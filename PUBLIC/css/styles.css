@@ -237,23 +237,38 @@ main {
    Sección Hero con Video (Controlada por HTML/Inline Styles)
    ========================== */
 
-.hero-video-section .hero-video-element {
+/* Estilos para la sección Hero con Carrusel de Videos */
+.hero-section {
+    position: relative; /* Necesario para posicionar absolutamente el contenido y los controles del carrusel */
+    height: 100vh;
+    overflow: hidden; /* Para asegurar que los videos no se desborden */
+}
+
+.hero-section .carousel,
+.hero-section .carousel-inner,
+.hero-section .carousel-item {
+    height: 100%;
+    width: 100%;
+}
+
+.hero-section .carousel-item video.hero-video-element {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     min-width: 100%;
     min-height: 100%;
-    width: auto; /* Para mantener proporción */
-    height: auto; /* Para mantener proporción */
-    object-fit: cover; /* Asegura que cubra todo */
-    z-index: 0; /* Detrás del contenido */
+    width: auto;
+    height: auto;
+    object-fit: cover; /* Cubre todo el espacio disponible sin perder proporción */
+    z-index: 0; /* Detrás del contenido y controles */
 }
 
-.hero-video-section .hero-content {
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
-    padding: 2rem;
-    border-radius: 0.5rem;
+/* Contenido superpuesto (títulos, botones) */
+.hero-content {
+    /* background-color: rgba(0, 0, 0, 0.5); Ya se aplica inline, pero podría centralizarse aquí */
+    /* padding: 2rem; */
+    /* border-radius: 0.5rem; */
     max-width: 90%; /* Limitar ancho en pantallas grandes */
     z-index: 1; /* Asegurar que esté sobre el video (aunque position-absolute ayuda) */
 }
@@ -375,13 +390,14 @@ footer {
 
 /* Pantallas pequeñas (móviles < 768px) */
 @media (max-width: 767.98px) {
-    .hero-video-section .hero-content h1 {
+    /* Ajustado para aplicar a la nueva estructura de .hero-section y .hero-content */
+    .hero-section .hero-content h1 {
         font-size: 1.8rem; /* Título más pequeño en hero */
     }
-    .hero-video-section .hero-content p {
+    .hero-section .hero-content p {
         font-size: 1rem;
     }
-     .hero-video-section .hero-content .btn {
+     .hero-section .hero-content .btn {
         font-size: 0.9rem;
         padding: 0.6rem 1rem;
     }

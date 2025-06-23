@@ -5,6 +5,12 @@ if (!isset($_SESSION['usu_id'])) {
     exit();
 }
 
+// Redirección para administradores
+if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3) {
+    header("Location: admin_panel.php");
+    exit();
+}
+
 $rol_id = $_SESSION['rol_id'] ?? 0;
 $nombre_usuario = htmlspecialchars($_SESSION['usu_nombre_completo'] ?? 'Usuario');
 
