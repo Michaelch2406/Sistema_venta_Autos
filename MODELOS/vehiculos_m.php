@@ -33,16 +33,25 @@ class Vehiculo
         $usu_id_gestor = isset($datos['usu_id_gestor']) && trim($datos['usu_id_gestor']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['usu_id_gestor'])) . "'" : "NULL";
         $veh_condicion = $this->conn->real_escape_string($datos['veh_condicion']);
         $veh_anio = $this->conn->real_escape_string($datos['veh_anio']);
-        $veh_kilometraje = (isset($datos['veh_condicion']) && $datos['veh_condicion'] == 'usado' && isset($datos['veh_kilometraje']) && trim($datos['veh_kilometraje']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos['veh_kilometraje'])) . "'" : "NULL";
+        
+        // Ajuste para veh_kilometraje, veh_placa_provincia_origen, veh_ultimo_digito_placa
+        if ($veh_condicion == 'nuevo') {
+            $veh_kilometraje = "0"; // Para 'nuevo', kilometraje es 0 o NULL dependiendo de la definición del SP. El SP lo maneja a NULL si no se envía o 0.
+            $veh_placa_provincia_origen = "NULL";
+            $veh_ultimo_digito_placa = "NULL";
+        } else { // 'usado'
+            $veh_kilometraje = (isset($datos['veh_kilometraje']) && trim($datos['veh_kilometraje']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos['veh_kilometraje'])) . "'" : "NULL"; // Permitir NULL si está vacío aunque sea usado, el SP podría tener validación
+            $veh_placa_provincia_origen = (isset($datos['veh_placa_provincia_origen']) && trim($datos['veh_placa_provincia_origen']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos['veh_placa_provincia_origen'])) . "'" : "NULL";
+            $veh_ultimo_digito_placa = (isset($datos['veh_ultimo_digito_placa']) && trim($datos['veh_ultimo_digito_placa']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos['veh_ultimo_digito_placa'])) . "'" : "NULL";
+        }
+        
         $veh_precio = $this->conn->real_escape_string($datos['veh_precio']);
         $veh_vin = isset($datos['veh_vin']) && trim($datos['veh_vin']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_vin'])) . "'" : "NULL";
         
         $veh_ubicacion_provincia = $this->conn->real_escape_string($datos['veh_ubicacion_provincia']);
         $veh_ubicacion_ciudad = $this->conn->real_escape_string($datos['veh_ubicacion_ciudad']);
-        $veh_placa_provincia_origen = (isset($datos['veh_condicion']) && $datos['veh_condicion'] == 'usado' && isset($datos['veh_placa_provincia_origen']) && trim($datos['veh_placa_provincia_origen']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos['veh_placa_provincia_origen'])) . "'" : "NULL";
-        $veh_ultimo_digito_placa = (isset($datos['veh_condicion']) && $datos['veh_condicion'] == 'usado' && isset($datos['veh_ultimo_digito_placa']) && trim($datos['veh_ultimo_digito_placa']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos['veh_ultimo_digito_placa'])) . "'" : "NULL";
 
-        $veh_color_exterior = $this->conn->real_escape_string(trim($datos['veh_color_exterior'])); // Requerido en el form
+        $veh_color_exterior = $this->conn->real_escape_string(trim($datos['veh_color_exterior']));
         $veh_color_interior = isset($datos['veh_color_interior']) && trim($datos['veh_color_interior']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_color_interior'])) . "'" : "NULL";
         $veh_detalles_motor = $this->conn->real_escape_string(trim($datos['veh_detalles_motor'])); // Requerido en el form
         $veh_tipo_transmision = isset($datos['veh_tipo_transmision']) && trim($datos['veh_tipo_transmision']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_tipo_transmision'])) . "'" : "NULL";
@@ -59,19 +68,28 @@ class Vehiculo
 
         $veh_fecha_publicacion = $this->conn->real_escape_string($datos['veh_fecha_publicacion']);
 
-        // LLAMADA AL SP CORREGIDA: SIN veh_caracteristicas_seguridad NI veh_caracteristicas_adicionales
+        // Parámetros para veh_caracteristicas_seguridad y veh_caracteristicas_adicionales (opcionales)
+        // Se asume que si no vienen en $datos, se pasarán como NULL al SP.
+        // El SP actual en el issue los tiene como parámetros, así que debemos pasarlos.
+        // Si el SP fue modificado para NO recibirlos, esta parte debe ajustarse.
+        // Por ahora, se asume que el SP SÍ los espera, y si no vienen en $datos, se envían como NULL.
+        $veh_caracteristicas_seguridad = isset($datos['veh_caracteristicas_seguridad']) && trim($datos['veh_caracteristicas_seguridad']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_caracteristicas_seguridad'])) . "'" : "NULL";
+        $veh_caracteristicas_adicionales = isset($datos['veh_caracteristicas_adicionales']) && trim($datos['veh_caracteristicas_adicionales']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_caracteristicas_adicionales'])) . "'" : "NULL";
+
         $sql = "CALL sp_insertar_vehiculo(
             $mar_id, $mod_id, $tiv_id, $veh_subtipo_vehiculo, $usu_id_gestor, '$veh_condicion', $veh_anio, $veh_kilometraje,
             $veh_precio, $veh_vin, '$veh_ubicacion_provincia', '$veh_ubicacion_ciudad', $veh_placa_provincia_origen, $veh_ultimo_digito_placa,
             '$veh_color_exterior', $veh_color_interior, '$veh_detalles_motor', $veh_tipo_transmision,
             $veh_traccion, $veh_tipo_vidrios, $veh_tipo_combustible, $veh_tipo_direccion, $veh_sistema_climatizacion,
+            $veh_caracteristicas_seguridad, $veh_caracteristicas_adicionales, -- Añadidos aquí
             '$veh_descripcion', $veh_detalles_extra_str,
             '$veh_fecha_publicacion',
             @p_veh_id_insertado, @p_resultado, @p_mensaje
         )";
         
         if (!$this->conn->query($sql)) {
-            error_log("Error al llamar a sp_insertar_vehiculo: " . $this->conn->error . " SQL: " . $sql);
+            // Log detallado del error y el SQL
+            error_log("Error al llamar a sp_insertar_vehiculo: " . $this->conn->error . ". SQL ejecutado: " . preg_replace('/\s+/', ' ', $sql));
             return ['resultado' => 0, 'mensaje' => 'Error técnico al publicar el vehículo. (SP Call Error)', 'veh_id' => null];
         }
 

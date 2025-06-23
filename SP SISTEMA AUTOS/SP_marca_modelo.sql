@@ -46,22 +46,46 @@ CREATE PROCEDURE sp_admin_actualizar_marca(
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    SET p_resultado = 0;
-    SET p_mensaje = 'Error al actualizar la marca o marca no encontrada.';
-    IF EXISTS (SELECT 1 FROM Marcas WHERE mar_nombre = p_mar_nombre AND mar_id != p_mar_id) THEN
-        SET p_mensaje = 'El nombre de la marca ya existe para otra marca.';
+    DECLARE v_marca_existe INT DEFAULT 0;
+    DECLARE v_nombre_duplicado INT DEFAULT 0;
+
+    SET p_resultado = 0; -- Error por defecto
+    SET p_mensaje = 'Error desconocido al actualizar la marca.';
+
+    -- Verificar si la marca a actualizar existe
+    SELECT COUNT(*) INTO v_marca_existe FROM Marcas WHERE mar_id = p_mar_id;
+
+    IF v_marca_existe = 0 THEN
+        SET p_mensaje = 'Marca no encontrada. No se puede actualizar.';
     ELSE
-        UPDATE Marcas 
-        SET mar_nombre = p_mar_nombre, mar_logo_url = p_mar_logo_url, mar_actualizado_en = CURRENT_TIMESTAMP
-        WHERE mar_id = p_mar_id;
-        IF ROW_COUNT() > 0 THEN
-            SET p_resultado = 1;
-            SET p_mensaje = 'Marca actualizada exitosamente.';
+        -- Verificar si el nuevo nombre ya existe para OTRA marca
+        SELECT COUNT(*) INTO v_nombre_duplicado 
+        FROM Marcas 
+        WHERE mar_nombre = p_mar_nombre AND mar_id != p_mar_id;
+
+        IF v_nombre_duplicado > 0 THEN
+            SET p_mensaje = 'El nombre de la marca ya está en uso por otra marca.';
         ELSE
-             -- Podría ser que no se encontraron filas o los datos son los mismos
-            IF EXISTS (SELECT 1 FROM Marcas WHERE mar_id = p_mar_id) THEN
-                SET p_resultado = 1; -- Considerar éxito si los datos son idénticos y la marca existe
-                SET p_mensaje = 'No se realizaron cambios en la marca (datos idénticos o marca no encontrada).';
+            UPDATE Marcas 
+            SET 
+                mar_nombre = p_mar_nombre, 
+                mar_logo_url = p_mar_logo_url, 
+                mar_actualizado_en = CURRENT_TIMESTAMP
+            WHERE mar_id = p_mar_id;
+
+            IF ROW_COUNT() > 0 THEN
+                SET p_resultado = 1;
+                SET p_mensaje = 'Marca actualizada exitosamente.';
+            ELSE
+                -- Si ROW_COUNT() es 0, puede ser que no se hicieron cambios (datos idénticos)
+                -- o un error muy raro si la marca existía.
+                -- Verificamos si los datos son idénticos
+                IF EXISTS (SELECT 1 FROM Marcas WHERE mar_id = p_mar_id AND mar_nombre = p_mar_nombre AND ( (mar_logo_url IS NULL AND p_mar_logo_url IS NULL) OR mar_logo_url = p_mar_logo_url) ) THEN
+                    SET p_resultado = 1; -- Considerarlo un éxito, no se hicieron cambios pero la data es consistente.
+                    SET p_mensaje = 'No se realizaron cambios en la marca (los datos proporcionados son idénticos a los existentes).';
+                ELSE
+                     SET p_mensaje = 'No se realizaron cambios en la marca. Verifique los datos o la existencia de la marca.';
+                END IF;
             END IF;
         END IF;
     END IF;

@@ -23,6 +23,8 @@ END //
 DELIMITER ;
 
 -- 3. MODIFICAR STORED PROCEDURE sp_insertar_vehiculo
+USE SistemaVentaAutos;
+
 DROP PROCEDURE IF EXISTS sp_insertar_vehiculo;
 DELIMITER //
 CREATE PROCEDURE sp_insertar_vehiculo(
@@ -31,27 +33,25 @@ CREATE PROCEDURE sp_insertar_vehiculo(
     IN p_tiv_id INT,
     IN p_veh_subtipo_vehiculo VARCHAR(100),
     IN p_usu_id_gestor INT,
-    -- p_veh_condicion ahora se asume 'usado'
+    IN p_veh_condicion ENUM('nuevo', 'usado'),
     IN p_veh_anio INT,
-    IN p_veh_kilometraje INT, -- Ahora es obligatorio
+    IN p_veh_kilometraje INT,
     IN p_veh_precio DECIMAL(12, 2),
     IN p_veh_vin VARCHAR(20),
     IN p_veh_ubicacion_provincia VARCHAR(100),
     IN p_veh_ubicacion_ciudad VARCHAR(100),
     IN p_veh_placa_provincia_origen VARCHAR(100),
     IN p_veh_ultimo_digito_placa CHAR(1),
-    IN p_veh_color_exterior VARCHAR(50), -- Sigue siendo requerido
-    IN p_veh_color_interior VARCHAR(50), -- Ahora opcional
-    IN p_veh_detalles_motor TEXT,       -- Sigue siendo requerido
-    IN p_veh_tipo_transmision VARCHAR(50), -- Ahora opcional
-    IN p_veh_traccion ENUM('Delantera', 'Trasera', '4x4', 'AWD', 'Otro'), -- Ahora opcional
-    IN p_veh_tipo_vidrios ENUM('Manuales', 'Electricos Delanteros', 'Electricos Completos', 'Otro'), -- Ahora opcional
-    IN p_veh_tipo_combustible ENUM('Gasolina', 'Diesel', 'Hibrido', 'Electrico', 'Flex (Gasolina/Etanol)', 'GLP', 'GNV', 'Otro'), -- Ahora opcional
-    IN p_veh_tipo_direccion ENUM('Mecanica', 'Hidraulica', 'Electroasistida', 'Electrica', 'Otra'), -- Ahora opcional
-    IN p_veh_sistema_climatizacion ENUM('Ninguno', 'Aire Acondicionado', 'Climatizador Manual', 'Climatizador Automatico', 'Climatizador Bi-Zona', 'Otro'), -- Ahora opcional
-    IN p_veh_caracteristicas_seguridad TEXT, -- Ahora opcional
-    IN p_veh_caracteristicas_adicionales TEXT, -- Ahora opcional
-    IN p_veh_descripcion TEXT,                -- Sigue siendo requerido
+    IN p_veh_color_exterior VARCHAR(50),
+    IN p_veh_color_interior VARCHAR(50),
+    IN p_veh_detalles_motor TEXT,
+    IN p_veh_tipo_transmision VARCHAR(50),
+    IN p_veh_traccion ENUM('Delantera', 'Trasera', '4x4', 'AWD', 'Otro'),
+    IN p_veh_tipo_vidrios ENUM('Manuales', 'Electricos Delanteros', 'Electricos Completos', 'Otro'),
+    IN p_veh_tipo_combustible ENUM('Gasolina', 'Diesel', 'Hibrido', 'Electrico', 'Flex (Gasolina/Etanol)', 'GLP', 'GNV', 'Otro'),
+    IN p_veh_tipo_direccion ENUM('Mecanica', 'Hidraulica', 'Electroasistida', 'Electrica', 'Otra'),
+    IN p_veh_sistema_climatizacion ENUM('Ninguno', 'Aire Acondicionado', 'Climatizador Manual', 'Climatizador Automatico', 'Climatizador Bi-Zona', 'Otro'),
+    IN p_veh_descripcion TEXT,
     IN p_veh_detalles_extra TEXT,
     IN p_veh_fecha_publicacion DATE,
     OUT p_veh_id_insertado INT,
@@ -62,7 +62,6 @@ BEGIN
     SET p_resultado = 0; 
     SET p_mensaje = 'Error al insertar el vehículo.';
     SET p_veh_id_insertado = NULL;
-    SET @v_veh_condicion = 'usado'; -- Siempre 'usado'
 
     IF p_veh_vin IS NOT NULL AND p_veh_vin != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_vin = p_veh_vin) THEN
         SET p_mensaje = 'El VIN ingresado ya existe para otro vehículo.';
@@ -72,21 +71,21 @@ BEGIN
             veh_precio, veh_vin, veh_ubicacion_provincia, veh_ubicacion_ciudad, veh_placa_provincia_origen, veh_ultimo_digito_placa,
             veh_color_exterior, veh_color_interior, veh_detalles_motor, veh_tipo_transmision,
             veh_traccion, veh_tipo_vidrios, veh_tipo_combustible, veh_tipo_direccion, veh_sistema_climatizacion,
-            veh_caracteristicas_seguridad, veh_caracteristicas_adicionales, veh_descripcion, veh_detalles_extra,
+            veh_descripcion, veh_detalles_extra,
             veh_estado, veh_fecha_publicacion
         ) VALUES (
-            p_mar_id, p_mod_id, p_tiv_id, p_veh_subtipo_vehiculo, p_usu_id_gestor, @v_veh_condicion, p_veh_anio, p_veh_kilometraje,
+            p_mar_id, p_mod_id, p_tiv_id, p_veh_subtipo_vehiculo, p_usu_id_gestor, p_veh_condicion, p_veh_anio, p_veh_kilometraje,
             p_veh_precio, p_veh_vin, p_veh_ubicacion_provincia, p_veh_ubicacion_ciudad, p_veh_placa_provincia_origen, p_veh_ultimo_digito_placa,
             p_veh_color_exterior, p_veh_color_interior, p_veh_detalles_motor, p_veh_tipo_transmision,
             p_veh_traccion, p_veh_tipo_vidrios, p_veh_tipo_combustible, p_veh_tipo_direccion, p_veh_sistema_climatizacion,
-            p_veh_caracteristicas_seguridad, p_veh_caracteristicas_adicionales, p_veh_descripcion, p_veh_detalles_extra,
+            p_veh_descripcion, p_veh_detalles_extra,
             'disponible', p_veh_fecha_publicacion
         );
 
         IF ROW_COUNT() > 0 THEN
             SET p_veh_id_insertado = LAST_INSERT_ID();
             SET p_resultado = 1;
-            SET p_mensaje = 'Vehículo usado publicado exitosamente.';
+            SET p_mensaje = 'Vehículo publicado exitosamente.';
         ELSE
             SET p_mensaje = 'No se pudo insertar el vehículo en la base de datos.';
         END IF;
@@ -98,118 +97,204 @@ DELIMITER ;
 -- Usar la base de datos
 USE SistemaVentaAutos;
 
-DROP PROCEDURE IF EXISTS sp_insertar_imagen_vehiculo;
+DROP PROCEDURE IF EXISTS sp_get_vehiculos_listado;
 DELIMITER //
-CREATE PROCEDURE sp_insertar_imagen_vehiculo(
-    IN p_veh_id INT,
-    IN p_ima_url VARCHAR(255),
-    IN p_ima_es_principal BOOLEAN,
-    OUT p_ima_id_insertado INT,
+CREATE PROCEDURE sp_get_vehiculos_listado(
+    IN p_veh_condicion ENUM('nuevo', 'usado', 'todos'), -- 'todos' para no filtrar por condición
+    IN p_mar_id INT,            -- 0 o NULL para no filtrar por marca
+    IN p_mod_id INT,            -- 0 o NULL para no filtrar por modelo
+    IN p_tiv_id INT,            -- 0 o NULL para no filtrar por tipo
+    IN p_precio_min DECIMAL(12,2),
+    IN p_precio_max DECIMAL(12,2),
+    IN p_anio_min INT,
+    IN p_anio_max INT,
+    IN p_ubicacion_provincia VARCHAR(100), -- Vacío o NULL para no filtrar
+    IN p_items_por_pagina INT,
+    IN p_offset INT,
+    OUT p_total_vehiculos INT -- Total de vehículos que coinciden con los filtros (para paginación)
+)
+BEGIN
+    -- Construir la consulta base
+    SET @sql_query = CONCAT(
+        'SELECT SQL_CALC_FOUND_ROWS ',
+        'v.veh_id, v.veh_anio, v.veh_kilometraje, v.veh_precio, v.veh_ubicacion_ciudad, v.veh_ubicacion_provincia, ',
+        'm.mar_nombre, mo.mod_nombre, tv.tiv_nombre, ',
+        '(SELECT ima_url FROM ImagenesVehiculo iv WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE LIMIT 1) AS imagen_principal_url ',
+        'FROM Vehiculos v ',
+        'JOIN Marcas m ON v.mar_id = m.mar_id ',
+        'JOIN Modelos mo ON v.mod_id = mo.mod_id ',
+        'JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id ',
+        'WHERE v.veh_estado = ''disponible'' '
+    );
+
+    -- Aplicar filtros
+    IF p_veh_condicion != 'todos' THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_condicion = ''', p_veh_condicion, '''');
+    END IF;
+    IF p_mar_id IS NOT NULL AND p_mar_id > 0 THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.mar_id = ', p_mar_id);
+    END IF;
+    IF p_mod_id IS NOT NULL AND p_mod_id > 0 THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.mod_id = ', p_mod_id);
+    END IF;
+    IF p_tiv_id IS NOT NULL AND p_tiv_id > 0 THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.tiv_id = ', p_tiv_id);
+    END IF;
+    IF p_precio_min IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_precio >= ', p_precio_min);
+    END IF;
+    IF p_precio_max IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_precio <= ', p_precio_max);
+    END IF;
+    IF p_anio_min IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_anio >= ', p_anio_min);
+    END IF;
+    IF p_anio_max IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_anio <= ', p_anio_max);
+    END IF;
+    IF p_ubicacion_provincia IS NOT NULL AND p_ubicacion_provincia != '' THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_ubicacion_provincia = ''', p_ubicacion_provincia, '''');
+    END IF;
+
+    -- Orden y Paginación
+    SET @sql_query = CONCAT(@sql_query, ' ORDER BY v.veh_fecha_publicacion DESC, v.veh_creado_en DESC');
+    IF p_items_por_pagina IS NOT NULL AND p_offset IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' LIMIT ', p_offset, ', ', p_items_por_pagina);
+    END IF;
+
+    -- Preparar y ejecutar la consulta principal
+    PREPARE stmt FROM @sql_query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+
+    -- Obtener el total de filas que coinciden con los filtros (para paginación)
+    SELECT FOUND_ROWS() INTO p_total_vehiculos;
+
+END //
+DELIMITER ;
+
+
+USE SistemaVentaAutos;
+
+-- TIPOS DE VEHICULO --
+DROP PROCEDURE IF EXISTS sp_admin_get_all_tipos_vehiculo;
+DELIMITER //
+CREATE PROCEDURE sp_admin_get_all_tipos_vehiculo()
+BEGIN
+    SELECT tiv_id, tiv_nombre, tiv_descripcion, tiv_icono_url, tiv_activo 
+    FROM TiposVehiculo 
+    ORDER BY tiv_nombre ASC;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS sp_admin_insertar_tipo_vehiculo;
+DELIMITER //
+CREATE PROCEDURE sp_admin_insertar_tipo_vehiculo(
+    IN p_tiv_nombre VARCHAR(100),
+    IN p_tiv_descripcion TEXT,
+    IN p_tiv_icono_url VARCHAR(255),
+    IN p_tiv_activo BOOLEAN,
+    OUT p_tiv_id_insertado INT,
     OUT p_resultado INT,
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    SET p_resultado = 0; -- Error por defecto
-    SET p_mensaje = 'Error al guardar la imagen del vehículo.';
-    SET p_ima_id_insertado = NULL;
-
-    -- Si se está marcando como principal, desmarcar otras para el mismo vehículo
-    IF p_ima_es_principal = TRUE THEN
-        UPDATE ImagenesVehiculo SET ima_es_principal = FALSE WHERE veh_id = p_veh_id;
-    END IF;
-
-    INSERT INTO ImagenesVehiculo (veh_id, ima_url, ima_es_principal)
-    VALUES (p_veh_id, p_ima_url, p_ima_es_principal);
-
-    IF ROW_COUNT() > 0 THEN
-        SET p_ima_id_insertado = LAST_INSERT_ID();
-        SET p_resultado = 1;
-        SET p_mensaje = 'Imagen guardada exitosamente.';
+    SET p_resultado = 0;
+    SET p_mensaje = 'Error al insertar el tipo de vehículo.';
+    IF EXISTS (SELECT 1 FROM TiposVehiculo WHERE tiv_nombre = p_tiv_nombre) THEN
+        SET p_mensaje = 'El nombre del tipo de vehículo ya existe.';
     ELSE
-        SET p_mensaje = 'No se pudo guardar la imagen en la base de datos.';
-    END IF;
-END //
-DELIMITER ;
-
-
--- Usar la base de datos
-USE SistemaVentaAutos;
-
-DROP PROCEDURE IF EXISTS sp_get_vehiculos_por_gestor;
-DELIMITER //
-CREATE PROCEDURE sp_get_vehiculos_por_gestor(
-    IN p_usu_id_gestor INT
-)
-BEGIN
-    SELECT
-        v.veh_id,
-        v.veh_condicion,
-        v.veh_anio,
-        v.veh_precio,
-        v.veh_estado,
-        v.veh_fecha_publicacion,
-        m.mar_nombre,
-        mo.mod_nombre,
-        tv.tiv_nombre,
-        -- Obtener la URL de la imagen principal
-        (SELECT ima_url FROM ImagenesVehiculo iv WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE LIMIT 1) AS imagen_principal_url,
-        -- Contar cuántas imágenes tiene (opcional, pero útil)
-        (SELECT COUNT(*) FROM ImagenesVehiculo iv_count WHERE iv_count.veh_id = v.veh_id) AS total_imagenes
-    FROM Vehiculos v
-    JOIN Marcas m ON v.mar_id = m.mar_id
-    JOIN Modelos mo ON v.mod_id = mo.mod_id
-    JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id
-    WHERE v.usu_id_gestor = p_usu_id_gestor
-    ORDER BY v.veh_fecha_publicacion DESC, v.veh_creado_en DESC;
-END //
-DELIMITER ;
-
-
-
--- Usar la base de datos
-USE SistemaVentaAutos;
-
-DROP PROCEDURE IF EXISTS sp_actualizar_estado_vehiculo;
-DELIMITER //
-CREATE PROCEDURE sp_actualizar_estado_vehiculo(
-    IN p_veh_id INT,
-    IN p_nuevo_estado ENUM('disponible', 'reservado', 'vendido', 'desactivado'),
-    IN p_usu_id_gestor_actual INT,
-    OUT p_resultado INT, -- 1: Éxito, 0: Vehículo no encontrado o no pertenece al gestor, -1: Error de actualización
-    OUT p_mensaje VARCHAR(255)
-)
-BEGIN
-    DECLARE v_current_gestor_id INT;
-    SET p_resultado = -1; -- Error por defecto
-    SET p_mensaje = 'Error desconocido al actualizar el estado.';
-
-    -- Verificar si el vehículo existe y pertenece al gestor actual
-    SELECT usu_id_gestor INTO v_current_gestor_id FROM Vehiculos WHERE veh_id = p_veh_id;
-
-    IF v_current_gestor_id IS NULL THEN
-        SET p_resultado = 0;
-        SET p_mensaje = 'Vehículo no encontrado.';
-    ELSEIF v_current_gestor_id != p_usu_id_gestor_actual THEN
-        SET p_resultado = 0;
-        SET p_mensaje = 'No tienes permiso para modificar este vehículo.';
-    ELSE
-        -- Actualizar el estado del vehículo
-        UPDATE Vehiculos
-        SET veh_estado = p_nuevo_estado,
-            veh_actualizado_en = CURRENT_TIMESTAMP
-        WHERE veh_id = p_veh_id;
-
+        INSERT INTO TiposVehiculo (tiv_nombre, tiv_descripcion, tiv_icono_url, tiv_activo) 
+        VALUES (p_tiv_nombre, p_tiv_descripcion, p_tiv_icono_url, p_tiv_activo);
         IF ROW_COUNT() > 0 THEN
+            SET p_tiv_id_insertado = LAST_INSERT_ID();
             SET p_resultado = 1;
-            SET p_mensaje = CONCAT('Estado del vehículo actualizado a "', p_nuevo_estado, '" exitosamente.');
-        ELSE
-            -- Esto podría pasar si el estado ya era el mismo, o si hubo un error inesperado.
-            -- ROW_COUNT() devuelve 0 si no se modificaron filas.
-            -- Para diferenciar, podríamos añadir una comprobación del estado actual antes del UPDATE.
-            SET p_mensaje = 'No se realizaron cambios en el estado (podría ser el mismo estado o un error).';
-            -- Si quieres ser más específico, puedes seleccionar el estado actual y compararlo.
-            -- Si es diferente y ROW_COUNT() es 0, entonces es un error.
+            SET p_mensaje = 'Tipo de vehículo insertado exitosamente.';
         END IF;
     END IF;
 END //
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS sp_admin_actualizar_tipo_vehiculo;
+DELIMITER //
+CREATE PROCEDURE sp_admin_actualizar_tipo_vehiculo(
+    IN p_tiv_id INT,
+    IN p_tiv_nombre VARCHAR(100),
+    IN p_tiv_descripcion TEXT,
+    IN p_tiv_icono_url VARCHAR(255),
+    IN p_tiv_activo BOOLEAN,
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_tipo_existe INT DEFAULT 0;
+    DECLARE v_nombre_duplicado INT DEFAULT 0;
+    SET p_resultado = 0;
+    SET p_mensaje = 'Error desconocido al actualizar el tipo de vehículo.';
+
+    SELECT COUNT(*) INTO v_tipo_existe FROM TiposVehiculo WHERE tiv_id = p_tiv_id;
+    IF v_tipo_existe = 0 THEN
+        SET p_mensaje = 'Tipo de vehículo no encontrado.';
+    ELSE
+        SELECT COUNT(*) INTO v_nombre_duplicado 
+        FROM TiposVehiculo 
+        WHERE tiv_nombre = p_tiv_nombre AND tiv_id != p_tiv_id;
+
+        IF v_nombre_duplicado > 0 THEN
+            SET p_mensaje = 'El nombre del tipo de vehículo ya está en uso por otro tipo.';
+        ELSE
+            UPDATE TiposVehiculo 
+            SET 
+                tiv_nombre = p_tiv_nombre, 
+                tiv_descripcion = p_tiv_descripcion, 
+                tiv_icono_url = p_tiv_icono_url,
+                tiv_activo = p_tiv_activo,
+                tiv_actualizado_en = CURRENT_TIMESTAMP
+            WHERE tiv_id = p_tiv_id;
+
+            IF ROW_COUNT() > 0 THEN
+                SET p_resultado = 1;
+                SET p_mensaje = 'Tipo de vehículo actualizado exitosamente.';
+            ELSE
+                IF EXISTS (SELECT 1 FROM TiposVehiculo WHERE tiv_id = p_tiv_id AND tiv_nombre = p_tiv_nombre AND 
+                           ( (tiv_descripcion IS NULL AND p_tiv_descripcion IS NULL) OR tiv_descripcion = p_tiv_descripcion ) AND
+                           ( (tiv_icono_url IS NULL AND p_tiv_icono_url IS NULL) OR tiv_icono_url = p_tiv_icono_url ) AND
+                           tiv_activo = p_tiv_activo) THEN
+                    SET p_resultado = 1;
+                    SET p_mensaje = 'No se realizaron cambios (datos idénticos).';
+                ELSE
+                    SET p_mensaje = 'No se realizaron cambios en el tipo de vehículo.';
+                END IF;
+            END IF;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS sp_admin_eliminar_tipo_vehiculo;
+DELIMITER //
+CREATE PROCEDURE sp_admin_eliminar_tipo_vehiculo(
+    IN p_tiv_id INT,
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    SET p_resultado = 0;
+    SET p_mensaje = 'Error al eliminar el tipo de vehículo.';
+    IF EXISTS (SELECT 1 FROM Vehiculos WHERE tiv_id = p_tiv_id) THEN
+        SET p_mensaje = 'No se puede eliminar el tipo de vehículo porque tiene vehículos asociados. Reasigne los vehículos primero.';
+    ELSE
+        DELETE FROM TiposVehiculo WHERE tiv_id = p_tiv_id;
+        IF ROW_COUNT() > 0 THEN
+            SET p_resultado = 1;
+            SET p_mensaje = 'Tipo de vehículo eliminado exitosamente.';
+        ELSE
+            SET p_mensaje = 'Tipo de vehículo no encontrado o ya eliminado.';
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+
+
+

@@ -139,11 +139,23 @@ try {
             foreach ($required_fields as $field) {
                 if (!isset($_POST[$field]) || trim($_POST[$field]) === '') { $missing_fields[] = $field; }
             }
+            
+            // Validación de campos de vehículo usado SOLO si la condición es 'usado'
             if (isset($_POST['veh_condicion']) && $_POST['veh_condicion'] === 'usado') {
-                if (!isset($_POST['veh_kilometraje']) || trim($_POST['veh_kilometraje']) === '') { $missing_fields[] = 'veh_kilometraje (Recorrido)'; }
-                if (!isset($_POST['veh_placa_provincia_origen']) || trim($_POST['veh_placa_provincia_origen']) === '') { $missing_fields[] = 'veh_placa_provincia_origen'; }
-                if (!isset($_POST['veh_ultimo_digito_placa']) || trim($_POST['veh_ultimo_digito_placa']) === '') { $missing_fields[] = 'veh_ultimo_digito_placa'; }
+                if (!isset($_POST['veh_kilometraje']) || trim($_POST['veh_kilometraje']) === '') { 
+                    $missing_fields[] = 'veh_kilometraje (Recorrido para vehículos usados)'; 
+                }
+                // Para vehículos usados, la placa y último dígito podrían ser opcionales si el usuario elige "Sin Placa"
+                // o si el formulario lo permite. Asumiendo que si es 'usado', son requeridos a menos que se indique lo contrario.
+                // Si "Sin Placa" es una opción válida para veh_ultimo_digito_placa, esta validación podría necesitar ajuste.
+                if (!isset($_POST['veh_placa_provincia_origen']) || trim($_POST['veh_placa_provincia_origen']) === '') { 
+                    $missing_fields[] = 'veh_placa_provincia_origen (para vehículos usados)'; 
+                }
+                if (!isset($_POST['veh_ultimo_digito_placa']) || trim($_POST['veh_ultimo_digito_placa']) === '') { 
+                    $missing_fields[] = 'veh_ultimo_digito_placa (para vehículos usados)'; 
+                }
             }
+            // No se añaden validaciones para kilometraje/placa si es 'nuevo', ya que el SP y el modelo los manejarán como NULL/0.
 
             if (!empty($missing_fields)) {
                 $response['message'] = 'Faltan campos obligatorios: ' . implode(', ', $missing_fields);
