@@ -1,0 +1,192 @@
+/* Estilos personalizados para el navbar mejorado */
+.navbar-enhanced {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: navbarLoad 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Animación de carga */
+}
+
+.navbar-enhanced.scrolled {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 55, 72, 0.95) 100%) !important;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-brand {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    color: #4f46e5 !important;
+}
+
+.navbar-brand img {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 8px rgba(79, 70, 229, 0.3));
+}
+
+.navbar-brand:hover img {
+    transform: rotate(5deg) scale(1.1);
+    filter: drop-shadow(0 4px 12px rgba(79, 70, 229, 0.5));
+}
+
+.nav-link {
+    position: relative;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 0.2rem;
+    border-radius: 8px;
+    padding: 0.7rem 1rem !important;
+}
+
+.nav-link:hover {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(168, 85, 247, 0.2));
+    transform: translateY(-2px);
+    color: #e0e7ff !important;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #a855f7);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+    width: 100%;
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(168, 85, 247, 0.3));
+    color: #e0e7ff !important;
+    font-weight: 600;
+}
+
+.dropdown-menu {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 55, 72, 0.95) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    margin-top: 0.5rem;
+    animation: dropdownSlide 0.3s ease-out;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-item {
+    color: #e2e8f0 !important;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    margin: 0.2rem 0.5rem;
+    padding: 0.7rem 1rem;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(168, 85, 247, 0.2));
+    transform: translateX(5px);
+    color: #ffffff !important;
+}
+
+.dropdown-item.active {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(168, 85, 247, 0.3));
+    color: #ffffff !important;
+}
+
+.dropdown-item.text-danger:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 127, 0.2));
+    color: #fecaca !important;
+}
+
+.navbar-toggler {
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    transform: scale(1.1);
+    background: rgba(79, 70, 229, 0.2);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+}
+
+.bi {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .bi {
+    transform: scale(1.2);
+}
+
+@keyframes navbarLoad {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Efecto de brillo sutil */
+/* Se eliminó este efecto porque `overflow: hidden` en el navbar sería necesario para que no afecte a toda la página,
+   o habría que aplicarlo a un pseudo-elemento con `position: absolute` y `z-index` bajo.
+   Por simplicidad, se omite para este ejemplo de separación de archivos. */
+/*
+.navbar-enhanced::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+*/
+
+/* Responsive improvements */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: linear-gradient(135deg, rgba(26, 26, 26, 0.98) 0%, rgba(45, 55, 72, 0.98) 100%);
+        border-radius: 15px;
+        margin-top: 1rem;
+        padding: 1rem;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-link {
+        margin: 0.2rem 0; /* Ajustar margen para vista colapsada */
+    }
+}

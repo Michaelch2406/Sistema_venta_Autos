@@ -1,0 +1,561 @@
+/* ==========================
+   Estilos Generales
+   ========================== */
+body {
+    padding-top: 56px; /* Ajuste para la barra de navegación fija */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1; /* Empuja el footer hacia abajo */
+}
+
+/* ==========================
+   Estilos de Formularios
+   ========================== */
+/* Título principal de la página de publicación */
+.publishing-title {
+    color: #2c3e50; /* Un azul oscuro elegante */
+}
+
+.card-form-section {
+    border: 1px solid #dee2e6; /* Borde más sutil que el default de card */
+    border-radius: .5rem; /* Bordes un poco más redondeados */
+    margin-bottom: 2.5rem; /* Más espacio entre secciones */
+    background-color: #fff; /* Fondo blanco para las secciones */
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); /* Sombra sutil */
+}
+
+.card-form-section .card-header {
+    background-color: #e9ecef; /* Un gris muy claro para el header de sección */
+    font-weight: 600; /* Un poco más de peso a la fuente */
+    font-size: 1.15rem;
+    color: #495057;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.75rem 1.25rem;
+}
+.card-form-section .card-header i { /* Estilo para iconos en el header */
+    color: #0d6efd; /* Color primario de Bootstrap */
+}
+
+
+.form-label {
+    font-weight: 500; /* Hacer labels un poco más notables */
+    color: #495057;
+    margin-bottom: 0.3rem;
+}
+
+.form-control-lg, .form-select-lg { 
+    font-size: 1.1rem; /* Tamaño de fuente ligeramente más grande */
+    padding: 0.75rem 1.25rem; /* Más espacio interno */
+    border-radius: .375rem; /* Bordes redondeados */
+}
+
+/* Estilo para el grupo de checkboxes de "Detalles Extra" */
+.optional-fields-group {
+    background-color: #f8f9fa; /* Fondo ligeramente diferente */
+    padding: 1rem 1.5rem;
+    border: 1px dashed #ced4da; /* Borde discontinuo */
+    border-radius: .375rem;
+    margin-top: 0.5rem;
+}
+.optional-fields-group .form-check {
+    margin-bottom: 0.5rem;
+}
+.optional-fields-group .form-check-label {
+    font-weight: normal; /* Labels de checkboxes normales */
+}
+
+
+/* Contenedor de previsualización de imágenes */
+#imagePreviewContainer {
+    background-color: #f8f9fa; /* Fondo claro */
+    border: 1px dashed #adb5bd; /* Borde más visible */
+    padding: 10px;
+    border-radius: .375rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 120px;
+    align-items: center; /* Centrar el texto de placeholder verticalmente */
+    justify-content: center; /* Centrar el texto de placeholder horizontalmente */
+}
+#imagePreviewContainer img.img-thumbnail {
+    border: 1px solid #dee2e6;
+    padding: 0.2rem;
+    background-color: #fff;
+    max-height: 100px; /* Para que no se hagan muy grandes */
+    object-fit: cover;
+}
+#imagePreviewContainer .text-muted { /* Estilo para el texto de placeholder */
+    font-style: italic;
+}
+
+/* Botones de acción del formulario */
+#publicarVehiculoForm .btn-primary {
+    background-color: #0d6efd; /* Asegurar color primario */
+    border-color: #0d6efd;
+    /* font-weight: 500; */
+}
+#publicarVehiculoForm .btn-outline-secondary {
+    background-color: #f8f9fa; /* Fondo claro */
+    border-color: #ced4da;
+    color: #495057; /* Texto gris oscuro */
+    
+    /* font-weight: 500; */
+}
+
+/* Ajustes de responsividad específicos para el formulario si son necesarios */
+@media (max-width: 767.98px) {
+    .publishing-title {
+        font-size: 2.2rem;
+    }
+    .card-form-section .card-header {
+        font-size: 1.1rem;
+    }
+    .optional-fields-group .col-sm-6 { /* Que los checkboxes ocupen más ancho en móvil */
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* ==========================
+   Estilos de Secciones de Formulario
+   ========================== */
+.form-section-title {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem; /* Lo hice un poco más pequeño que el card-header */
+    color: #343a40;
+    font-weight: 500;
+}
+/* ==========================
+   Estilos de Botones
+   ========================== */
+   .button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.button:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+    transform: translateY(-2px); /* Efecto de elevación sutil */
+}
+
+/* En PUBLIC/css/styles.css (Ejemplo para color púrpura) */
+.text-purple-600 { color: #7c3aed !important; }
+.btn-purple { background-color: #7c3aed; border-color: #7c3aed; color: #fff; }
+.btn-purple:hover { background-color: #6d28d9; border-color: #6d28d9; color: #fff; }
+
+/* ==========================
+   Animación de Carga
+   ========================== */
+#page-loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999; /* Muy alto para estar por encima de todo */
+  /* background-color: rgba(255, 255, 255, 0.8); /* Fondo opcional para difuminar contenido */
+  /* padding: 20px; */ /* Opcional */
+  /* border-radius: 10px; */ /* Opcional */
+}
+
+/* Clase para ocultar contenido mientras carga */
+.content-hidden {
+    display: none !important;
+}
+
+#page-loader .container {
+  --uib-size: 40px; /* Corregido: doble guion */
+  --uib-color: #0d6efd;
+  --uib-speed: 1.4s;
+  --uib-bg-opacity: .1;
+  height: var(--uib-size);
+  width: var(--uib-size);
+  transform-origin: center;
+  overflow: visible;
+}
+
+#page-loader .car {
+  fill: none;
+  stroke: var(--uib-color);
+  stroke-dasharray: 15, 85;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  stroke-width: 4; /* Asegurar grosor consistente */
+  animation: travel var(--uib-speed) linear infinite;
+  will-change: stroke-dasharray, stroke-dashoffset;
+  transition: stroke 0.5s ease;
+}
+
+#page-loader .track {
+  fill: none;
+  stroke: var(--uib-color);
+  opacity: var(--uib-bg-opacity);
+  transition: stroke 0.5s ease;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+@keyframes travel {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* ==========================
+   Barra de Navegación
+   ========================== */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Efecto hover/focus sutil en links de navegación */
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+    color: rgba(255, 255, 255, 0.75); /* Blanco un poco más tenue */
+}
+
+/* Ajuste para el logo si es necesario (Ej: hacerlo más visible si es transparente) */
+.navbar-brand img {
+  /* filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.6)); */ /* Ejemplo si el logo es oscuro/transparente */
+}
+
+
+/* ==========================
+   Sección Hero con Video (Controlada por HTML/Inline Styles)
+   ========================== */
+
+.hero-video-section .hero-video-element {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto; /* Para mantener proporción */
+    height: auto; /* Para mantener proporción */
+    object-fit: cover; /* Asegura que cubra todo */
+    z-index: 0; /* Detrás del contenido */
+}
+
+.hero-video-section .hero-content {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+    padding: 2rem;
+    border-radius: 0.5rem;
+    max-width: 90%; /* Limitar ancho en pantallas grandes */
+    z-index: 1; /* Asegurar que esté sobre el video (aunque position-absolute ayuda) */
+}
+
+
+
+/* ==========================
+   Tarjetas de Vehículos Destacados
+   ========================== */
+.car-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none; /* Quitar borde por defecto si se usa shadow */
+}
+
+.car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important; /* Sombra más pronunciada en hover */
+}
+
+.car-card .card-img-top {
+    height: 270px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.car-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.car-card .card-footer {
+    background-color: #fff; /* Fondo blanco explícito */
+    border-top: none; /* Quitar línea superior del footer */
+}
+
+/* ==========================
+   Página de Login
+   ========================== */
+.login-bg {
+     background-color: #f1f4f8; /* Un fondo gris azulado muy claro */
+     /* Opcional: Imagen de fondo
+     background: url('../PUBLIC/Img/fondo_login.jpg') no-repeat center center fixed;
+     background-size: cover; */
+}
+
+/* ==========================
+   Mostrar/Ocultar Contraseña
+   ========================== */
+/* Ajuste para input-group con botón de mostrar/ocultar contraseña */
+.input-group .toggle-password {
+    border-left: 0; /* Opcional: para que se vea más integrado */
+}
+
+.input-group .form-control:focus { /* Para que el foco no se corte por el botón */
+    z-index: 3;
+}
+
+/* ==========================
+   Página de Escritorio (Dashboard)
+   ========================== */
+.dashboard-header {
+    border-bottom: 1px solid #dee2e6; /* Línea separadora sutil */
+    padding-bottom: 1.5rem;
+}
+
+.dashboard-card {
+    border: none; /* Quitar borde por defecto si se usa shadow */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.1) !important;
+}
+
+.dashboard-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar contenido de la tarjeta */
+}
+
+.dashboard-card-icon {
+    font-size: 2.5rem; /* Tamaño del icono */
+    color: #0d6efd; /* Color del icono, puedes cambiarlo */
+    margin-bottom: 1rem; /* Espacio entre el icono y el título */
+}
+
+.dashboard-card .card-title {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-card .card-text {
+    flex-grow: 1; /* Para que el botón se alinee abajo si el texto varía */
+    margin-bottom: 1rem;
+}
+
+.dashboard-card .btn {
+    min-width: 150px; /* Ancho mínimo para los botones si quieres */
+}
+
+
+/* ==========================
+   Pie de Página
+   ========================== */
+footer {
+    margin-top: auto;
+    background-color: #343a40; /* Fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+    padding: 1rem 0; /* Espaciado vertical */
+    text-align: center; /* Centrar texto */
+    position: relative; /* Para que se mantenga al final del contenido */
+    z-index: 1000; /* Asegurar que esté por encima de otros elementos */
+}
+
+/* ==========================
+   Media Queries (Responsividad)
+   ========================== */
+
+/* Pantallas pequeñas (móviles < 768px) */
+@media (max-width: 767.98px) {
+    .hero-video-section .hero-content h1 {
+        font-size: 1.8rem; /* Título más pequeño en hero */
+    }
+    .hero-video-section .hero-content p {
+        font-size: 1rem;
+    }
+     .hero-video-section .hero-content .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .car-card .card-img-top {
+      height: 180px; /* Imágenes un poco más bajas en móviles */
+    }
+}
+
+/* Pantallas medianas (tablets >= 768px) */
+@media (min-width: 768px) {
+    .card-img-top {
+    height: 250px;
+  }
+}
+
+/* Pantallas grandes (desktops >= 992px) */
+@media (min-width: 992px) {
+    .card-img-top {
+    height: 270px;
+  }
+}
+
+/* ==========================
+   Barra de Navegación
+   ========================== */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Efecto hover/focus sutil en links de navegación */
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+    color: rgba(255, 255, 255, 0.75); /* Blanco un poco más tenue */
+}
+
+/* Ajuste para el logo si es necesario (Ej: hacerlo más visible si es transparente) */
+.navbar-brand img {
+  /* filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.6)); */
+}
+
+/* Estilos para la barra de navegación cuando se hace scroll */
+.navbar.fixed-top.navbar-scrolled {
+    background-color: rgba(33, 37, 41, 0.9) !important; /* Un poco más transparente o un color diferente */
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+/* ==========================
+   Página de Contacto
+   ========================== */
+.contact-hero {
+    
+    
+}
+
+.contact-info-item i {
+    
+}
+
+.contact-info-item p {
+    line-height: 1.6;
+}
+
+.contact-content .card {
+    transition: box-shadow 0.3s ease-in-out;
+}
+.contact-content .card:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
+}
+
+.social-icons a:hover i {
+    transform: scale(1.15);
+    transition: transform 0.2s ease-in-out;
+}
+
+.map-placeholder {
+    /* Estilos para tu placeholder de mapa */
+}
+
+/* Ajustes de responsividad para la página de contacto */
+@media (max-width: 767.98px) {
+    .contact-hero .display-4 {
+        font-size: 2.5rem;
+    }
+    .contact-hero .lead {
+        font-size: 1rem;
+    }
+    .contact-content .col-lg-5,
+    .contact-content .col-lg-7 {
+        margin-bottom: 2rem; /* Espacio entre columnas en móvil */
+    }
+}
+
+/* ==========================
+   Página Autos Nuevos (Adicional a estilos generales)
+   ========================== */
+
+#autos-nuevos-page .hero-section-nuevos {
+    min-height: 65vh; /* Altura para el carrusel hero */
+    /* background-color: #f8f9fa; /* Un color de fondo si las imágenes del carrusel no cubren todo */
+}
+
+#autos-nuevos-page .carousel-item img {
+    height: 65vh; /* Misma altura que el hero */
+    object-fit: cover; /* Asegura que la imagen cubra sin distorsionarse */
+    filter: brightness(0.7); /* Oscurece un poco la imagen para que el texto resalte */
+}
+
+#autos-nuevos-page .carousel-caption {
+    bottom: 10%; /* Ajustar posición vertical del caption */
+}
+.bg-dark-overlay { /* Clase reutilizable para captions de carrusel */
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+
+#autos-nuevos-page .filter-dropdown .dropdown-menu {
+    max-height: 200px; /* Para evitar menús muy largos */
+    overflow-y: auto;
+}
+
+#autos-nuevos-page .car-card-autos-nuevos {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: 1px solid #e9ecef; /* Borde sutil */
+}
+/* El hover se maneja en autosnuevos.js para mayor control */
+
+#autos-nuevos-page .car-card-autos-nuevos .card-img-top {
+    height: 240px; /* Altura consistente para imágenes de listado */
+    object-fit: cover;
+}
+
+#autos-nuevos-page .brand-logo {
+    max-height: 60px; /* Tamaño para logos de marcas */
+    filter: grayscale(80%);
+    transition: filter 0.3s ease;
+}
+#autos-nuevos-page .brand-logo:hover {
+    filter: grayscale(0%);
+}
+
+/* Estilos para Scroll-to-reveal */
+.reveal-on-scroll {
+    opacity: 0;
+    position: relative;
+    /* top: 20px; Descomentar para efecto slide-in */
+    transition: opacity 0.8s ease-out, top 0.8s ease-out;
+}
+.reveal-on-scroll.revealed {
+    /* Estos estilos se aplican por JS */
+}
+
+/* Ajustes finos para responsividad si son necesarios */
+@media (max-width: 767.98px) {
+    #autos-nuevos-page .hero-section-nuevos,
+    #autos-nuevos-page .carousel-item img {
+        min-height: 45vh; /* Menor altura en móviles */
+        height: 45vh;
+    }
+    #autos-nuevos-page .carousel-caption h1 {
+        font-size: 1.8rem;
+    }
+     #autos-nuevos-page .carousel-caption p {
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+    }
+    #autos-nuevos-page .carousel-caption .btn {
+        font-size: 0.9rem;
+    }
+
+    #filtros-nuevos .col-md-3 {
+        margin-bottom: 1rem; /* Espacio entre filtros en móvil */
+    }
+}

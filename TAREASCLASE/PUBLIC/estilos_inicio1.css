@@ -1,0 +1,73 @@
+/* Reset de estilos y configuración básica */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff; /* Fondo blanco */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Contenedor del formulario de login */
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del formulario */
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+/* Grupos de entrada */
+.input-group {
+  margin-bottom: 15px;
+}
+
+/* Etiquetas de los campos */
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555555;
+  font-weight: bold;
+}
+
+/* Campos de entrada */
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+/* Botón de envío */
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff; /* Azul Bootstrap */
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Efecto hover en el botón */
+button:hover {
+  background-color: #0056b3;
+}

@@ -1,0 +1,76 @@
+/* Estilo general del cuerpo */
+body {
+  background-color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilo del contenedor de la tabla de usuarios */
+#tbl_usuarios {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Estilo del encabezado de bienvenida */
+h2 span {
+  font-weight: bold;
+}
+
+/* Estilo de la tabla dentro del contenedor */
+#tbl_usuarios table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+}
+
+/* Estilo de las celdas de la tabla */
+#tbl_usuarios th,
+#tbl_usuarios td {
+  border: 1px solid #dee2e6;
+  padding: 12px;
+  text-align: left;
+}
+
+/* Estilo del encabezado de la tabla */
+#tbl_usuarios th {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* Estilo de las filas pares de la tabla */
+#tbl_usuarios tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Estilo al pasar el cursor sobre las filas */
+#tbl_usuarios tr:hover {
+  background-color: #e9ecef;
+}
+
+/* Estilo del título principal */
+h1 {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.table{ 
+  margin:0; 
+  padding:0;
+  width:100%;
+}
+
+caption {
+  caption-side: top;
+}
+
+.dropdown-menu {
+  z-index: 2002; /* por encima del fondo de botones */
+}
+/* Estilo de los botones */
+.btn {
+  margin: 5px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+}
