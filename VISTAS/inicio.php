@@ -1,9 +1,11 @@
 <?php
 session_start(); 
+/*
 if (isset($_SESSION['usu_id'])) {
     header('Location: escritorio.php');
     exit();
 }
+*/
 ?>
 <!DOCTYPE html>
 <html lang="es">

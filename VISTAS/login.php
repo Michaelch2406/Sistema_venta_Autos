@@ -32,7 +32,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6 col-xl-4">
                     <div class="text-center mb-4 mt-5 pt-3">
-                        <img src="../PUBLIC/Img/Auto_Mercado_Total_LOGO4.jpeg" alt="Logo AutoMercado" width="100">
+                        <img src="../PUBLIC/Img/Auto_Mercado_Total_LOGO_BLACK_TEXT.png" alt="Logo AutoMercado" width="100">
                     </div>
                     <div class="card shadow-lg">
                         <div class="card-header text-center text-white" style="background-color: rgb(0, 50, 200);">
