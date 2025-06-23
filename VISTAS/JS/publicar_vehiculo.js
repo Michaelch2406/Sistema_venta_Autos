@@ -132,9 +132,61 @@ $(document).ready(function() {
     }
     actualizarCamposUsado($('#veh_condicion').val() === 'usado'); 
 
+    // --- INICIO: Lógica para Año de Fabricación Dinámico ---
+    var $selectAnio = $('#veh_anio');
+    var opcionesAnioOriginales = $selectAnio.html(); // Guardar opciones originales
+
+    function actualizarOpcionesAnio(esNuevo) {
+        var currentYear = new Date().getFullYear();
+        $selectAnio.empty(); // Limpiar opciones actuales
+
+        if (esNuevo) {
+            // Para vehículos nuevos, mostrar solo año actual +1 y +2
+            // y seleccionar el más alto por defecto.
+            var anioMasNuevo = currentYear + 1;
+            $selectAnio.append($('<option>', { value: '', text: 'Selecciona año...', disabled: true }));
+            for (var year = anioMasNuevo; year >= currentYear + 1; year--) {
+                 var $option = $('<option>', { value: year, text: year });
+                 if (year === anioMasNuevo) {
+                    // $option.prop('selected', true); // Comentado para que el usuario seleccione explícitamente
+                 }
+                 $selectAnio.append($option);
+            }
+             // Seleccionar el más nuevo por defecto si así se desea, o dejar que el usuario elija.
+             // Para asegurar que el placeholder "Selecciona año..." no quede seleccionado si hay opciones:
+            if ($selectAnio.find('option[value="' + anioMasNuevo + '"]').length > 0) {
+                 $selectAnio.val(anioMasNuevo); // Seleccionar el año más nuevo
+            } else if ($selectAnio.find('option[value="' + (currentYear + 1) + '"]').length > 0) {
+                $selectAnio.val(currentYear + 1); // Si no, el siguiente
+            } else {
+                $selectAnio.val(''); // Si no hay opciones, dejar el placeholder
+            }
+
+
+        } else {
+            // Para vehículos usados o sin condición, restaurar opciones originales
+            $selectAnio.html(opcionesAnioOriginales);
+            $selectAnio.val(''); // Resetear selección a placeholder
+        }
+        // Disparar un evento de cambio si es necesario para validaciones u otras lógicas
+        // $selectAnio.trigger('change'); 
+    }
+
+    // Llamada inicial por si el formulario se carga con una condición ya seleccionada (ej. al editar)
+    // Esto requiere que el valor de veh_condicion esté disponible al cargar.
+    // Si es un formulario nuevo, 'veh_condicion' estará vacío, así que no hará nada especial.
+    if ($('#veh_condicion').val()) {
+        actualizarOpcionesAnio($('#veh_condicion').val() === 'nuevo');
+    }
+
+
     $('#veh_condicion').on('change', function() {
-        actualizarCamposUsado($(this).val() === 'usado');
+        var esUsado = $(this).val() === 'usado';
+        var esNuevo = $(this).val() === 'nuevo';
+        actualizarCamposUsado(esUsado);
+        actualizarOpcionesAnio(esNuevo);
     });
+    // --- FIN: Lógica para Año de Fabricación Dinámico ---
 
     $('#veh_imagenes').on('change', function(event) {
         var $previewContainer = $('#imagePreviewContainer'); $previewContainer.empty();
