@@ -34,7 +34,7 @@ if (isset($_SESSION['usu_id'])) {
   <header id="navbar-placeholder"></header>
 
   <div class="text-center mb-4 mt-5 pt-3">
-    <img src="../PUBLIC/Img/Logoautomercado-total.png" alt="Logo AutoMercado" width="100">
+    <img src="../PUBLIC/Img/Auto_Mercado_Total_LOGO_BLACK_TEXT.png" alt="Logo AutoMercado" width="100">
   </div>
 
   <!-- Título -->
