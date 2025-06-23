@@ -36,19 +36,35 @@ $currentPageNavbar = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
                 <?php 
-                if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3): // Rol Admin
-                ?>
-                    <li class="nav-item">
-                        <a class="nav-link <?php echo ($currentPageNavbar == 'admin_panel.php') ? 'active' : ''; ?>" href="admin_panel.php">
-                            <i class="bi bi-shield-fill-check me-2"></i>Panel Admin
-                        </a>
-                    </li>
-                <?php endif; ?>
+                // El antiguo "Panel Admin" se integra o reemplaza por "Mi Tablero"
+                // if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3): // Rol Admin
+                // ?>
+                //     <li class="nav-item">
+                //         <a class="nav-link <?php //echo ($currentPageNavbar == 'admin_panel.php') ? 'active' : ''; ?>" href="admin_panel.php">
+                //             <i class="bi bi-shield-fill-check me-2"></i>Panel Admin
+                //         </a>
+                //     </li>
+                // <?php //endif; ?>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <?php if (isset($_SESSION['usu_id']) && isset($_SESSION['usu_nombre_completo'])): ?>
+                    <?php
+                        // Determinar el enlace para "Mi Tablero"
+                        $dashboard_link = "escritorio.php"; // Default para roles no admin
+                        $dashboard_page_check = 'escritorio.php';
+                        if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3) { // Rol Admin ID es 3
+                            $dashboard_link = "admin_panel.php";
+                            $dashboard_page_check = 'admin_panel.php';
+                        }
+                    ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo ($currentPageNavbar == $dashboard_page_check) ? 'active' : ''; ?>" href="<?php echo $dashboard_link; ?>">
+                            <i class="bi bi-speedometer2 me-2"></i>Mi Tablero
+                        </a>
+                    </li>
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?php echo ($currentPageNavbar == 'escritorio.php' || $currentPageNavbar == 'configuracion_cuenta.php') ? 'active' : ''; ?>" href="#" id="navbarDropdownUserMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle <?php echo ($currentPageNavbar == 'configuracion_cuenta.php') ? 'active' : ''; ?>" href="#" id="navbarDropdownUserMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-fill me-2"></i>
                             <?php 
                                 $nombre_partes = explode(' ', htmlspecialchars($_SESSION['usu_nombre_completo']));
@@ -56,7 +72,8 @@ $currentPageNavbar = basename($_SERVER['PHP_SELF']);
                             ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUserMenu">
-                            <li><a class="dropdown-item <?php echo ($currentPageNavbar == 'escritorio.php') ? 'active' : ''; ?>" href="escritorio.php"><i class="bi bi-speedometer2 me-2"></i>Mi Tablero</a></li>
+                            <!-- El antiguo link a Mi Tablero/escritorio.php desde el dropdown se elimina o se reevalúa si es necesario -->
+                            <!-- <li><a class="dropdown-item <?php //echo ($currentPageNavbar == 'escritorio.php') ? 'active' : ''; ?>" href="escritorio.php"><i class="bi bi-speedometer2 me-2"></i>Mi Tablero</a></li> -->
                             <li><a class="dropdown-item <?php echo ($currentPageNavbar == 'configuracion_cuenta.php') ? 'active' : ''; ?>" href="configuracion_cuenta.php"><i class="bi bi-gear-fill me-2"></i>Mi Perfil / Configuración</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>

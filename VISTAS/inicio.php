@@ -43,15 +43,54 @@ if (isset($_SESSION['usu_id'])) {
 
     <!-- Cuerpo Principal -->
     <main class="content-hidden">
-        <!-- Sección Hero con Video -->
+        <!-- Sección Hero con Carrusel de Videos -->
         <section class="hero-section text-white text-center d-flex align-items-center justify-content-center">
-            <div class="position-relative overflow-hidden" style="height: 100vh;">
-           <video autoplay muted loop  class="w-100 h-100">
-              <source src="../PUBLIC/Video/The BUGATTI W16 MISTRAL conquers the Mont Ventoux.mp4" type="video/mp4">
-          </video>
-                <div class="hero-content position-absolute top-50 start-50 translate-middle text-center text-white" style="z-index: 2;">
-                    <h1 class="display-4 fw-bold">Encuentra el Auto de Tus Sueños</h1>
-                    <p class="lead">Explora nuestro inventario de vehículos nuevos y usados.</p>
+            <div id="heroVideoCarousel" class="carousel slide" data-bs-ride="carousel" style="width: 100%; height: 100vh;">
+                <div class="carousel-inner" style="width: 100%; height: 100%;">
+                    <div class="carousel-item active" data-bs-interval="10000"> <!-- Intervalo mayor si el video es largo -->
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted loop playsinline>
+                            <source src="../PUBLIC/Video/The BUGATTI W16 MISTRAL conquers the Mont Ventoux.mp4" type="video/mp4">
+                            Tu navegador no soporta videos HTML5.
+                        </video>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="10000">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted loop playsinline>
+                            <source src="../PUBLIC/Video/KOENIGSEGG Gemera Configurator Teaser.mp4" type="video/mp4">
+                            Tu navegador no soporta videos HTML5.
+                        </video>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="10000">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted loop playsinline>
+                            <source src="../PUBLIC/Video/Next-Gen Ford Ranger Raptor _ Ford España.mp4" type="video/mp4">
+                            Tu navegador no soporta videos HTML5.
+                        </video>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="10000">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted loop playsinline>
+                            <source src="../PUBLIC/Video/The BUGATTI TOURBILLON_ an automotive icon ‘Pour l’éternité’.mp4" type="video/mp4">
+                            Tu navegador no soporta videos HTML5.
+                        </video>
+                    </div>
+                    <div class="carousel-item" data-bs-interval="10000">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted loop playsinline>
+                            <source src="../PUBLIC/Video/The Porsche 917 that started a legacy.mp4" type="video/mp4">
+                            Tu navegador no soporta videos HTML5.
+                        </video>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroVideoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroVideoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+            <!-- El contenido superpuesto se saca fuera del div del carrusel para que no sea un carousel-caption y tenga más control -->
+            <div class="hero-content position-absolute top-50 start-50 translate-middle text-center text-white" style="z-index: 2;">
+                <h1 class="display-4 fw-bold">Encuentra el Auto de Tus Sueños</h1>
+                <p class="lead">Explora nuestro inventario de vehículos nuevos y usados.</p>
                     <a href="#" class="btn btn-lg me-2" style="background: yellow; color: black;">Ver Autos Nuevos</a>
                     <a href="#" class="btn btn-secondary btn-lg">Ver Autos Usados</a>
                 </div>
@@ -139,7 +178,7 @@ if (isset($_SESSION['usu_id'])) {
     <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../VISTAS/JS/global.js"></script> <!-- Script global primero -->
-    <script src="../VISTAS/JS/login.js"></script>   <!-- Script específico de la página después -->
+    <script src="../VISTAS/JS/inicio.js"></script>   <!-- Script específico de la página después -->
 
 </body>
 </html>
