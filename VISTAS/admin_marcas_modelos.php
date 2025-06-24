@@ -113,7 +113,7 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
                             <input type="text" class="form-control" id="mar_nombre" name="mar_nombre" required>
                             <div class="invalid-feedback">El nombre de la marca es obligatorio.</div>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3" id="marLogoUrlContainer"> <!-- Contenedor añadido -->
                             <label for="mar_logo_url" class="form-label">URL del Logo <span class="text-muted">(Opcional)</span></label>
                             <input type="url" class="form-control" id="mar_logo_url" name="mar_logo_url" placeholder="https://ejemplo.com/logo.png">
                             <div class="invalid-feedback">Por favor, ingresa una URL válida.</div>

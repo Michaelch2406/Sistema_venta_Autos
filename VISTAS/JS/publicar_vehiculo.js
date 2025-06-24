@@ -141,27 +141,16 @@ $(document).ready(function() {
         $selectAnio.empty(); // Limpiar opciones actuales
 
         if (esNuevo) {
-            // Para vehículos nuevos, mostrar solo año actual +1 y +2
-            // y seleccionar el más alto por defecto.
-            var anioMasNuevo = currentYear + 1;
-            $selectAnio.append($('<option>', { value: '', text: 'Selecciona año...', disabled: true }));
-            for (var year = anioMasNuevo; year >= currentYear + 1; year--) {
-                 var $option = $('<option>', { value: year, text: year });
-                 if (year === anioMasNuevo) {
-                    // $option.prop('selected', true); // Comentado para que el usuario seleccione explícitamente
-                 }
-                 $selectAnio.append($option);
-            }
-             // Seleccionar el más nuevo por defecto si así se desea, o dejar que el usuario elija.
-             // Para asegurar que el placeholder "Selecciona año..." no quede seleccionado si hay opciones:
-            if ($selectAnio.find('option[value="' + anioMasNuevo + '"]').length > 0) {
-                 $selectAnio.val(anioMasNuevo); // Seleccionar el año más nuevo
-            } else if ($selectAnio.find('option[value="' + (currentYear + 1) + '"]').length > 0) {
-                $selectAnio.val(currentYear + 1); // Si no, el siguiente
-            } else {
-                $selectAnio.val(''); // Si no hay opciones, dejar el placeholder
-            }
+            // Para vehículos nuevos, mostrar solo año actual +1 y actual +2.
+            // Seleccionar el más alto (actual + 2) por defecto.
+            var anioOpcion1 = currentYear + 1;
+            var anioOpcion2 = currentYear + 2;
 
+            $selectAnio.append($('<option>', { value: '', text: 'Selecciona año...', disabled: true }));
+            $selectAnio.append($('<option>', { value: anioOpcion2, text: anioOpcion2 }));
+            $selectAnio.append($('<option>', { value: anioOpcion1, text: anioOpcion1 }));
+            
+            $selectAnio.val(anioOpcion2); // Seleccionar por defecto el año más alto (actual + 2)
 
         } else {
             // Para vehículos usados o sin condición, restaurar opciones originales

@@ -63,6 +63,8 @@ $(document).ready(function() {
         $formGestionMarca.removeClass('was-validated');
         $editMarId.val('');
         $modalMarcaLabel.text('Añadir Nueva Marca');
+        $('#marLogoUrlContainer').hide(); // Ocultar campo URL Logo para nueva marca
+        $marLogoUrlInput.val(''); // Limpiar el valor por si acaso
         $marcaFormFeedback.html('');
     });
 
@@ -101,6 +103,7 @@ $(document).ready(function() {
         $editMarId.val($tr.data('mar_id'));
         $marNombreInput.val($tr.find('td:nth-child(3)').text()); // Nombre de la marca
         $marLogoUrlInput.val($tr.find('td:nth-child(4)').text() === '-' ? '' : $tr.find('td:nth-child(4)').text()); // URL del logo
+        $('#marLogoUrlContainer').show(); // Mostrar campo URL Logo para editar marca
         $modalMarcaLabel.text('Editar Marca');
         $formGestionMarca.removeClass('was-validated');
         $marcaFormFeedback.html('');

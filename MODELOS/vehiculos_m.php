@@ -210,6 +210,29 @@ class Vehiculo
             return ['vehiculos' => [], 'total' => 0, 'error' => 'Error en la consulta de vehículos.'];
         }
     }
+    public function getVehiculoDetalle($veh_id)
+    {
+        if (!$this->conn) return false;
+
+        $veh_id_esc = $this->conn->real_escape_string($veh_id);
+        $sql = "CALL sp_get_vehiculo_detalle($veh_id_esc)";
+        
+        $resultado = $this->conexion_obj->ejecutarSP($sql);
+        $vehiculo_detalle = null;
+
+        if ($resultado && $resultado instanceof mysqli_result) {
+            if ($resultado->num_rows > 0) {
+                $vehiculo_detalle = $resultado->fetch_assoc();
+            }
+            $resultado->free();
+            // Limpiar para asegurar que la conexión esté lista para la siguiente query (de imágenes)
+            while($this->conn->more_results() && $this->conn->next_result()){;}
+        } elseif ($resultado === false) {
+            error_log("Error al ejecutar sp_get_vehiculo_detalle para veh_id $veh_id_esc: " . $this->conn->error . " (SQL: $sql)");
+            return false;
+        }
+        return $vehiculo_detalle; // Puede ser null si no se encontró el vehículo
+    }
 
 }
 

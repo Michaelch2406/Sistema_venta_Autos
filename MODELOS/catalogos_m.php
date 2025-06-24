@@ -93,7 +93,16 @@ class Catalogos
         if (!$this->conn) return ['resultado' => 0, 'mensaje' => 'Error de conexión.'];
         $id_esc = $this->conn->real_escape_string($id);
         $nombre_esc = $this->conn->real_escape_string($nombre);
-        $logo_url_esc = $logo_url ? "'" . $this->conn->real_escape_string($logo_url) . "'" : "NULL";
+        
+        // Modificación: Si logo_url es una cadena vacía, tratarlo como NULL para el SP.
+        // Si es una URL válida, escaparla y entrecomillarla. Si es explícitamente null, pasar NULL.
+        if ($logo_url === null) {
+            $logo_url_esc = "NULL";
+        } elseif (trim($logo_url) === '') {
+            $logo_url_esc = "NULL"; // Tratar cadena vacía como NULL
+        } else {
+            $logo_url_esc = "'" . $this->conn->real_escape_string($logo_url) . "'";
+        }
 
         $sql = "CALL sp_admin_actualizar_marca($id_esc, '$nombre_esc', $logo_url_esc, @p_resultado, @p_mensaje)";
         if (!$this->conn->query($sql)) {
@@ -167,7 +176,7 @@ class Catalogos
 
         $sql = "CALL sp_admin_actualizar_modelo($modelo_id_esc, $marca_id_esc, '$nombre_modelo_esc', @p_resultado, @p_mensaje)";
         if (!$this->conn->query($sql)) {
-            error_log("Error al llamar a sp_admin_actualizar_modelo: " . $this->conn->error);
+            error_log("Error al llamar a sp_admin_actualizar_modelo: " . $this->conn->error . " (SQL: " . $sql . ")");
             return ['resultado' => 0, 'mensaje' => 'Error técnico al actualizar modelo (SP Call).'];
         }
         $res = $this->conn->query("SELECT @p_resultado AS resultado, @p_mensaje AS mensaje");

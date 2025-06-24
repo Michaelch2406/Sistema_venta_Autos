@@ -98,20 +98,66 @@ $(document).ready(function() {
         ],
         "responsive": true,
         "language": {
-            "url": "../DataTables/i18n/es-ES.json" // <<< CAMBIO AQUÍ para apuntar al archivo local
+            "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json" // Apuntando al CDN de DataTables
         },
         "processing": true, // Mostrar mensaje de "Procesando..."
         // "serverSide": false, // Si tus datos son muchos, considera serverSide true y adaptar el backend
-        "dom": 'Bfrtip',
+        "dom": 'Bfrtip', // Define dónde aparecerán los botones
         "buttons": [
-            { extend: 'copyHtml5', text: '<i class="bi bi-files"></i> Copiar' },
-            { extend: 'excelHtml5', text: '<i class="bi bi-file-earmark-excel"></i> Excel' },
-            { extend: 'csvHtml5', text: '<i class="bi bi-filetype-csv"></i> CSV' },
-            { extend: 'pdfHtml5', text: '<i class="bi bi-file-earmark-pdf"></i> PDF' },
-            { extend: 'print', text: '<i class="bi bi-printer"></i> Imprimir' },
-            { extend: 'colvis', text: '<i class="bi bi-layout-three-columns"></i> Visibilidad Columnas' }
+            { 
+                extend: 'copyHtml5', 
+                text: '<i class="bi bi-files"></i> Copiar',
+                titleAttr: 'Copiar al portapapeles',
+                exportOptions: { columns: ':visible:not(:last-child)' } // Exportar todas las visibles excepto la última (acciones)
+            },
+            { 
+                extend: 'excelHtml5', 
+                text: '<i class="bi bi-file-earmark-excel"></i> Excel',
+                titleAttr: 'Exportar a Excel',
+                title: 'Listado de Usuarios - AutoMercado Total', // Título del archivo Excel
+                exportOptions: { columns: ':visible:not(:last-child)' }
+            },
+            { 
+                extend: 'csvHtml5', 
+                text: '<i class="bi bi-filetype-csv"></i> CSV',
+                titleAttr: 'Exportar a CSV',
+                title: 'Listado_de_Usuarios_AutoMercado_Total', // Nombre del archivo CSV
+                exportOptions: { columns: ':visible:not(:last-child)' }
+            },
+            { 
+                extend: 'pdfHtml5', 
+                text: '<i class="bi bi-file-earmark-pdf"></i> PDF',
+                titleAttr: 'Exportar a PDF',
+                title: 'Listado de Usuarios - AutoMercado Total', // Título del documento PDF
+                exportOptions: { columns: ':visible:not(:last-child)' },
+                orientation: 'landscape', // Orientación horizontal para más columnas
+                pageSize: 'LEGAL'
+            },
+            { 
+                extend: 'print', 
+                text: '<i class="bi bi-printer"></i> Imprimir',
+                titleAttr: 'Imprimir tabla',
+                title: 'Listado de Usuarios - AutoMercado Total', // Título para la impresión
+                exportOptions: { columns: ':visible:not(:last-child)' },
+                customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' )
+                        .prepend(
+                            '<img src="../PUBLIC/Img/Auto_Mercado_Total_LOGO4_SIN_FONDO.png" style="position:absolute; top:10px; left:10px; height:50px;" />' // Ejemplo de logo
+                        );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', 'inherit' );
+                }
+            },
+            { 
+                extend: 'colvis', 
+                text: '<i class="bi bi-layout-three-columns"></i> Visibilidad Columnas',
+                titleAttr: 'Mostrar/ocultar columnas'
+            }
         ],
-        "order": [[0, 'desc']]
+        "order": [[0, 'desc']] // Ordenar por ID descendente por defecto
     });
 
     $('#btnNuevoUsuario').on('click', function() {

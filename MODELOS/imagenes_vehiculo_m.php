@@ -55,5 +55,39 @@ class ImagenesVehiculo_M
 
         return $out_params;
     }
+    public function getImagenesPorVehiculo($veh_id)
+    {
+        if (!$this->conn) return false;
+
+        $veh_id_esc = $this->conn->real_escape_string($veh_id);
+        // No necesitamos un SP para una consulta tan simple, pero se podría crear por consistencia
+        $sql = "SELECT ima_id, ima_url, ima_es_principal 
+                FROM ImagenesVehiculo 
+                WHERE veh_id = $veh_id_esc 
+                ORDER BY ima_es_principal DESC, ima_id ASC";
+        
+        $resultado = $this->conn->query($sql); // Usar query directamente para SELECTs simples
+        $imagenes = [];
+
+        if ($resultado && $resultado instanceof mysqli_result) {
+            if ($resultado->num_rows > 0) {
+                while ($fila = $resultado->fetch_assoc()) {
+                    // Ajustar la URL si es necesario para el frontend
+                    if (strpos($fila['ima_url'], 'PUBLIC/') === 0) { // Si ya contiene PUBLIC/
+                        $fila['ima_url_frontend'] = '../' . $fila['ima_url'];
+                    } else { // Si es una ruta como uploads/vehiculos/...
+                        $fila['ima_url_frontend'] = '../PUBLIC/' . $fila['ima_url'];
+                    }
+                    $imagenes[] = $fila;
+                }
+            }
+            $resultado->free();
+        } elseif ($resultado === false) {
+            error_log("Error al obtener imágenes para veh_id $veh_id_esc: " . $this->conn->error . " (SQL: $sql)");
+            return false;
+        }
+        // No es necesario limpiar resultados múltiples aquí para un SELECT simple
+        return $imagenes;
+    }
 }
 ?>
