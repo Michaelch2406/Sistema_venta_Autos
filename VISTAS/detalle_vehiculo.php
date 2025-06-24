@@ -30,7 +30,11 @@ if (!$vehiculo) {
 $titulo_pagina = htmlspecialchars($vehiculo['mar_nombre'] . " " . $vehiculo['mod_nombre'] . " " . $vehiculo['veh_anio']) . " - AutoMercado Total";
 $nombre_vehiculo_completo = htmlspecialchars($vehiculo['mar_nombre'] . " " . $vehiculo['mod_nombre'] . ($vehiculo['veh_subtipo_vehiculo'] ? ' ' . $vehiculo['veh_subtipo_vehiculo'] : '') . " - " . $vehiculo['veh_anio']);
 $precio_formateado = number_format((float)$vehiculo['veh_precio'], 2, '.', ',');
-$kilometraje_formateado = $vehiculo['veh_condicion'] == 'usado' && $vehiculo['veh_kilometraje'] !== null ? number_format((int)$vehiculo['veh_kilometraje']) . " km" : "0 km (Nuevo)";
+$kilometraje_formateado = $vehiculo['veh_condicion'] == 'usado' ? number_format((int)$vehiculo['veh_kilometraje']) . " km" : "0 km (Nuevo)";
+if ($vehiculo['veh_condicion'] == 'usado' && $vehiculo['veh_kilometraje'] === null) {
+    $kilometraje_formateado = "N/D km"; // Or some other placeholder for used cars with no mileage specified
+}
+
 
 $detalles_extra_array = [];
 if (!empty($vehiculo['veh_detalles_extra'])) {
