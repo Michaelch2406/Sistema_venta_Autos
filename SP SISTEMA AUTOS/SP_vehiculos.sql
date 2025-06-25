@@ -295,6 +295,42 @@ BEGIN
 END //
 DELIMITER ;
 
+USE SistemaVentaAutos;
+
+DROP PROCEDURE IF EXISTS sp_get_vehiculo_detalle;
+DELIMITER //
+CREATE PROCEDURE sp_get_vehiculo_detalle(
+    IN p_veh_id INT
+)
+BEGIN
+    -- Obtener detalles principales del vehículo
+    SELECT
+        v.veh_id, v.veh_subtipo_vehiculo, v.veh_condicion, v.veh_anio, v.veh_kilometraje,
+        v.veh_precio, v.veh_vin, v.veh_ubicacion_provincia, v.veh_ubicacion_ciudad,
+        v.veh_placa_provincia_origen, v.veh_ultimo_digito_placa,
+        v.veh_color_exterior, v.veh_color_interior, v.veh_detalles_motor,
+        v.veh_tipo_transmision, v.veh_traccion, v.veh_tipo_vidrios, v.veh_tipo_combustible,
+        v.veh_tipo_direccion, v.veh_sistema_climatizacion,
+        v.veh_descripcion, v.veh_detalles_extra, v.veh_fecha_publicacion, v.veh_estado,
+        m.mar_nombre, mo.mod_nombre, tv.tiv_nombre,
+        u_gestor.usu_usuario AS gestor_usuario, 
+        CONCAT(u_gestor.usu_nombre, ' ', u_gestor.usu_apellido) AS gestor_nombre_completo,
+        u_gestor.usu_telefono AS gestor_telefono -- Teléfono del vendedor/gestor
+    FROM Vehiculos v
+    JOIN Marcas m ON v.mar_id = m.mar_id
+    JOIN Modelos mo ON v.mod_id = mo.mod_id
+    JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id
+    LEFT JOIN Usuarios u_gestor ON v.usu_id_gestor = u_gestor.usu_id -- LEFT JOIN por si usu_id_gestor es NULL
+    WHERE v.veh_id = p_veh_id AND v.veh_estado = 'disponible'; -- Solo mostrar si está disponible
+
+    -- Obtener imágenes del vehículo (se manejará en un segundo result set o llamada separada)
+    -- SELECT ima_url, ima_es_principal
+    -- FROM ImagenesVehiculo
+    -- WHERE veh_id = p_veh_id
+    -- ORDER BY ima_es_principal DESC, ima_id ASC;
+END //
+DELIMITER ;
+
 
 
 
