@@ -1,62 +1,91 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
-require_once __DIR__ . "/../MODELOS/favoritos_m.php"; 
 
-header('Content-Type: application/json');
-$response = ['status' => 'error', 'message' => 'Acción no válida.'];
+header('Content-Type: application/json'); // Asegurar que la respuesta sea JSON
 
+require_once __DIR__ . '/../MODELOS/favoritos_m.php';
+
+// Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usu_id'])) {
-    $response['message'] = 'Debes iniciar sesión para gestionar favoritos.';
-    echo json_encode($response);
+    echo json_encode(['status' => 'error', 'message' => 'Usuario no autenticado. Por favor, inicie sesión.']);
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'], $_POST['veh_id'])) {
-    $accion = $_POST['accion'];
+$usu_id = $_SESSION['usu_id'];
+$response = ['status' => 'error', 'message' => 'Acción no válida o faltan parámetros.']; // Respuesta por defecto
+
+// Priorizar POST para todas las acciones
+if (isset($_POST['accion']) && isset($_POST['veh_id'])) {
+    $accion = $_POST['accion']; // Cambiado de 'agregarFavorito' a 'agregar', etc.
     $veh_id = filter_var($_POST['veh_id'], FILTER_VALIDATE_INT);
-    $usu_id = $_SESSION['usu_id'];
 
-    if (!$veh_id) {
-        $response['message'] = 'ID de vehículo inválido.';
-        echo json_encode($response);
-        exit();
-    }
-
-    try {
-        $favoritos_model = new Favoritos_M();
-
-        if ($accion === 'agregarFavorito') {
-            $resultado = $favoritos_model->agregarFavorito($usu_id, $veh_id);
-            $response = $resultado; // El modelo ya devuelve 'status' y 'message'
-        } elseif ($accion === 'quitarFavorito') {
-            $resultado = $favoritos_model->quitarFavorito($usu_id, $veh_id);
-            $response = $resultado;
-        } else {
-            $response['message'] = 'Acción de favoritos desconocida.';
-        }
-    } catch (Exception $e) {
-        error_log("Excepción en favoritos_ajax.php (POST): " . $e->getMessage());
-        $response['message'] = 'Error procesando la solicitud de favoritos: ' . $e->getMessage();
-    }
-
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['accion']) && $_GET['accion'] === 'verificarEstado' && isset($_GET['veh_id'])) {
-    $veh_id = filter_var($_GET['veh_id'], FILTER_VALIDATE_INT);
-    $usu_id = $_SESSION['usu_id'];
-    if ($veh_id && $usu_id) {
+    if ($veh_id === false) {
+        $response = ['status' => 'error', 'message' => 'ID de vehículo no válido.'];
+    } else {
         try {
             $favoritos_model = new Favoritos_M();
-            $esFavorito = $favoritos_model->esFavorito($usu_id, $veh_id);
-            $response = ['status' => 'success', 'esFavorito' => (bool)$esFavorito];
+
+            switch ($accion) {
+                case 'agregar':
+                    $resultado_sp = $favoritos_model->agregarFavorito($usu_id, $veh_id);
+                    $response = $resultado_sp;
+                    // Asegurar que 'esFavorito' esté presente en la respuesta
+                    $response['esFavorito'] = $favoritos_model->verificarFavorito($usu_id, $veh_id);
+                    break;
+
+                case 'quitar':
+                    $resultado_sp = $favoritos_model->quitarFavorito($usu_id, $veh_id);
+                    $response = $resultado_sp;
+                    $response['esFavorito'] = $favoritos_model->verificarFavorito($usu_id, $veh_id);
+                    break;
+
+                case 'verificar': // Acción 'verificar' también por POST para consistencia
+                    $es_favorito = $favoritos_model->verificarFavorito($usu_id, $veh_id);
+                    $response = [
+                        'status' => 'success',
+                        'esFavorito' => $es_favorito,
+                        'message' => $es_favorito ? 'El vehículo es favorito.' : 'El vehículo no es favorito.'
+                    ];
+                    break;
+
+                default:
+                    $response = ['status' => 'error', 'message' => 'Acción desconocida: ' . htmlspecialchars($accion)];
+                    break;
+            }
         } catch (Exception $e) {
-            error_log("Excepción en favoritos_ajax.php (GET verificarEstado): " . $e->getMessage());
-            $response['message'] = 'Error verificando estado de favorito: ' . $e->getMessage();
+            error_log("Excepción en favoritos_ajax.php (POST): " . $e->getMessage());
+            $response = ['status' => 'error', 'message' => 'Error procesando la solicitud: ' . $e->getMessage()];
         }
+    }
+}
+// Fallback a GET solo para 'verificar' si no se proporcionaron datos POST
+else if (isset($_GET['accion']) && $_GET['accion'] === 'verificar' && isset($_GET['veh_id']) && !isset($_POST['accion'])) {
+    $veh_id = filter_var($_GET['veh_id'], FILTER_VALIDATE_INT);
+    if ($veh_id === false) {
+        $response = ['status' => 'error', 'message' => 'ID de vehículo no válido (GET).'];
     } else {
-        $response['message'] = 'Faltan datos para verificar estado de favorito.';
+        try {
+            $favoritos_model = new Favoritos_M();
+            // El método en el modelo se llama verificarFavorito, no esFavorito
+            $es_favorito = $favoritos_model->verificarFavorito($usu_id, $veh_id);
+            $response = [
+                'status' => 'success',
+                'esFavorito' => $es_favorito, // (bool) ya es manejado por el modelo
+                'message' => $es_favorito ? 'El vehículo es favorito.' : 'El vehículo no es favorito.'
+            ];
+        } catch (Exception $e) {
+            error_log("Excepción en favoritos_ajax.php (GET verificar): " . $e->getMessage());
+            $response = ['status' => 'error', 'message' => 'Error verificando estado: ' . $e->getMessage()];
+        }
     }
 } else {
-    $response['message'] = 'Petición no válida para favoritos.';
+     $response = ['status' => 'error', 'message' => 'Parámetros incompletos. Se requiere acción y veh_id (preferiblemente vía POST).'];
 }
 
 echo json_encode($response);
+exit();
 ?>
