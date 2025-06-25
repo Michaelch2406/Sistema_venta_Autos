@@ -1,0 +1,115 @@
+/* Estilos para VISTAS/configuracion_cuenta.php */
+
+body {
+    /* Podrías añadir un color de fondo general si no lo cubre styles.css */
+}
+
+.container h1.display-5 {
+    color: #333; /* Un color más oscuro para el título principal */
+}
+
+.card {
+    border: none; /* Quitar bordes por defecto de las tarjetas si se usa shadow */
+    margin-bottom: 2rem; /* Espacio entre tarjetas si se apilan en móvil */
+}
+
+.card-header {
+    /* background-color: #f8f9fa; Bootstrap default */
+    /* border-bottom: 1px solid rgba(0,0,0,.125); Bootstrap default */
+    font-weight: 500;
+}
+
+.card-header.bg-primary i,
+.card-header.bg-warning i {
+    vertical-align: middle; /* Alinear mejor los iconos con el texto del header */
+}
+
+
+#formPerfil .form-label,
+#formCambiarPassword .form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Estilo para los campos readonly/disabled para que se vean claramente informativos */
+input[readonly],
+input[disabled] {
+    background-color: #e9ecef; /* Color de fondo estándar para deshabilitados */
+    opacity: 0.8; /* Un poco de opacidad */
+    cursor: not-allowed;
+}
+
+/* Mensajes de validación de Bootstrap */
+.form-control.is-invalid {
+    border-color: #dc3545; /* Rojo de Bootstrap para error */
+}
+.invalid-feedback {
+    display: none; /* Oculto por defecto, Bootstrap lo muestra */
+    width: 100%;
+    margin-top: .25rem;
+    font-size: .875em; /* 14px si el base es 16px */
+    color: #dc3545; /* Rojo de Bootstrap para error */
+}
+.form-control.is-valid {
+    border-color: #198754; /* Verde de Bootstrap para éxito */
+}
+.valid-feedback { /* Aunque no los estamos usando explícitamente en el HTML, es bueno tenerlos */
+    display: none;
+    width: 100%;
+    margin-top: .25rem;
+    font-size: .875em;
+    color: #198754; /* Verde de Bootstrap para éxito */
+}
+
+
+/* Estilo para el contenedor de mensajes generales AJAX */
+#mensajeGeneral {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    font-size: 1rem;
+}
+#mensajeGeneral.alert-success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+    color: #0f5132;
+}
+#mensajeGeneral.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
+#mensajeGeneral.alert-warning { /* Para mensajes de validación del servidor o duplicados */
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    color: #664d03;
+}
+
+
+/* Botones */
+.btn-lg {
+    padding: .75rem 1.25rem;
+    font-size: 1.1rem;
+}
+
+/* Espaciado y responsividad */
+@media (max-width: 991.98px) { /* lg breakpoint */
+    .row.g-5 {
+        row-gap: 1.5rem !important; /* Reducir el espacio entre las columnas cuando se apilan */
+    }
+    .col-lg-7, .col-lg-5 {
+        margin-bottom: 1.5rem; /* Espacio entre tarjetas en vista apilada */
+    }
+    .col-lg-5:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 767.98px) { /* md breakpoint */
+    .display-5 {
+        font-size: 1.8rem; /* Título más pequeño */
+    }
+    .card-body.p-4 {
+        padding: 1.5rem !important; /* Menos padding en tarjetas en móvil */
+    }
+}

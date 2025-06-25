@@ -196,6 +196,158 @@ class Usuario
     }
 
 
+    // --- Métodos para Configuración de Cuenta del Usuario ---
+
+    public function getUsuarioParaConfiguracion($usu_id)
+    {
+        if (!$this->conn) {
+            error_log("Error de conexión en getUsuarioParaConfiguracion: Conexión nula.");
+            return null;
+        }
+
+        $usu_id_esc = $this->conn->real_escape_string($usu_id);
+        $sql = "CALL sp_get_usuario_configuracion($usu_id_esc)";
+
+        $resultado = $this->conn_obj->ejecutarSP($sql);
+        $usuario_data = null;
+
+        if ($resultado && $resultado instanceof mysqli_result) {
+            if ($resultado->num_rows > 0) {
+                $usuario_data = $resultado->fetch_assoc();
+            }
+            $resultado->free();
+            while($this->conn->more_results() && $this->conn->next_result()){
+                if($rs = $this->conn->store_result()){ $rs->free(); }
+            }
+        } elseif ($resultado === false) {
+            error_log("Error al ejecutar sp_get_usuario_configuracion para usu_id $usu_id_esc: " . ($this->conn->error ?? 'Error desconocido en la ejecución del SP. SQL: '.$sql));
+        } else {
+            error_log("sp_get_usuario_configuracion para usu_id $usu_id_esc no devolvió un resultado válido. SQL: ".$sql);
+        }
+        return $usuario_data;
+    }
+
+    public function actualizarPerfil($usu_id, $datos_perfil)
+    {
+        if (!$this->conn) return ['status' => 'error', 'message' => 'Error de conexión a la base de datos.'];
+
+        $nombre = isset($datos_perfil['nombre']) ? trim($datos_perfil['nombre']) : '';
+        $apellido = isset($datos_perfil['apellido']) ? trim($datos_perfil['apellido']) : '';
+        $cedula = isset($datos_perfil['cedula']) ? trim($datos_perfil['cedula']) : '';
+        $telefono = (isset($datos_perfil['telefono']) && trim($datos_perfil['telefono']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos_perfil['telefono'])) . "'" : "NULL";
+        $direccion = (isset($datos_perfil['direccion']) && trim($datos_perfil['direccion']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos_perfil['direccion'])) . "'" : "NULL";
+        $fnacimiento = (isset($datos_perfil['fnacimiento']) && !empty($datos_perfil['fnacimiento'])) ? "'" . $this->conn->real_escape_string($datos_perfil['fnacimiento']) . "'" : "NULL";
+
+        $usu_id_esc = $this->conn->real_escape_string($usu_id);
+        $nombre_esc = $this->conn->real_escape_string($nombre);
+        $apellido_esc = $this->conn->real_escape_string($apellido);
+        $cedula_esc = $this->conn->real_escape_string($cedula);
+
+        $sql = "CALL sp_actualizar_perfil_usuario(
+            $usu_id_esc,
+            '$nombre_esc',
+            '$apellido_esc',
+            '$cedula_esc',
+            $telefono,
+            $direccion,
+            $fnacimiento,
+            @p_resultado,
+            @p_mensaje
+        )";
+
+        if (!$this->conn->query($sql)) {
+            error_log("Error al llamar a sp_actualizar_perfil_usuario: " . $this->conn->error . " (SQL: $sql)");
+            return ['status' => 'error', 'message' => 'Error técnico al actualizar el perfil (llamada SP).'];
+        }
+
+        $res_sp = $this->conn->query("SELECT @p_resultado AS resultado, @p_mensaje AS mensaje");
+        if (!$res_sp) {
+            error_log("Error obteniendo resultados de sp_actualizar_perfil_usuario: " . $this->conn->error);
+            return ['status' => 'error', 'message' => 'Error técnico al obtener respuesta del SP de perfil.'];
+        }
+        $out_params = $res_sp->fetch_assoc();
+        $res_sp->free();
+        while($this->conn->more_results() && $this->conn->next_result()){
+            if($rs = $this->conn->store_result()){ $rs->free(); }
+        }
+
+        if (isset($out_params['resultado'])) {
+            if ($out_params['resultado'] == 1) {
+                return ['status' => 'success', 'message' => $out_params['mensaje']];
+            } elseif ($out_params['resultado'] == 0) {
+                return ['status' => 'validation_error', 'message' => $out_params['mensaje']];
+            } elseif ($out_params['resultado'] == 2) {
+                return ['status' => 'duplicate_cedula', 'message' => $out_params['mensaje']];
+            }
+        }
+        return ['status' => 'error', 'message' => $out_params['mensaje'] ?? 'No se pudo actualizar el perfil. Verifique los datos.'];
+    }
+
+    public function cambiarContrasena($usu_id, $pass_actual_plain, $pass_nueva_plain)
+    {
+        if (!$this->conn) return ['status' => 'error', 'message' => 'Error de conexión a la base de datos.'];
+
+        $usu_id_esc = $this->conn->real_escape_string($usu_id);
+
+        $sql_get_hash = "SELECT usu_password FROM Usuarios WHERE usu_id = $usu_id_esc";
+        $res_hash = $this->conn->query($sql_get_hash);
+
+        if (!$res_hash || $res_hash->num_rows === 0) {
+            if($res_hash) $res_hash->free();
+            return ['status' => 'error', 'message' => 'Usuario no encontrado o error al obtener datos de autenticación.'];
+        }
+        $usuario_actual = $res_hash->fetch_assoc();
+        $res_hash->free();
+        $hash_guardado = $usuario_actual['usu_password'];
+
+        if (!password_verify($pass_actual_plain, $hash_guardado)) {
+            return ['status' => 'auth_error', 'message' => 'La contraseña actual ingresada es incorrecta.'];
+        }
+
+        if (strlen(trim($pass_nueva_plain)) < 8) {
+            return ['status' => 'validation_error', 'message' => 'La nueva contraseña debe tener al menos 8 caracteres.'];
+        }
+
+        $nuevo_hash = password_hash($pass_nueva_plain, PASSWORD_DEFAULT);
+        if ($nuevo_hash === false) {
+            error_log("Error al hashear la nueva contraseña para usu_id $usu_id_esc.");
+            return ['status' => 'error', 'message' => 'Error interno del servidor al procesar la nueva contraseña.'];
+        }
+
+        $sql_sp_change = "CALL sp_cambiar_contrasena(
+            $usu_id_esc,
+            '$nuevo_hash',
+            @p_resultado,
+            @p_mensaje
+        )";
+
+        if (!$this->conn->query($sql_sp_change)) {
+            error_log("Error al llamar a sp_cambiar_contrasena: " . $this->conn->error . " (SQL: $sql_sp_change)");
+            return ['status' => 'error', 'message' => 'Error técnico al cambiar la contraseña (llamada SP).'];
+        }
+
+        $res_sp_change = $this->conn->query("SELECT @p_resultado AS resultado, @p_mensaje AS mensaje");
+        if (!$res_sp_change) {
+            error_log("Error obteniendo resultados de sp_cambiar_contrasena: " . $this->conn->error);
+            return ['status' => 'error', 'message' => 'Error técnico al obtener respuesta del SP de contraseña.'];
+        }
+        $out_params_change = $res_sp_change->fetch_assoc();
+        $res_sp_change->free();
+        while($this->conn->more_results() && $this->conn->next_result()){
+            if($rs = $this->conn->store_result()){ $rs->free(); }
+        }
+
+        if (isset($out_params_change['resultado'])) {
+            if ($out_params_change['resultado'] == 1) {
+                return ['status' => 'success', 'message' => $out_params_change['mensaje']];
+            } elseif ($out_params_change['resultado'] == 2) {
+                 return ['status' => 'validation_error', 'message' => $out_params_change['mensaje']];
+            }
+        }
+
+        return ['status' => 'error', 'message' => $out_params_change['mensaje'] ?? 'No se pudo cambiar la contraseña.'];
+    }
+
     public function __destruct()
     {
         // La conexión es manejada por el objeto Conexion, que se cierra cuando ya no se usa.
