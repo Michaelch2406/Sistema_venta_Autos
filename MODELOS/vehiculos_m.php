@@ -217,7 +217,8 @@ class Vehiculo
         $veh_id_esc = $this->conn->real_escape_string($veh_id);
         $sql = "CALL sp_get_vehiculo_detalle($veh_id_esc)";
         
-        $resultado = $this->conexion_obj->ejecutarSP($sql);
+        // Corregido: $this->conexion_obj a $this->conn_obj
+        $resultado = $this->conn_obj->ejecutarSP($sql);
         $vehiculo_detalle = null;
 
         if ($resultado && $resultado instanceof mysqli_result) {

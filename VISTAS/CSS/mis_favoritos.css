@@ -1,0 +1,68 @@
+/* Estilos para VISTAS/mis_favoritos.php */
+
+/* Estilos para las tarjetas de vehículos, pueden ser similares a autos_usados.css */
+.card-vehiculo {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 1px solid #e0e0e0;
+}
+
+.card-vehiculo:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-vehiculo-img-top {
+    width: 100%;
+    height: 200px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.card-vehiculo .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para empujar botones al final si es necesario */
+}
+
+.card-vehiculo .precio {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #0d6efd; /* Azul primario de Bootstrap */
+}
+
+.caracteristicas-list {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.caracteristica-item i {
+    color: #555;
+}
+
+/* Contenedor de la lista de favoritos */
+#lista-favoritos-container {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Podrías añadir estilos aquí si es necesario, como un fondo o espaciado */
+}
+
+/* Estilos para el mensaje de "no hay favoritos" */
+.text-center.py-5 i.display-1 {
+    font-size: 4rem; /* Ajustar tamaño del icono */
+}
+
+/* Estilos para los botones dentro de la tarjeta si necesitas diferenciarlos */
+.card-vehiculo .btn-quitar-favorito-lista {
+    background-color: #dc3545; /* Rojo de Bootstrap */
+    color: white;
+    /* Puedes añadir estilos específicos aquí si es necesario */
+}
+
+/* Ajustes responsivos si son necesarios y no están cubiertos por Bootstrap */
+@media (max-width: 767.98px) {
+    .display-5 {
+        font-size: 2rem; /* Reducir tamaño del título en móviles */
+    }
+}
