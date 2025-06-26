@@ -45,8 +45,15 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 0; 
     background: linear-gradient(45deg, rgba(0,0,0,0.1) 0%, rgba(255,255,255,0.1) 100%);
+    z-index: 1; /* Asegurar que el overlay esté en una capa base */
+}
+
+/* Asegurar que el contenido principal del hero-section (el .container) esté sobre el overlay */
+.hero-section > .container {
+    position: relative; /* Necesario para que z-index funcione correctamente */
+    z-index: 2; /* Coloca el container (y su contenido como el botón) sobre el .hero-overlay */
 }
 
 .hero-content {
