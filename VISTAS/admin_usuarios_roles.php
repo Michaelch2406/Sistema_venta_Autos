@@ -56,6 +56,7 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
                                     <th>Usuario</th>
                                     <th>Nombre Completo</th>
                                     <th>Email</th>
+                                    <th>Cédula</th>
                                     <th>Teléfono</th>
                                     <th>Rol</th>
                                     <th>Verificado</th>
@@ -115,7 +116,12 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
                                 <input type="email" class="form-control" id="usu_email_form" name="usu_email" required>
                                 <div class="invalid-feedback">Ingresa un correo válido.</div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
+                                <label for="usu_cedula_form" class="form-label">Cédula <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="usu_cedula_form" name="usu_cedula" required maxlength="13" pattern="\d{10}|\d{13}">
+                                <div class="invalid-feedback">Ingresa una cédula válida (10 o 13 dígitos numéricos).</div>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="usu_password_form" class="form-label">Contraseña</label>
                                 <input type="password" class="form-control" id="usu_password_form" name="usu_password" placeholder="Dejar en blanco para no cambiar">
                                 <small class="form-text text-muted">Mínimo 8 caracteres si se establece una nueva.</small>

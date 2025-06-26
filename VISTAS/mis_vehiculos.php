@@ -1,8 +1,8 @@
 <?php
 session_start();
-// Verificar si el usuario está logueado y tiene permiso (Vendedor o Administrador)
-// Asumimos rol_id 2 para Vendedor y 3 para Administrador (ajusta según tu BD)
-if (!isset($_SESSION['usu_id']) || !in_array($_SESSION['rol_id'], [2, 3])) {
+// Verificar si el usuario está logueado y tiene permiso (Cliente/Vendedor, Vendedor o Administrador)
+// Rol Cliente/Vendedor es 1, Vendedor 2 (si aplica), Administrador 3
+if (!isset($_SESSION['usu_id']) || !in_array($_SESSION['rol_id'], [1, 2, 3])) {
     echo "<!DOCTYPE html><html><head><title>Acceso Denegado</title><link href='../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-danger'><h1>Acceso Denegado</h1><p>No tienes permisos para acceder a esta página.</p><a href='escritorio.php' class='btn btn-primary'>Volver al Escritorio</a></div></body></html>";
     exit();
 }

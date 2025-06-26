@@ -62,19 +62,6 @@ $currentPageNavbar = basename($_SERVER['PHP_SELF']);
                             <i class="bi bi-speedometer2 me-2"></i>Mi Tablero
                         </a>
                     </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?php echo ($currentPageNavbar == 'configuracion_cuenta.php') ? 'active' : ''; ?>" href="#" id="navbarDropdownUserMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-fill me-2"></i>Bienvenido/a, <?php echo htmlspecialchars($_SESSION['usu_nombre_completo']); ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUserMenu">
-                            <!-- El antiguo link a Mi Tablero/escritorio.php desde el dropdown se elimina o se reevalúa si es necesario -->
-                            <!-- <li><a class="dropdown-item <?php //echo ($currentPageNavbar == 'escritorio.php') ? 'active' : ''; ?>" href="escritorio.php"><i class="bi bi-speedometer2 me-2"></i>Mi Tablero</a></li> -->
-                            <li><a class="dropdown-item <?php echo ($currentPageNavbar == 'configuracion_cuenta.php') ? 'active' : ''; ?>" href="configuracion_cuenta.php"><i class="bi bi-gear-fill me-2"></i>Mi Perfil / Configuración</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
-                        </ul>
-                    </li>
                 <?php else: ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($currentPageNavbar == 'login.php') ? 'active' : ''; ?>" href="login.php" title="Iniciar Sesión">
