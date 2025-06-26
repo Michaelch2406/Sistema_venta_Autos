@@ -273,7 +273,21 @@ main {
     z-index: 1; /* Asegurar que esté sobre el video (aunque position-absolute ayuda) */
 }
 
+/* Estilos para asegurar que el contenido del hero-section esté sobre el overlay */
+.hero-section .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Capa base del overlay */
+    /* Ejemplo: background-color: rgba(0, 0, 0, 0.3); */
+}
 
+.hero-section .container { /* Aplica al div.container dentro de .hero-section */
+    position: relative; /* Necesario para que z-index funcione */
+    z-index: 2;     /* Por encima del .hero-overlay */
+}
 
 /* ==========================
    Tarjetas de Vehículos Destacados
