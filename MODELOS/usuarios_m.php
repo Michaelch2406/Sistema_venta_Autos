@@ -126,74 +126,80 @@ class Usuario
     }
 
     public function crearUsuarioAdmin(
-        $rol_id, $usuario, $nombre, $apellido, $email,
-        $password_plana, $telefono, $direccion, $fnacimiento, $verificado
-    ) {
+    $rol_id, $usuario, $nombre, $apellido, $email, $cedula, // Parámetro $cedula añadido
+    $password_plana, $telefono, $direccion, $fnacimiento, $verificado
+) {
+    $password_hash = password_hash($password_plana, PASSWORD_DEFAULT);
+    $rol_id_esc = $this->conn->real_escape_string($rol_id);
+    $usuario_esc = $this->conn->real_escape_string(trim($usuario));
+    $nombre_esc = $this->conn->real_escape_string(trim($nombre));
+    $apellido_esc = $this->conn->real_escape_string(trim($apellido));
+    $email_esc = $this->conn->real_escape_string(trim($email));
+    $cedula_esc = $this->conn->real_escape_string(trim($cedula)); // Añadido y escapado
+    $telefono_esc = $telefono ? "'" . $this->conn->real_escape_string(trim($telefono)) . "'" : "NULL";
+    $direccion_esc = $direccion ? "'" . $this->conn->real_escape_string(trim($direccion)) . "'" : "NULL";
+    $fnacimiento_esc = $fnacimiento ? "'" . $this->conn->real_escape_string($fnacimiento) . "'" : "NULL";
+    $verificado_esc = (bool)$verificado ? 'TRUE' : 'FALSE';
+
+    $sql = "CALL sp_crear_usuario_admin(
+        $rol_id_esc, '$usuario_esc', '$nombre_esc', '$apellido_esc', '$email_esc', 
+        '$cedula_esc', -- Añadido en la llamada al SP
+        '$password_hash', $telefono_esc, $direccion_esc, $fnacimiento_esc, $verificado_esc,
+        @p_usu_id_creado, @p_resultado, @p_mensaje
+    )";
+
+    if (!$this->conn->query($sql)) {
+        error_log("Error al llamar a sp_crear_usuario_admin: " . $this->conn->error . " (SQL: $sql)");
+        return ['resultado' => -2, 'mensaje' => 'Error técnico al crear usuario (admin).'];
+    }
+    $res = $this->conn->query("SELECT @p_usu_id_creado as usu_id, @p_resultado AS resultado, @p_mensaje AS mensaje");
+    $out_params = $res->fetch_assoc();
+    $res->free();
+    while($this->conn->more_results() && $this->conn->next_result()){;}
+    return $out_params;
+}
+
+public function actualizarUsuarioAdmin(
+    $usu_id, $rol_id, $usuario, $nombre, $apellido, $email, $cedula, // Parámetro $cedula añadido
+    $password_plana, 
+    $telefono, $direccion, $fnacimiento, $verificado
+) {
+    $password_hash_sql = "NULL"; 
+    if (!empty($password_plana)) {
         $password_hash = password_hash($password_plana, PASSWORD_DEFAULT);
-        $rol_id_esc = $this->conn->real_escape_string($rol_id);
-        $usuario_esc = $this->conn->real_escape_string($usuario);
-        $nombre_esc = $this->conn->real_escape_string($nombre);
-        $apellido_esc = $this->conn->real_escape_string($apellido);
-        $email_esc = $this->conn->real_escape_string($email);
-        $telefono_esc = $telefono ? "'" . $this->conn->real_escape_string($telefono) . "'" : "NULL";
-        $direccion_esc = $direccion ? "'" . $this->conn->real_escape_string($direccion) . "'" : "NULL";
-        $fnacimiento_esc = $fnacimiento ? "'" . $this->conn->real_escape_string($fnacimiento) . "'" : "NULL";
-        $verificado_esc = (bool)$verificado ? 'TRUE' : 'FALSE';
-
-        $sql = "CALL sp_crear_usuario_admin(
-            $rol_id_esc, '$usuario_esc', '$nombre_esc', '$apellido_esc', '$email_esc',
-            '$password_hash', $telefono_esc, $direccion_esc, $fnacimiento_esc, $verificado_esc,
-            @p_usu_id_creado, @p_resultado, @p_mensaje
-        )";
-        if (!$this->conn->query($sql)) {
-            error_log("Error al llamar a sp_crear_usuario_admin: " . $this->conn->error);
-            return ['resultado' => -2, 'mensaje' => 'Error técnico al crear usuario (admin).'];
-        }
-        $res = $this->conn->query("SELECT @p_usu_id_creado as usu_id, @p_resultado AS resultado, @p_mensaje AS mensaje");
-        $out_params = $res->fetch_assoc();
-        $res->free();
-        while($this->conn->more_results() && $this->conn->next_result()){;}
-        return $out_params;
+        $password_hash_sql = "'" . $this->conn->real_escape_string($password_hash) . "'";
     }
 
-    public function actualizarUsuarioAdmin(
-        $usu_id, $rol_id, $usuario, $nombre, $apellido, $email,
-        $password_plana, // Puede ser vacía si no se cambia
-        $telefono, $direccion, $fnacimiento, $verificado
-    ) {
-        $password_hash_sql = "NULL"; // Por defecto no se cambia la contraseña
-        if (!empty($password_plana)) {
-            $password_hash = password_hash($password_plana, PASSWORD_DEFAULT);
-            $password_hash_sql = "'" . $this->conn->real_escape_string($password_hash) . "'";
-        }
+    $usu_id_esc = $this->conn->real_escape_string($usu_id);
+    $rol_id_esc = $this->conn->real_escape_string($rol_id);
+    $usuario_esc = $this->conn->real_escape_string(trim($usuario));
+    $nombre_esc = $this->conn->real_escape_string(trim($nombre));
+    $apellido_esc = $this->conn->real_escape_string(trim($apellido));
+    $email_esc = $this->conn->real_escape_string(trim($email));
+    $cedula_esc = $this->conn->real_escape_string(trim($cedula)); // Añadido y escapado
+    $telefono_esc = $telefono ? "'" . $this->conn->real_escape_string(trim($telefono)) . "'" : "NULL";
+    $direccion_esc = $direccion ? "'" . $this->conn->real_escape_string(trim($direccion)) . "'" : "NULL";
+    $fnacimiento_esc = $fnacimiento ? "'" . $this->conn->real_escape_string($fnacimiento) . "'" : "NULL";
+    $verificado_esc = (bool)$verificado ? 'TRUE' : 'FALSE';
 
-        $usu_id_esc = $this->conn->real_escape_string($usu_id);
-        $rol_id_esc = $this->conn->real_escape_string($rol_id);
-        $usuario_esc = $this->conn->real_escape_string($usuario);
-        $nombre_esc = $this->conn->real_escape_string($nombre);
-        $apellido_esc = $this->conn->real_escape_string($apellido);
-        $email_esc = $this->conn->real_escape_string($email);
-        $telefono_esc = $telefono ? "'" . $this->conn->real_escape_string($telefono) . "'" : "NULL";
-        $direccion_esc = $direccion ? "'" . $this->conn->real_escape_string($direccion) . "'" : "NULL";
-        $fnacimiento_esc = $fnacimiento ? "'" . $this->conn->real_escape_string($fnacimiento) . "'" : "NULL";
-        $verificado_esc = (bool)$verificado ? 'TRUE' : 'FALSE';
+    $sql = "CALL sp_actualizar_usuario_admin(
+        $usu_id_esc, $rol_id_esc, '$usuario_esc', '$nombre_esc', '$apellido_esc', '$email_esc',
+        '$cedula_esc', -- Añadido en la llamada al SP
+        $password_hash_sql, 
+        $telefono_esc, $direccion_esc, $fnacimiento_esc, $verificado_esc,
+        @p_resultado, @p_mensaje
+    )";
 
-        $sql = "CALL sp_actualizar_usuario_admin(
-            $usu_id_esc, $rol_id_esc, '$usuario_esc', '$nombre_esc', '$apellido_esc', '$email_esc',
-            $password_hash_sql, 
-            $telefono_esc, $direccion_esc, $fnacimiento_esc, $verificado_esc,
-            @p_resultado, @p_mensaje
-        )";
-        if (!$this->conn->query($sql)) {
-            error_log("Error al llamar a sp_actualizar_usuario_admin: " . $this->conn->error);
-            return ['resultado' => -2, 'mensaje' => 'Error técnico al actualizar usuario (admin).'];
-        }
-        $res = $this->conn->query("SELECT @p_resultado AS resultado, @p_mensaje AS mensaje");
-        $out_params = $res->fetch_assoc();
-        $res->free();
-        while($this->conn->more_results() && $this->conn->next_result()){;}
-        return $out_params;
+    if (!$this->conn->query($sql)) {
+        error_log("Error al llamar a sp_actualizar_usuario_admin: " . $this->conn->error . " (SQL: $sql)");
+        return ['resultado' => -2, 'mensaje' => 'Error técnico al actualizar usuario (admin).'];
     }
+    $res = $this->conn->query("SELECT @p_resultado AS resultado, @p_mensaje AS mensaje");
+    $out_params = $res->fetch_assoc();
+    $res->free();
+    while($this->conn->more_results() && $this->conn->next_result()){;}
+    return $out_params;
+}
 
 
     // --- Métodos para Configuración de Cuenta del Usuario ---

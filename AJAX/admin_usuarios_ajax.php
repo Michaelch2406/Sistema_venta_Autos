@@ -51,12 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['accion'])) {
 
     if ($accion === 'crearUsuario') {
         // Validaciones básicas
-        if (empty($_POST['usu_usuario']) || empty($_POST['usu_nombre']) || empty($_POST['usu_apellido']) || empty($_POST['usu_email']) || empty($_POST['rol_id']) || empty($_POST['usu_password'])) {
-            $response['message'] = 'Faltan campos obligatorios para crear el usuario.';
+        if (empty($_POST['usu_usuario']) || empty($_POST['usu_nombre']) || empty($_POST['usu_apellido']) || empty($_POST['usu_email']) || empty($_POST['rol_id']) || empty($_POST['usu_password']) || empty($_POST['usu_cedula'])) { // Añadida validación para usu_cedula
+            $response['message'] = 'Faltan campos obligatorios (incluyendo cédula) para crear el usuario.';
         } elseif (!filter_var($_POST['usu_email'], FILTER_VALIDATE_EMAIL)) {
             $response['message'] = 'Formato de correo electrónico inválido.';
         } elseif (strlen($_POST['usu_password']) < 8) {
             $response['message'] = 'La contraseña debe tener al menos 8 caracteres.';
+        } elseif (strlen(trim($_POST['usu_cedula'])) != 10 && strlen(trim($_POST['usu_cedula'])) != 13) { // Validación básica de longitud de cédula
+            $response['message'] = 'La cédula debe tener 10 o 13 dígitos.';
+        } elseif (!ctype_digit(trim($_POST['usu_cedula']))) { // Validar que sean solo dígitos
+            $response['message'] = 'La cédula debe contener solo números.';
         } else {
             $resultado_sp = $usuario_model->crearUsuarioAdmin(
                 $_POST['rol_id'],
@@ -64,26 +68,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['accion'])) {
                 trim($_POST['usu_nombre']),
                 trim($_POST['usu_apellido']),
                 trim($_POST['usu_email']),
-                $_POST['usu_password'], // Se hashea en el modelo
+                trim($_POST['usu_cedula']), // Pasar usu_cedula al modelo
+                $_POST['usu_password'], 
                 isset($_POST['usu_telefono']) ? trim($_POST['usu_telefono']) : null,
                 isset($_POST['usu_direccion']) ? trim($_POST['usu_direccion']) : null,
                 isset($_POST['usu_fnacimiento']) && !empty($_POST['usu_fnacimiento']) ? $_POST['usu_fnacimiento'] : null,
                 isset($_POST['usu_verificado']) ? (bool)$_POST['usu_verificado'] : false
             );
-            if ($resultado_sp['resultado'] == 1) {
+            // El modelo ahora devuelve 'resultado' y 'mensaje' del SP directamente
+            if ($resultado_sp['resultado'] == 1) { // Éxito
                 $response = ['status' => 'success', 'message' => $resultado_sp['mensaje'], 'usu_id' => $resultado_sp['usu_id']];
-            } else {
-                $response['message'] = $resultado_sp['mensaje'];
+            } else { // Error de SP (duplicado, validación, etc.)
+                $response = ['status' => 'error', 'message' => $resultado_sp['mensaje']];
             }
         }
     } elseif ($accion === 'actualizarUsuario') {
-         if (empty($_POST['usu_id']) || empty($_POST['usu_usuario']) || empty($_POST['usu_nombre']) || empty($_POST['usu_apellido']) || empty($_POST['usu_email']) || empty($_POST['rol_id'])) {
-            $response['message'] = 'Faltan campos obligatorios para actualizar el usuario.';
+         if (empty($_POST['usu_id']) || empty($_POST['usu_usuario']) || empty($_POST['usu_nombre']) || empty($_POST['usu_apellido']) || empty($_POST['usu_email']) || empty($_POST['rol_id']) || empty($_POST['usu_cedula'])) { // Añadida validación para usu_cedula
+            $response['message'] = 'Faltan campos obligatorios (incluyendo cédula) para actualizar el usuario.';
         } elseif (!filter_var($_POST['usu_email'], FILTER_VALIDATE_EMAIL)) {
             $response['message'] = 'Formato de correo electrónico inválido.';
-        } elseif (!empty($_POST['usu_password']) && strlen($_POST['usu_password']) < 8) { // Validar contraseña solo si se provee una nueva
+        } elseif (!empty($_POST['usu_password']) && strlen($_POST['usu_password']) < 8) { 
             $response['message'] = 'La nueva contraseña debe tener al menos 8 caracteres.';
-        } else {
+        } elseif (strlen(trim($_POST['usu_cedula'])) != 10 && strlen(trim($_POST['usu_cedula'])) != 13) { // Validación básica de longitud de cédula
+            $response['message'] = 'La cédula debe tener 10 o 13 dígitos.';
+        } elseif (!ctype_digit(trim($_POST['usu_cedula']))) { // Validar que sean solo dígitos
+            $response['message'] = 'La cédula debe contener solo números.';
+        }else {
             $resultado_sp = $usuario_model->actualizarUsuarioAdmin(
                 $_POST['usu_id'],
                 $_POST['rol_id'],
@@ -91,16 +101,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['accion'])) {
                 trim($_POST['usu_nombre']),
                 trim($_POST['usu_apellido']),
                 trim($_POST['usu_email']),
-                !empty($_POST['usu_password']) ? $_POST['usu_password'] : null, // Pasar null si no se cambia contraseña
+                trim($_POST['usu_cedula']), // Pasar usu_cedula al modelo
+                !empty($_POST['usu_password']) ? $_POST['usu_password'] : null, 
                 isset($_POST['usu_telefono']) ? trim($_POST['usu_telefono']) : null,
                 isset($_POST['usu_direccion']) ? trim($_POST['usu_direccion']) : null,
                 isset($_POST['usu_fnacimiento']) && !empty($_POST['usu_fnacimiento']) ? $_POST['usu_fnacimiento'] : null,
                 isset($_POST['usu_verificado']) ? (bool)$_POST['usu_verificado'] : false
             );
-             if ($resultado_sp['resultado'] == 1) {
+             if ($resultado_sp['resultado'] == 1) { // Éxito
                 $response = ['status' => 'success', 'message' => $resultado_sp['mensaje']];
-            } else {
-                $response['message'] = $resultado_sp['mensaje'];
+            } else { // Error de SP
+                $response = ['status' => 'error', 'message' => $resultado_sp['mensaje']];
             }
         }
     }

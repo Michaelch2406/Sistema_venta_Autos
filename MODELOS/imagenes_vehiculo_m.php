@@ -18,6 +18,9 @@ class ImagenesVehiculo_M
         }
     }
 
+    // Devuelve un array con 'resultado' y 'mensaje'
+    // 'resultado' = 1 si se insertó correctamente, 0 si hubo error
+    // 'mensaje' = mensaje de éxito o error
     public function insertarImagen($veh_id, $ima_url, $es_principal = false)
     {
         if (!$this->conn) {

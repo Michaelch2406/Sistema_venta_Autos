@@ -331,6 +331,40 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_insertar_imagen_vehiculo;
+DELIMITER //
+CREATE PROCEDURE sp_insertar_imagen_vehiculo(
+    IN p_veh_id INT,
+    IN p_ima_url VARCHAR(255),
+    IN p_ima_es_principal BOOLEAN,
+    OUT p_ima_id_insertado INT,
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    SET p_resultado = 0; -- Error por defecto
+    SET p_mensaje = 'Error al guardar la imagen del vehículo.';
+    SET p_ima_id_insertado = NULL;
+
+    -- Si se está marcando como principal, desmarcar otras para el mismo vehículo
+    IF p_ima_es_principal = TRUE THEN
+        UPDATE ImagenesVehiculo SET ima_es_principal = FALSE WHERE veh_id = p_veh_id;
+    END IF;
+
+    INSERT INTO ImagenesVehiculo (veh_id, ima_url, ima_es_principal)
+    VALUES (p_veh_id, p_ima_url, p_ima_es_principal);
+
+    IF ROW_COUNT() > 0 THEN
+        SET p_ima_id_insertado = LAST_INSERT_ID();
+        SET p_resultado = 1;
+        SET p_mensaje = 'Imagen guardada exitosamente.';
+    ELSE
+        SET p_mensaje = 'No se pudo guardar la imagen en la base de datos.';
+    END IF;
+END//
+DELIMITER ;
+
+
 
 
 

@@ -1,6 +1,7 @@
 USE SistemaVentaAutos;
 
 -- SP para obtener TODOS los usuarios para el panel de admin
+-- SP para obtener TODOS los usuarios para el panel de admin
 DROP PROCEDURE IF EXISTS sp_get_todos_usuarios_admin;
 DELIMITER //
 CREATE PROCEDURE sp_get_todos_usuarios_admin()
@@ -11,6 +12,7 @@ BEGIN
         u.usu_nombre,
         u.usu_apellido,
         u.usu_email,
+        u.usu_cedula, -- Añadido
         u.usu_telefono,
         u.usu_verificado,
         r.rol_id,
@@ -45,6 +47,7 @@ BEGIN
         usu_nombre,
         usu_apellido,
         usu_email,
+        usu_cedula, -- Añadido
         usu_telefono,
         usu_direccion,
         usu_fnacimiento,
@@ -63,45 +66,59 @@ CREATE PROCEDURE sp_crear_usuario_admin(
     IN p_usu_nombre VARCHAR(100),
     IN p_usu_apellido VARCHAR(100),
     IN p_usu_email VARCHAR(100),
-    IN p_usu_password_hash VARCHAR(255), -- Contraseña ya hasheada
+    IN p_usu_cedula VARCHAR(13), -- Añadido
+    IN p_usu_password_hash VARCHAR(255),
     IN p_usu_telefono VARCHAR(20),
     IN p_usu_direccion VARCHAR(255),
     IN p_usu_fnacimiento DATE,
     IN p_usu_verificado BOOLEAN,
     OUT p_usu_id_creado INT,
-    OUT p_resultado INT,
+    OUT p_resultado INT, -- 1: Éxito, 0: Usuario duplicado, -1: Email duplicado, -3: Cédula duplicada, -2: Otro error
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
     DECLARE v_count_usuario INT;
     DECLARE v_count_email INT;
+    DECLARE v_count_cedula INT;
+
     SET p_resultado = -2; 
     SET p_mensaje = 'Error desconocido al crear el usuario.';
     SET p_usu_id_creado = NULL;
 
-    SELECT COUNT(*) INTO v_count_usuario FROM Usuarios WHERE usu_usuario = p_usu_usuario;
-    IF v_count_usuario > 0 THEN
-        SET p_resultado = 0;
-        SET p_mensaje = 'El nombre de usuario ya está en uso.';
+    IF p_usu_cedula IS NULL OR LENGTH(TRIM(p_usu_cedula)) = 0 THEN
+        SET p_resultado = -2; -- O un código específico para cédula vacía si es NOT NULL
+        SET p_mensaje = 'La cédula es un campo requerido.';
     ELSE
-        SELECT COUNT(*) INTO v_count_email FROM Usuarios WHERE usu_email = p_usu_email;
-        IF v_count_email > 0 THEN
-            SET p_resultado = -1;
-            SET p_mensaje = 'El correo electrónico ya está registrado.';
+        SELECT COUNT(*) INTO v_count_usuario FROM Usuarios WHERE usu_usuario = TRIM(p_usu_usuario);
+        IF v_count_usuario > 0 THEN
+            SET p_resultado = 0;
+            SET p_mensaje = 'El nombre de usuario ya está en uso.';
         ELSE
-            INSERT INTO Usuarios (
-                rol_id, usu_usuario, usu_nombre, usu_apellido, usu_email,
-                usu_password, usu_telefono, usu_direccion, usu_fnacimiento, usu_verificado
-            ) VALUES (
-                p_rol_id, p_usu_usuario, p_usu_nombre, p_usu_apellido, p_usu_email,
-                p_usu_password_hash, p_usu_telefono, p_usu_direccion, p_usu_fnacimiento, p_usu_verificado
-            );
-            IF ROW_COUNT() > 0 THEN
-                SET p_usu_id_creado = LAST_INSERT_ID();
-                SET p_resultado = 1;
-                SET p_mensaje = 'Usuario creado exitosamente.';
+            SELECT COUNT(*) INTO v_count_email FROM Usuarios WHERE usu_email = TRIM(p_usu_email);
+            IF v_count_email > 0 THEN
+                SET p_resultado = -1;
+                SET p_mensaje = 'El correo electrónico ya está registrado.';
             ELSE
-                SET p_mensaje = 'Error al insertar el usuario en la base de datos.';
+                SELECT COUNT(*) INTO v_count_cedula FROM Usuarios WHERE usu_cedula = TRIM(p_usu_cedula);
+                IF v_count_cedula > 0 THEN
+                    SET p_resultado = -3;
+                    SET p_mensaje = 'La cédula ingresada ya está registrada.';
+                ELSE
+                    INSERT INTO Usuarios (
+                        rol_id, usu_usuario, usu_nombre, usu_apellido, usu_email, usu_cedula, 
+                        usu_password, usu_telefono, usu_direccion, usu_fnacimiento, usu_verificado
+                    ) VALUES (
+                        p_rol_id, TRIM(p_usu_usuario), TRIM(p_usu_nombre), TRIM(p_usu_apellido), TRIM(p_usu_email), TRIM(p_usu_cedula),
+                        p_usu_password_hash, p_usu_telefono, p_usu_direccion, p_usu_fnacimiento, p_usu_verificado
+                    );
+                    IF ROW_COUNT() > 0 THEN
+                        SET p_usu_id_creado = LAST_INSERT_ID();
+                        SET p_resultado = 1;
+                        SET p_mensaje = 'Usuario creado exitosamente.';
+                    ELSE
+                        SET p_mensaje = 'Error al insertar el usuario en la base de datos.';
+                    END IF;
+                END IF;
             END IF;
         END IF;
     END IF;
@@ -118,51 +135,65 @@ CREATE PROCEDURE sp_actualizar_usuario_admin(
     IN p_usu_nombre VARCHAR(100),
     IN p_usu_apellido VARCHAR(100),
     IN p_usu_email VARCHAR(100),
-    IN p_usu_password_hash VARCHAR(255), -- Contraseña ya hasheada, o NULL si no se cambia
+    IN p_usu_cedula VARCHAR(13), -- Añadido
+    IN p_usu_password_hash VARCHAR(255),
     IN p_usu_telefono VARCHAR(20),
     IN p_usu_direccion VARCHAR(255),
     IN p_usu_fnacimiento DATE,
     IN p_usu_verificado BOOLEAN,
-    OUT p_resultado INT,
+    OUT p_resultado INT, -- 1: Éxito, 0: Usuario duplicado, -1: Email duplicado, -3: Cédula duplicada, -2: Otro error
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
     DECLARE v_count_usuario INT;
     DECLARE v_count_email INT;
+    DECLARE v_count_cedula INT;
+
     SET p_resultado = -2;
     SET p_mensaje = 'Error desconocido al actualizar el usuario.';
 
-    SELECT COUNT(*) INTO v_count_usuario FROM Usuarios WHERE usu_usuario = p_usu_usuario AND usu_id != p_usu_id;
-    IF v_count_usuario > 0 THEN
-        SET p_resultado = 0;
-        SET p_mensaje = 'El nombre de usuario ya está en uso por otro usuario.';
+    IF p_usu_cedula IS NULL OR LENGTH(TRIM(p_usu_cedula)) = 0 THEN
+        SET p_resultado = -2;
+        SET p_mensaje = 'La cédula es un campo requerido.';
     ELSE
-        SELECT COUNT(*) INTO v_count_email FROM Usuarios WHERE usu_email = p_usu_email AND usu_id != p_usu_id;
-        IF v_count_email > 0 THEN
-            SET p_resultado = -1;
-            SET p_mensaje = 'El correo electrónico ya está registrado por otro usuario.';
+        SELECT COUNT(*) INTO v_count_usuario FROM Usuarios WHERE usu_usuario = TRIM(p_usu_usuario) AND usu_id != p_usu_id;
+        IF v_count_usuario > 0 THEN
+            SET p_resultado = 0;
+            SET p_mensaje = 'El nombre de usuario ya está en uso por otro usuario.';
         ELSE
-            UPDATE Usuarios SET
-                rol_id = p_rol_id,
-                usu_usuario = p_usu_usuario,
-                usu_nombre = p_usu_nombre,
-                usu_apellido = p_usu_apellido,
-                usu_email = p_usu_email,
-                usu_password = IF(p_usu_password_hash IS NOT NULL AND p_usu_password_hash != '', p_usu_password_hash, usu_password), -- Solo actualiza si se provee una nueva
-                usu_telefono = p_usu_telefono,
-                usu_direccion = p_usu_direccion,
-                usu_fnacimiento = p_usu_fnacimiento,
-                usu_verificado = p_usu_verificado,
-                usu_actualizado_en = CURRENT_TIMESTAMP
-            WHERE usu_id = p_usu_id;
-
-            IF ROW_COUNT() > 0 THEN
-                SET p_resultado = 1;
-                SET p_mensaje = 'Usuario actualizado exitosamente.';
+            SELECT COUNT(*) INTO v_count_email FROM Usuarios WHERE usu_email = TRIM(p_usu_email) AND usu_id != p_usu_id;
+            IF v_count_email > 0 THEN
+                SET p_resultado = -1;
+                SET p_mensaje = 'El correo electrónico ya está registrado por otro usuario.';
             ELSE
-                -- Podría ser que no se modificaron filas porque los datos eran los mismos
-                SET p_resultado = 1; -- Considerar éxito si no hay error, aunque no haya cambios.
-                SET p_mensaje = 'No se realizaron cambios o el usuario no fue encontrado.';
+                SELECT COUNT(*) INTO v_count_cedula FROM Usuarios WHERE usu_cedula = TRIM(p_usu_cedula) AND usu_id != p_usu_id;
+                IF v_count_cedula > 0 THEN
+                    SET p_resultado = -3;
+                    SET p_mensaje = 'La cédula ingresada ya está registrada por otro usuario.';
+                ELSE
+                    UPDATE Usuarios SET
+                        rol_id = p_rol_id,
+                        usu_usuario = TRIM(p_usu_usuario),
+                        usu_nombre = TRIM(p_usu_nombre),
+                        usu_apellido = TRIM(p_usu_apellido),
+                        usu_email = TRIM(p_usu_email),
+                        usu_cedula = TRIM(p_usu_cedula), -- Añadido
+                        usu_password = IF(p_usu_password_hash IS NOT NULL AND p_usu_password_hash != '', p_usu_password_hash, usu_password),
+                        usu_telefono = p_usu_telefono,
+                        usu_direccion = p_usu_direccion,
+                        usu_fnacimiento = p_usu_fnacimiento,
+                        usu_verificado = p_usu_verificado,
+                        usu_actualizado_en = CURRENT_TIMESTAMP
+                    WHERE usu_id = p_usu_id;
+
+                    IF ROW_COUNT() > 0 THEN
+                        SET p_resultado = 1;
+                        SET p_mensaje = 'Usuario actualizado exitosamente.';
+                    ELSE
+                        SET p_resultado = 1; 
+                        SET p_mensaje = 'No se realizaron cambios o el usuario no fue encontrado.';
+                    END IF;
+                END IF;
             END IF;
         END IF;
     END IF;
@@ -275,55 +306,53 @@ DROP PROCEDURE IF EXISTS sp_cambiar_contrasena;
 DELIMITER //
 CREATE PROCEDURE sp_cambiar_contrasena(
     IN p_usu_id INT,
-    IN p_pass_actual_ingresada VARCHAR(255), -- Contraseña actual tal como la ingresa el usuario
-    IN p_pass_nueva VARCHAR(255),
-    OUT p_resultado INT,          -- 1: Éxito, 0: Contraseña actual incorrecta, -1: Error, 2: Contraseña nueva no válida
+    IN p_pass_nueva_hash VARCHAR(255),
+    OUT p_resultado INT,
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    DECLARE v_pass_actual_guardada VARCHAR(255);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET p_resultado = -1;
+        SET p_mensaje = 'Error interno del servidor al cambiar la contraseña.';
+        ROLLBACK;
+    END;
 
-    SET p_resultado = -1; -- Por defecto
+    SET p_resultado = -1;
 
-    -- Obtener la contraseña actual hasheada del usuario
-    SELECT usu_password INTO v_pass_actual_guardada FROM Usuarios WHERE usu_id = p_usu_id;
-
-    IF v_pass_actual_guardada IS NULL THEN
+    IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE usu_id = p_usu_id) THEN
         SET p_resultado = -1;
         SET p_mensaje = 'Usuario no encontrado.';
-    -- Aquí necesitas una función para verificar la contraseña. 
-    -- MySQL no tiene password_verify() directamente en SQL estándar para SPs.
-    -- La verificación de p_pass_actual_ingresada contra v_pass_actual_guardada DEBE hacerse en PHP usando password_verify().
-    -- Por lo tanto, este SP asumirá que PHP ya verificó la contraseña actual.
-    -- O, si p_pass_actual_ingresada es la contraseña ya hasheada por PHP (lo cual no es lo usual para este flujo),
-    -- entonces se podría comparar directamente si el hash es idéntico (solo si no hay salt variable por usuario).
-    -- Modificación: Este SP no verificará la contraseña actual. PHP lo hará y solo llamará a este SP si la actual es correcta.
-    -- Este SP solo actualizará la contraseña con la nueva.
-
-    /* -- COMENTADO: Lógica de verificación de contraseña actual que es mejor en PHP
-    ELSEIF (SELECT PASSWORD(p_pass_actual_ingresada)) != v_pass_actual_guardada THEN -- ESTO ES INCORRECTO SI USAS password_hash() de PHP
-        SET p_resultado = 0;
-        SET p_mensaje = 'La contraseña actual es incorrecta.';
-    */
-
-    -- Validación de la nueva contraseña (ej. longitud mínima)
-    ELSEIF CHAR_LENGTH(p_pass_nueva) < 8 THEN -- Ejemplo: mínimo 8 caracteres
+    ELSEIF CHAR_LENGTH(p_pass_nueva_hash) < 60 THEN -- Un hash bcrypt típico es de 60 caracteres
         SET p_resultado = 2;
-        SET p_mensaje = 'La nueva contraseña debe tener al menos 8 caracteres.';
+        SET p_mensaje = 'El formato de la nueva contraseña no es válido (problema con el hash).';
     ELSE
-        -- Aquí la nueva contraseña (p_pass_nueva) DEBE ser la contraseña YA HASHEADA por PHP con password_hash()
+        START TRANSACTION;
         UPDATE Usuarios
-        SET usu_password = p_pass_nueva, -- p_pass_nueva ya debe estar hasheada
+        SET usu_password = p_pass_nueva_hash,
             usu_actualizado_en = CURRENT_TIMESTAMP
         WHERE usu_id = p_usu_id;
 
         IF ROW_COUNT() > 0 THEN
             SET p_resultado = 1;
             SET p_mensaje = 'Contraseña actualizada exitosamente.';
+            COMMIT;
         ELSE
             SET p_resultado = -1;
-            SET p_mensaje = 'No se pudo actualizar la contraseña.';
+            SET p_mensaje = 'No se pudo actualizar la contraseña (usuario existe pero no se afectaron filas).';
+            ROLLBACK; 
         END IF;
     END IF;
 END //
 DELIMITER ;
+
+
+
+
+-- SP para obtener un usuario específico por ID para edición
+
+
+-- SP para crear un nuevo usuario por el administrador
+
+
+-- SP para actualizar un usuario por el administrador
