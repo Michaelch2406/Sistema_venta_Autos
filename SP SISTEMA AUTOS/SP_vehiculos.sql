@@ -59,6 +59,7 @@ CREATE PROCEDURE sp_insertar_vehiculo(
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
+    -- (El cuerpo del procedimiento va aquí)
     SET p_resultado = 0; 
     SET p_mensaje = 'Error al insertar el vehículo.';
     SET p_veh_id_insertado = NULL;
@@ -363,8 +364,4 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
-
-
-
-
 

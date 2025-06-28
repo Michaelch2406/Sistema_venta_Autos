@@ -1,8 +1,8 @@
 <?php
 ini_set('display_errors', 0); 
 error_reporting(E_ALL);
-// ini_set('log_errors', 1);
-// ini_set('error_log', __DIR__ . '/../php_error.log'); 
+ ini_set('log_errors', 1);
+ ini_set('error_log', __DIR__ . '/../php_error.log'); 
 
 session_start();
 require_once __DIR__ . "/../MODELOS/catalogos_m.php";
@@ -144,6 +144,9 @@ try {
             if (isset($_POST['veh_condicion']) && $_POST['veh_condicion'] === 'usado') {
                 if (!isset($_POST['veh_kilometraje']) || trim($_POST['veh_kilometraje']) === '') { 
                     $missing_fields[] = 'veh_kilometraje (Recorrido para vehículos usados)'; 
+                }
+                if (!isset($_POST['veh_placa']) || trim($_POST['veh_placa']) === '') { 
+                    $missing_fields[] = 'veh_placa (Placa para vehículos usados)'; 
                 }
                 // Para vehículos usados, la placa y último dígito podrían ser opcionales si el usuario elige "Sin Placa"
                 // o si el formulario lo permite. Asumiendo que si es 'usado', son requeridos a menos que se indique lo contrario.

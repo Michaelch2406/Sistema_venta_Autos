@@ -30,11 +30,14 @@ class Vehiculo
         $mod_id = $this->conn->real_escape_string($datos['mod_id']);
         $tiv_id = $this->conn->real_escape_string($datos['tiv_id']);
         $veh_subtipo_vehiculo = isset($datos['veh_subtipo_vehiculo']) && trim($datos['veh_subtipo_vehiculo']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_subtipo_vehiculo'])) . "'" : "NULL";
-        $usu_id_gestor = isset($datos['usu_id_gestor']) && trim($datos['usu_id_gestor']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['usu_id_gestor'])) . "'" : "NULL";
+        $usu_id_gestor = isset($datos['usu_id_gestor']) && filter_var(trim($datos['usu_id_gestor']), FILTER_VALIDATE_INT) 
+        ? (int)$datos['usu_id_gestor'] 
+        : "NULL";
         $veh_condicion = $this->conn->real_escape_string($datos['veh_condicion']);
         $veh_anio = $this->conn->real_escape_string($datos['veh_anio']);
         $veh_precio = $this->conn->real_escape_string($datos['veh_precio']);
         $veh_vin = isset($datos['veh_vin']) && trim($datos['veh_vin']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos['veh_vin'])) . "'" : "NULL";
+        $veh_placa = isset($datos['veh_placa']) && trim($datos['veh_placa']) !== '' ? "'" . $this->conn->real_escape_string(strtoupper(trim($datos['veh_placa']))) . "'" : "NULL";
         
         // Definición de variables para SP
         $p_veh_kilometraje = "NULL";
@@ -77,19 +80,23 @@ class Vehiculo
         // El nuevo SP no incluye veh_caracteristicas_seguridad ni veh_caracteristicas_adicionales
         $sql = "CALL sp_insertar_vehiculo(
             $mar_id, $mod_id, $tiv_id, $veh_subtipo_vehiculo, $usu_id_gestor, '$veh_condicion', $veh_anio, $p_veh_kilometraje,
-            $veh_precio, $veh_vin, '$veh_ubicacion_provincia', '$veh_ubicacion_ciudad', $p_veh_placa_provincia_origen, $p_veh_ultimo_digito_placa,
+            $veh_precio, $veh_vin, $veh_placa, '$veh_ubicacion_provincia', '$veh_ubicacion_ciudad', $p_veh_placa_provincia_origen,
+            $p_veh_ultimo_digito_placa,
             '$veh_color_exterior', $veh_color_interior, '$veh_detalles_motor', $veh_tipo_transmision,
             $veh_traccion, $veh_tipo_vidrios, $veh_tipo_combustible, $veh_tipo_direccion, $veh_sistema_climatizacion,
-            -- Ya no se pasan veh_caracteristicas_seguridad ni veh_caracteristicas_adicionales
-            '$veh_descripcion', $veh_detalles_extra_str,
+            '$veh_descripcion',
+            $veh_detalles_extra_str,
             '$veh_fecha_publicacion',
             @p_veh_id_insertado, @p_resultado, @p_mensaje
         )";
         
         if (!$this->conn->query($sql)) {
-            error_log("Error al llamar a sp_insertar_vehiculo: " . $this->conn->error . ". SQL ejecutado: " . preg_replace('/\s+/', ' ', $sql));
-            return ['resultado' => 0, 'mensaje' => 'Error técnico al publicar el vehículo. (SP Call Error)', 'veh_id' => null];
-        }
+    // Volcamos el error y el SQL en dos líneas para poder copiarlo bien
+    error_log("[SP ERROR] MySQL Error: " . $this->conn->errno . " - " . $this->conn->error);
+    error_log("[SP ERROR] SQL ejecutado: " . preg_replace('/\s+/', ' ', $sql));
+    return ['resultado' => 0, 'mensaje' => 'Error técnico al publicar el vehículo. (SP Call Error)', 'veh_id' => null];
+}
+
 
         $res = $this->conn->query("SELECT @p_veh_id_insertado AS veh_id, @p_resultado AS resultado, @p_mensaje AS mensaje");
         if (!$res) {

@@ -1,5 +1,94 @@
 USE SistemaVentaAutos;
 
+-- Stored Procedure para Registrar un Nuevo Usuario
+DELIMITER //
+CREATE PROCEDURE sp_registrar_usuario(
+    IN p_rol_id INT,
+    IN p_usu_usuario VARCHAR(50),
+    IN p_usu_nombre VARCHAR(100),
+    IN p_usu_apellido VARCHAR(100),
+    IN p_usu_email VARCHAR(100),
+    IN p_usu_password VARCHAR(255), -- Recibe la contraseña ya hasheada
+    IN p_usu_telefono VARCHAR(20),
+    IN p_usu_direccion VARCHAR(255),
+    IN p_usu_fnacimiento DATE,
+    OUT p_resultado INT, -- 1: Éxito, 0: Usuario ya existe, -1: Email ya existe, -2: Error
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_count_usuario INT;
+    DECLARE v_count_email INT;
+    SET p_resultado = -2; -- Error por defecto
+    SET p_mensaje = 'Error desconocido al registrar el usuario.';
+
+    -- Verificar si el nombre de usuario ya existe
+    SELECT COUNT(*) INTO v_count_usuario FROM Usuarios WHERE usu_usuario = p_usu_usuario;
+    IF v_count_usuario > 0 THEN
+        SET p_resultado = 0;
+        SET p_mensaje = 'El nombre de usuario ya está en uso.';
+    ELSE
+        -- Verificar si el email ya existe
+        SELECT COUNT(*) INTO v_count_email FROM Usuarios WHERE usu_email = p_usu_email;
+        IF v_count_email > 0 THEN
+            SET p_resultado = -1;
+            SET p_mensaje = 'El correo electrónico ya está registrado.';
+        ELSE
+            -- Insertar el nuevo usuario
+            INSERT INTO Usuarios (
+                rol_id, usu_usuario, usu_nombre, usu_apellido, usu_email,
+                usu_password, usu_telefono, usu_direccion, usu_fnacimiento, usu_verificado
+            ) VALUES (
+                p_rol_id, p_usu_usuario, p_usu_nombre, p_usu_apellido, p_usu_email,
+                p_usu_password, p_usu_telefono, p_usu_direccion, p_usu_fnacimiento, FALSE -- usu_verificado por defecto FALSE
+            );
+
+            IF ROW_COUNT() > 0 THEN
+                SET p_resultado = 1;
+                SET p_mensaje = 'Usuario registrado exitosamente.';
+            ELSE
+                SET p_mensaje = 'Error al insertar el usuario en la base de datos.';
+            END IF;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+-- Stored Procedure para Iniciar Sesión
+DELIMITER //
+CREATE PROCEDURE sp_login_usuario(
+    IN p_usu_usuario_o_email VARCHAR(100),
+    OUT p_usu_id INT,
+    OUT p_rol_id INT,
+    OUT p_usu_nombre VARCHAR(100),
+    OUT p_usu_apellido VARCHAR(100),
+    OUT p_usu_email_db VARCHAR(100),
+    OUT p_usu_password_hash VARCHAR(255),
+    OUT p_usu_verificado BOOLEAN,
+    OUT p_resultado INT, -- 1: Éxito, 0: Usuario no encontrado, -1: Contraseña incorrecta
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    SET p_resultado = 0; -- Usuario no encontrado por defecto
+    SET p_mensaje = 'Usuario o correo electrónico no encontrado.';
+    SET p_usu_id = NULL;
+
+    SELECT
+        usu_id, rol_id, usu_nombre, usu_apellido, usu_email, usu_password, usu_verificado
+    INTO
+        p_usu_id, p_rol_id, p_usu_nombre, p_usu_apellido, p_usu_email_db, p_usu_password_hash, p_usu_verificado
+    FROM Usuarios
+    WHERE usu_usuario = p_usu_usuario_o_email OR usu_email = p_usu_usuario_o_email
+    LIMIT 1;
+
+    IF p_usu_id IS NOT NULL THEN
+        SET p_resultado = 1; -- Usuario encontrado, la verificación de contraseña se hace en PHP
+        SET p_mensaje = 'Usuario encontrado.';
+    END IF;
+    -- No se verifica la contraseña aquí, se devuelve el hash para verificar en PHP con password_verify()
+END //
+DELIMITER ;
+
+
 -- SP para obtener TODOS los usuarios para el panel de admin
 -- SP para obtener TODOS los usuarios para el panel de admin
 DROP PROCEDURE IF EXISTS sp_get_todos_usuarios_admin;
@@ -345,14 +434,3 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-
-
-
-
--- SP para obtener un usuario específico por ID para edición
-
-
--- SP para crear un nuevo usuario por el administrador
-
-
--- SP para actualizar un usuario por el administrador

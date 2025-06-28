@@ -112,11 +112,13 @@ $(document).ready(function() {
     var $camposPlacaGroup = $('#campos_placa_group');
     var $placaProvinciaInput = $('#veh_placa_provincia_origen');
     var $ultimoDigitoInput = $('#veh_ultimo_digito_placa');
+    var $placaInput = $('#veh_placa');
 
     function actualizarCamposUsado(esUsado) {
         if (esUsado) {
             $kilometrajeLabel.html('Recorrido (km) <span class="text-danger">*</span>');
             $kilometrajeInput.prop('required', true);
+            $placaInput.prop('required', true);
             $placaProvinciaInput.prop('required', true);
             $ultimoDigitoInput.prop('required', true);
             $kilometrajeContainer.slideDown();
@@ -124,6 +126,7 @@ $(document).ready(function() {
         } else {
             $kilometrajeLabel.html('Recorrido (km)');
             $kilometrajeInput.prop('required', false).val('').removeClass('is-invalid is-valid');
+            $placaInput.prop('required', false).val('').removeClass('is-invalid is-valid');
             $placaProvinciaInput.prop('required', false).val('').removeClass('is-invalid is-valid');
             $ultimoDigitoInput.prop('required', false).val('').removeClass('is-invalid is-valid');
             $kilometrajeContainer.slideUp();
