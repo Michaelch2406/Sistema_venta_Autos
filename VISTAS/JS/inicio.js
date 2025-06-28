@@ -1,58 +1,87 @@
 $(document).ready(function() {
-    var heroCarousel = document.getElementById('heroVideoCarousel');
-    var videos = heroCarousel.querySelectorAll('video');
 
-    // Pausar todos los videos inicialmente, excepto el del item activo si ya está en play.
-    // Bootstrap podría intentar reproducir el primero si tiene 'autoplay'.
-    // El atributo 'loop' en cada video los hará repetirse individualmente si no se maneja el 'ended'.
-    // Para un carrusel continuo, es mejor quitar 'loop' de los videos individuales y manejarlo con JS.
-    // Por ahora, dejaremos 'loop' y 'autoplay' y nos centraremos en la transición.
+    // --- GESTIÓN DEL CARRUSEL DE VIDEOS ---
+    const heroCarousel = document.getElementById('heroVideoCarousel');
+    if (heroCarousel) {
+        const videos = heroCarousel.querySelectorAll('video');
 
-    // Quitar 'loop' de todos los videos para que el evento 'ended' funcione para la transición
-    videos.forEach(function(video) {
-        video.loop = false; 
-    });
-    
-    // Función para reproducir el video del slide activo y pausar los demás
-    function playActiveVideo(event) {
-        // Pausar todos los videos
-        videos.forEach(function(video) {
-            video.pause();
+        // Inicializamos el carrusel de Bootstrap con el intervalo desactivado.
+        // Nosotros controlaremos cuándo avanza.
+        const carouselInstance = new bootstrap.Carousel(heroCarousel, {
+            interval: false, // Desactiva el avance automático por tiempo.
+            ride: false,     // Desactiva el inicio automático al cargar la página.
         });
-        // Reproducir el video en el slide activo
-        var activeItem = heroCarousel.querySelector('.carousel-item.active');
-        if (activeItem) {
-            var activeVideo = activeItem.querySelector('video');
-            if (activeVideo) {
-                activeVideo.play().catch(function(error) {
-                    console.error("Error al intentar reproducir video:", error);
-                });
+
+        // Función para reproducir el video activo y pausar los demás.
+        function playActiveVideo() {
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0; // Reinicia los videos no activos.
+            });
+
+            const activeItem = heroCarousel.querySelector('.carousel-item.active');
+            if (activeItem) {
+                const activeVideo = activeItem.querySelector('video');
+                if (activeVideo) {
+                    // Intenta reproducir el video, capturando posibles errores si el navegador lo bloquea.
+                    activeVideo.play().catch(error => {
+                        console.error("El navegador bloqueó la reproducción automática:", error);
+                    });
+                }
             }
         }
+
+        // Para cada video, cuando termine, pasamos al siguiente slide.
+        videos.forEach(video => {
+            video.addEventListener('ended', () => {
+                carouselInstance.next();
+            });
+        });
+
+        // Cuando el carrusel termina de cambiar de slide (manualmente o automáticamente).
+        heroCarousel.addEventListener('slid.bs.carousel', playActiveVideo);
+
+        // Inicia la reproducción del primer video al cargar la página.
+        playActiveVideo();
     }
 
-    // Cuando un nuevo slide se muestra (después de la transición)
-    heroCarousel.addEventListener('slid.bs.carousel', playActiveVideo);
 
-    // Manejar el evento 'ended' de cada video para pasar al siguiente slide
-    videos.forEach(function(video) {
-        video.addEventListener('ended', function() {
-            // Mueve el carrusel al siguiente slide
-            var carouselInstance = bootstrap.Carousel.getInstance(heroCarousel);
-            if (carouselInstance) {
-                carouselInstance.next();
+    // --- ANIMACIONES AL HACER SCROLL ---
+    function animateOnScroll() {
+        const elements = document.querySelectorAll('.animate-on-scroll');
+        const elementVisible = 150; // Distancia desde la parte inferior de la ventana para activar la animación.
+
+        elements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+
+            if (elementTop < window.innerHeight - elementVisible) {
+                element.classList.add('animate-in');
             }
         });
-    });
+    }
 
-    // Intentar reproducir el video del primer slide activo al cargar la página
-    // Esto es importante si el `autoplay` no funciona consistentemente en todos los navegadores
-    // o si se quita el atributo autoplay de los videos.
-    var firstActiveVideo = heroCarousel.querySelector('.carousel-item.active video');
-    if (firstActiveVideo) {
-        firstActiveVideo.play().catch(function(error) {
-            console.error("Error al intentar reproducir el primer video:", error);
-            // Podrías mostrar una imagen de fallback o un mensaje si la reproducción automática falla.
+    // Ejecutar animaciones cuando se carga la página y al hacer scroll.
+    window.addEventListener('scroll', animateOnScroll);
+    window.addEventListener('load', animateOnScroll);
+    // Primera ejecución por si hay elementos visibles sin hacer scroll.
+    animateOnScroll();
+
+
+    // --- EFECTO PARALLAX SUTIL EN EL HERO ---
+    const heroSection = document.querySelector('.hero-section');
+    const heroContent = document.querySelector('.hero-content');
+
+    if (heroSection && heroContent) {
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+
+            // Solo aplicar el efecto si estamos viendo la sección del hero.
+            if (scrolled < heroSection.offsetHeight) {
+                // Mueve el contenido hacia abajo a la mitad de la velocidad del scroll.
+                // Usamos `translate` para un rendimiento más fluido.
+                heroContent.style.transform = `translate(-50%, calc(-50% + ${scrolled * 0.4}px))`;
+            }
         });
     }
+
 });

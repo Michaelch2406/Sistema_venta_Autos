@@ -12,8 +12,7 @@ if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 }
 
 if (!$veh_id) {
-    // Redirigir a una página de error o al listado si no hay ID
-    header("Location: autos_usados.php"); // O a una página de "no encontrado"
+    header("Location: autos_usados.php");
     exit();
 }
 
@@ -24,7 +23,6 @@ $imagenes_model = new ImagenesVehiculo_M();
 $imagenes = $imagenes_model->getImagenesPorVehiculo($veh_id);
 
 if (!$vehiculo) {
-    // Si el SP devolvió null (vehículo no encontrado o no disponible)
     echo "<!DOCTYPE html><html><head><title>Vehículo no Encontrado</title><link href='../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Vehículo no Encontrado</h1><p>El vehículo que buscas no está disponible o no existe.</p><a href='inicio.php' class='btn btn-primary'>Volver al Inicio</a></div></body></html>";
     exit();
 }
@@ -35,17 +33,15 @@ $nombre_vehiculo_completo = htmlspecialchars($vehiculo['mar_nombre'] . " " . $ve
 $precio_formateado = number_format((float)$vehiculo['veh_precio'], 2, '.', ',');
 $kilometraje_formateado = $vehiculo['veh_condicion'] == 'usado' ? number_format((int)$vehiculo['veh_kilometraje']) . " km" : "0 km (Nuevo)";
 if ($vehiculo['veh_condicion'] == 'usado' && $vehiculo['veh_kilometraje'] === null) {
-    $kilometraje_formateado = "N/D km"; // Or some other placeholder for used cars with no mileage specified
+    $kilometraje_formateado = "N/D km";
 }
-
 
 $detalles_extra_array = [];
 if (!empty($vehiculo['veh_detalles_extra'])) {
     $detalles_extra_array = array_map('trim', explode(',', $vehiculo['veh_detalles_extra']));
 }
 
-// Separar la imagen principal de las demás
-$imagen_principal_url = '../PUBLIC/Img/auto_placeholder.png'; // Default
+$imagen_principal_url = '../PUBLIC/Img/auto_placeholder.png';
 $imagenes_galeria = [];
 if (!empty($imagenes)) {
     foreach ($imagenes as $img) {
@@ -55,17 +51,13 @@ if (!empty($imagenes)) {
             $imagenes_galeria[] = htmlspecialchars($img['ima_url_frontend']);
         }
     }
-    // Si no se encontró una principal explícita, y hay imágenes, usar la primera
     if ($imagen_principal_url === '../PUBLIC/Img/auto_placeholder.png' && !empty($imagenes[0]['ima_url_frontend'])) {
         $imagen_principal_url = htmlspecialchars($imagenes[0]['ima_url_frontend']);
-        // Si la primera era la principal, ya se usó. Si no, quitarla de la galería si ya es la principal.
         if(isset($imagenes_galeria[0]) && $imagenes_galeria[0] === $imagen_principal_url) {
             array_shift($imagenes_galeria);
         }
     }
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -76,103 +68,14 @@ if (!empty($imagenes)) {
     <title><?php echo $titulo_pagina; ?></title>
     <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Lightbox CSS (opcional, para galería de imágenes) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <link href="../PUBLIC/css/styles.css" rel="stylesheet">
+    
+    <!-- === CAMBIO REALIZADO AQUÍ === -->
+    <link href="../VISTAS/css/detalle_vehiculo.css" rel="stylesheet">
+    <!-- ============================= -->
+
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
-    <style>
-        .detalle-vehiculo-header {
-            margin-bottom: 1.5rem;
-        }
-
-        .precio-destacado {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #0d6efd;
-            margin-bottom: 1rem;
-        }
-
-        .galeria-principal img {
-            width: 100%;
-            max-height: 500px;
-            object-fit: cover;
-            border-radius: .5rem;
-            border: 1px solid #dee2e6;
-        }
-
-        .galeria-miniaturas img {
-            height: 80px;
-            width: 100%;
-            object-fit: cover;
-            cursor: pointer;
-            border-radius: .25rem;
-            border: 1px solid #dee2e6;
-            opacity: 0.7;
-            transition: opacity 0.2s ease-in-out;
-        }
-
-        .galeria-miniaturas img:hover,
-        .galeria-miniaturas img.active-thumb {
-            opacity: 1;
-            border-color: #0d6efd;
-        }
-
-        .detalle-seccion {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .detalle-seccion:last-child {
-            border-bottom: none;
-        }
-
-        .detalle-seccion h3 {
-            font-size: 1.5rem;
-            color: #343a40;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .detalle-lista {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .detalle-lista li {
-            padding: 0.5rem 0;
-            border-bottom: 1px dashed #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .detalle-lista li:last-child {
-            border-bottom: none;
-        }
-
-        .detalle-lista li strong {
-            color: #495057;
-        }
-
-        .contact-card {
-            background-color: #f8f9fa;
-        }
-
-        .contact-card .btn-whatsapp {
-            background-color: #25D366;
-            color: white;
-        }
-
-        .contact-card .btn-whatsapp:hover {
-            background-color: #1DAE50;
-        }
-
-        .detalles-extra-list i {
-            color: #198754;
-        }
-
-        /* Verde para check */
-    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -185,7 +88,6 @@ if (!empty($imagenes)) {
     <main class="flex-grow-1 content-hidden">
         <div class="container py-5">
             <div class="pt-3">
-                <!-- Espacio para el navbar fijo -->
                 <nav aria-label="breadcrumb mb-4">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="inicio.php">Inicio</a></li>
@@ -211,7 +113,7 @@ if (!empty($imagenes)) {
                         </div>
                         <?php if (count($imagenes_galeria) > 0): ?>
                         <div class="galeria-miniaturas d-flex flex-wrap justify-content-start gap-2">
-                            <?php if ($imagen_principal_url !== '../PUBLIC/Img/auto_placeholder.png' && !in_array($imagen_principal_url, $imagenes_galeria)): // Mostrar la principal si no está ya en galería ?>
+                            <?php if ($imagen_principal_url !== '../PUBLIC/Img/auto_placeholder.png' && !in_array($imagen_principal_url, $imagenes_galeria)): ?>
                             <a href="<?php echo $imagen_principal_url; ?>" data-lightbox="galeria-vehiculo"
                                 data-title="<?php echo $nombre_vehiculo_completo; ?>">
                                 <img src="<?php echo $imagen_principal_url; ?>" alt="Miniatura principal"
@@ -279,7 +181,6 @@ if (!empty($imagenes)) {
                                 <p class="small text-muted">Tel:
                                     <?php echo htmlspecialchars($vehiculo['gestor_telefono']); ?></p>
                                 <?php endif; ?>
-                                <!-- Podrías añadir un botón para un formulario de contacto directo aquí -->
                             </div>
                         </div>
                         <?php endif; ?>
@@ -361,7 +262,6 @@ if (!empty($imagenes)) {
                         <?php endif; ?>
                     </div>
                     <div class="col-lg-4">
-                        <!-- Espacio para publicidad, vehículos relacionados, etc. -->
                         <div class="sticky-top" style="top: 80px;">
                             <div class="card shadow-sm">
                                 <div class="card-body">
@@ -386,7 +286,6 @@ if (!empty($imagenes)) {
                                 <div class="card-body">
                                     <h5 class="card-title">Comparte</h5>
                                     <p class="card-text small text-muted">Si te gustó este vehículo, ¡compártelo!</p>
-                                    <!-- Implementar botones de compartir -->
                                     <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode('http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); ?>"
                                         target="_blank" class="btn btn-sm btn-outline-primary me-1"><i
                                             class="bi bi-facebook"></i></a>
@@ -409,7 +308,6 @@ if (!empty($imagenes)) {
 
     <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- Lightbox JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <script src="../VISTAS/JS/global.js"></script>
     <script src="../VISTAS/JS/detalle_vehiculo.js"></script>

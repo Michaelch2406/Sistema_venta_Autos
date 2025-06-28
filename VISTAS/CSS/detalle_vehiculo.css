@@ -1,0 +1,90 @@
+.detalle-vehiculo-header {
+    margin-bottom: 1.5rem;
+}
+
+.precio-destacado {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0d6efd;
+    margin-bottom: 1rem;
+}
+
+.galeria-principal img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: .5rem;
+    border: 1px solid #dee2e6;
+}
+
+.galeria-miniaturas img {
+    height: 80px;
+    width: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: .25rem;
+    border: 1px solid #dee2e6;
+    opacity: 0.7;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.galeria-miniaturas img:hover,
+.galeria-miniaturas img.active-thumb {
+    opacity: 1;
+    border-color: #0d6efd;
+}
+
+.detalle-seccion {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.detalle-seccion:last-child {
+    border-bottom: none;
+}
+
+.detalle-seccion h3 {
+    font-size: 1.5rem;
+    color: #343a40;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.detalle-lista {
+    list-style: none;
+    padding-left: 0;
+}
+
+.detalle-lista li {
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.detalle-lista li:last-child {
+    border-bottom: none;
+}
+
+.detalle-lista li strong {
+    color: #495057;
+}
+
+.contact-card {
+    background-color: #f8f9fa;
+}
+
+.contact-card .btn-whatsapp {
+    background-color: #25D366;
+    color: white;
+}
+
+.contact-card .btn-whatsapp:hover {
+    background-color: #1DAE50;
+}
+
+.detalles-extra-list i {
+    color: #198754;
+    /* Verde para check */
+}

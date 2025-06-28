@@ -49,7 +49,8 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-9">
+
+                    <div class="col-lg-9">                        
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div id="conteoResultados" class="text-muted"><i class="bi bi-car-front me-2"></i>Cargando...</div>
                             <button class="btn btn-outline-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtrosOffcanvas" aria-controls="filtrosOffcanvas"><i class="bi bi-funnel me-2"></i>Filtros</button>

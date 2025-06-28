@@ -77,7 +77,7 @@ function renderVehiculos(vehiculos) {
             if (imagenUrl.startsWith('PUBLIC/')) { imagenUrl = '../' + imagenUrl; }
 
             const precioFormateado = v.veh_precio ? parseFloat(v.veh_precio).toLocaleString('es-EC', { style: 'currency', currency: 'USD' }) : 'Consultar';
-            const kmFormateado = v.veh_kilometraje ? parseInt(v.veh_kilometraje).toLocaleString('es-EC') + ' km' : 'N/D';
+            const kmFormateado = v.veh_kilometraje ? parseInt(v.veh_kilometraje).toLocaleString('es-EC') : '0';
             
             const cardHtml = `
                 <div class="col-sm-6 col-md-6 col-lg-4 mb-4">
@@ -89,9 +89,10 @@ function renderVehiculos(vehiculos) {
                             <h5 class="card-title"><a href="detalle_vehiculo.php?id=${v.veh_id}" class="text-dark text-decoration-none">${v.mar_nombre} ${v.mod_nombre}</a></h5>
                             <p class="precio mb-2">${precioFormateado}</p>
                             <div class="caracteristicas-list mt-1">
-                                <p class="caracteristica-item mb-1"><i class="bi bi-calendar-event"></i> Año: ${v.veh_anio}</p>
-                                ${v.veh_condicion === 'usado' ? `<p class="caracteristica-item mb-1"><i class="bi bi-speedometer2"></i> ${kmFormateado}</p>` : ''}
-                                <p class="caracteristica-item mb-1"><i class="bi bi-geo-alt"></i> ${v.veh_ubicacion_ciudad || 'N/D'}, ${v.veh_ubicacion_provincia || 'N/D'}</p>
+                                <p class="caracteristica-item mb-1"><i class="bi bi-calendar-event me-2"></i>Año: ${v.veh_anio}</p>
+                                <!-- LÍNEA MODIFICADA: Ahora siempre se muestra -->
+                                <p class="caracteristica-item mb-1"><i class="bi bi-speedometer2 me-2"></i>Recorrido: ${kmFormateado} km</p>
+                                <p class="caracteristica-item mb-1"><i class="bi bi-geo-alt me-2"></i>${v.veh_ubicacion_ciudad || 'N/D'}, ${v.veh_ubicacion_provincia || 'N/D'}</p>
                             </div>
                             <a href="detalle_vehiculo.php?id=${v.veh_id}" class="btn btn-primary mt-auto w-100 view-details-btn"><i class="bi bi-search me-2"></i>Ver Detalles</a>
                         </div>

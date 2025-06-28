@@ -1,4 +1,6 @@
 <?php
+// Usamos @ para suprimir la advertencia si la sesión ya fue iniciada en la página padre.
+@session_start(); 
 $currentPageNavbar = basename($_SERVER['PHP_SELF']);
 ?>
 <!-- Enlace al CSS específico del Navbar -->
@@ -14,58 +16,76 @@ $currentPageNavbar = basename($_SERVER['PHP_SELF']);
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Menú Principal Izquierdo -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPageNavbar == 'inicio.php') ? 'active' : ''; ?>" href="inicio.php">
-                        <i class="bi bi-house-fill me-2"></i>Inicio
-                    </a>
+                    <a class="nav-link <?php echo ($currentPageNavbar == 'inicio.php') ? 'active' : ''; ?>" href="inicio.php"><i class="bi bi-house-fill me-2"></i>Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPageNavbar == 'autos_nuevos.php') ? 'active' : ''; ?>" href="#">
-                        <i class="bi bi-car-front-fill me-2"></i>Autos Nuevos
-                    </a>
+                    <a class="nav-link <?php echo ($currentPageNavbar == 'autos_nuevos.php') ? 'active' : ''; ?>" href="#"><i class="bi bi-car-front-fill me-2"></i>Autos Nuevos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPageNavbar == 'autos_usados.php') ? 'active' : ''; ?>" href="autos_usados.php"> 
-                        <i class="bi bi-car-front me-2"></i>Vehículos Usados
-                    </a>
+                    <a class="nav-link <?php echo ($currentPageNavbar == 'autos_usados.php') ? 'active' : ''; ?>" href="autos_usados.php"><i class="bi bi-car-front me-2"></i>Vehículos Usados</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPageNavbar == 'contacto.php') ? 'active' : ''; ?>" href="contacto.php">
-                        <i class="bi bi-envelope-fill me-2"></i>Contacto
-                    </a>
+                    <a class="nav-link <?php echo ($currentPageNavbar == 'contacto.php') ? 'active' : ''; ?>" href="contacto.php"><i class="bi bi-envelope-fill me-2"></i>Contacto</a>
                 </li>
-                <?php 
-                // El antiguo "Panel Admin" se integra o reemplaza por "Mi Tablero"
-                // if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3): // Rol Admin
-                // ?>
-                     <li class="nav-item">
-                         <a class="nav-link <?php echo ($currentPageNavbar == 'admin_panel.php') ? 'active' : ''; ?>" href="admin_panel.php">
-                             <i class="bi bi-shield-fill-check me-2"></i>Panel Admin
-                         </a>
-                     </li>
-                <?php //endif; ?>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <?php if (isset($_SESSION['usu_id']) && isset($_SESSION['usu_nombre_completo'])): ?>
-                    <?php
-                        // Determinar el enlace para "Mi Tablero"
-                        $dashboard_link = "escritorio.php"; // Default para roles no admin
-                        $dashboard_page_check = 'escritorio.php';
-                        if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3) { // Rol Admin ID es 3
-                            $dashboard_link = "admin_panel.php";
-                            $dashboard_page_check = 'admin_panel.php';
-                        }
-                    ?>
+                
+                <?php
+                // --- LÓGICA PRINCIPAL PARA PANELES DE USUARIO ---
+                // Solo se muestra si el usuario ha iniciado sesión.
+                if (isset($_SESSION['rol_id'])):
+                    $panel_text = '';
+                    $panel_url = '';
+                    $panel_page_name = '';
+
+                    // Caso para Administrador (Rol 3)
+                    if ($_SESSION['rol_id'] == 3) {
+                        $panel_text = 'Panel Admin';
+                        $panel_url = 'admin_panel.php';
+                        $panel_page_name = 'admin_panel.php';
+                    } 
+                    // Caso para Cliente o Asesor (Roles 1 y 2)
+                    elseif ($_SESSION['rol_id'] == 1 || $_SESSION['rol_id'] == 2) {
+                        $panel_text = 'Mi Panel';
+                        $panel_url = 'escritorio.php';
+                        $panel_page_name = 'escritorio.php';
+                    }
+
+                    // Si se encontró un rol válido, muestra el enlace al panel
+                    if (!empty($panel_url)):
+                ?>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo ($currentPageNavbar == $dashboard_page_check) ? 'active' : ''; ?>" href="<?php echo $dashboard_link; ?>">
-                            <i class="bi bi-speedometer2 me-2"></i>Mi Tablero
+                        <a class="nav-link <?php echo ($currentPageNavbar == $panel_page_name) ? 'active' : ''; ?>" href="<?php echo $panel_url; ?>">
+                            <i class="bi bi-person-workspace me-2"></i><?php echo $panel_text; ?>
                         </a>
                     </li>
+                <?php 
+                    endif;
+                endif; 
+                ?>
+            </ul>
+            
+            <!-- Menú de Usuario Derecho -->
+            <ul class="navbar-nav ms-auto">
+                <?php if (isset($_SESSION['usu_id']) && isset($_SESSION['usu_nombre_completo'])): ?>
+                    <!-- Si el usuario inició sesión, muestra un menú desplegable -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i><?php echo htmlspecialchars($_SESSION['usu_nombre_completo']); ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                            <li><a class="dropdown-item" href="configuracion_cuenta.php"><i class="bi bi-person-fill-gear me-2"></i>Mi Perfil</a></li>
+                            <li><a class="dropdown-item" href="mis_vehiculos.php"><i class="bi bi-card-list me-2"></i>Mis Publicaciones</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
                 <?php else: ?>
+                    <!-- Si no ha iniciado sesión, muestra el botón para hacerlo -->
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($currentPageNavbar == 'login.php') ? 'active' : ''; ?>" href="login.php" title="Iniciar Sesión">
-                            <i class="bi bi-person-circle me-2"></i> Iniciar Sesión
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
                         </a>
                     </li>
                 <?php endif; ?>
