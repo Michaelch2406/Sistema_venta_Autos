@@ -1,0 +1,323 @@
+/* FUENTES Y VARIABLES DE COLOR PARA EL TEMA LUJOSO */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --luxury-dark-bg: #1a1a1a; /* Negro profundo o gris muy oscuro */
+    --luxury-card-bg: #2c2c2c; /* Gris oscuro para tarjetas */
+    --luxury-text: #e0e0e0;    /* Texto principal claro, no blanco puro */
+    --luxury-gold: #daa520;    /* Dorado para acentos y highlights */
+    --luxury-gold-hover: #b8860b; /* Dorado más oscuro para hover */
+    --luxury-border: #444;   /* Bordes sutiles */
+    --luxury-font-primary: 'Playfair Display', serif;
+    --luxury-font-secondary: 'Montserrat', sans-serif;
+}
+
+/* ESTILOS GENERALES DEL BODY PARA EL TEMA LUJOSO */
+body.luxury-theme {
+    background-color: var(--luxury-dark-bg);
+    color: var(--luxury-text);
+    font-family: var(--luxury-font-secondary);
+    line-height: 1.7;
+    overflow-x: hidden; /* Prevenir scroll horizontal indeseado */
+}
+
+/* Animaciones base */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUpSmall { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleUp { from { transform: scale(0.95); opacity: 0.8; } to { transform: scale(1); opacity: 1;} }
+
+/* SECCIÓN HERO */
+.hero-section-nuevos {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('../PUBLIC/Img/cover_luxury_cars.jpg') no-repeat center center; /* Idealmente una imagen de fondo de alta calidad */
+    background-size: cover;
+    padding: 8rem 0;
+    color: white;
+    animation: fadeIn 1.5s ease-out;
+}
+.hero-section-nuevos .hero-title {
+    font-family: var(--luxury-font-primary);
+    font-size: 3.5rem; /* Ajustar según sea necesario */
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 0.5rem;
+    animation: fadeInUpSmall 1s ease-out 0.5s both;
+}
+.hero-section-nuevos .hero-subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    max-width: 700px;
+    margin: 0 auto 1rem auto;
+    animation: fadeInUpSmall 1s ease-out 0.8s both;
+}
+
+/* BARRA DE CONTROLES Y FILTROS */
+.filtros-controles-nuevos {
+    background-color: rgba(0,0,0,0.3); /* Un poco de transparencia sobre el fondo principal */
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid var(--luxury-border);
+    position: sticky;
+    top: 60px; /* Ajustar si el navbar tiene altura diferente */
+    z-index: 1020; /* Debajo del navbar pero encima del contenido */
+}
+.filtros-controles-nuevos .btn-outline-light {
+    border-color: var(--luxury-gold);
+    color: var(--luxury-gold);
+    transition: all 0.3s ease;
+}
+.filtros-controles-nuevos .btn-outline-light:hover {
+    background-color: var(--luxury-gold);
+    color: var(--luxury-dark-bg);
+    box-shadow: 0 0 15px rgba(218, 165, 32, 0.5);
+}
+.filtros-sidebar-luxury {
+    background-color: rgba(44, 44, 44, 0.8); /* Fondo de filtros ligeramente transparente */
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--luxury-border);
+}
+.filtros-sidebar-luxury .form-select,
+.filtros-sidebar-luxury .form-control {
+    background-color: var(--luxury-card-bg);
+    color: var(--luxury-text);
+    border: 1px solid var(--luxury-border);
+    font-size: 0.9rem;
+}
+.filtros-sidebar-luxury .form-select:focus,
+.filtros-sidebar-luxury .form-control:focus {
+    background-color: var(--luxury-card-bg);
+    color: var(--luxury-text);
+    border-color: var(--luxury-gold);
+    box-shadow: 0 0 0 0.2rem rgba(218, 165, 32, 0.25);
+}
+.filtros-sidebar-luxury .btn-primary {
+    background-color: var(--luxury-gold);
+    border-color: var(--luxury-gold);
+    color: var(--luxury-dark-bg);
+    font-weight: bold;
+}
+.filtros-sidebar-luxury .btn-primary:hover {
+    background-color: var(--luxury-gold-hover);
+    border-color: var(--luxury-gold-hover);
+}
+.filtros-sidebar-luxury .btn-outline-secondary {
+    border-color: var(--luxury-border);
+    color: var(--luxury-text);
+}
+.filtros-sidebar-luxury .btn-outline-secondary:hover {
+    background-color: var(--luxury-border);
+    color: var(--luxury-gold);
+}
+
+/* LISTADO DE VEHÍCULOS - ENFOQUE EN IMÁGENES GRANDES */
+#listaVehiculosNuevos .card-vehiculo-luxury {
+    background-color: var(--luxury-card-bg);
+    border: 1px solid var(--luxury-border);
+    border-radius: 8px; /* Bordes más sutiles */
+    overflow: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    animation: fadeInUpSmall 0.6s ease-out;
+    display: flex; /* Para estructura interna flexible */
+    flex-direction: column;
+    height: 100%; /* Asegurar que todas las tarjetas tengan la misma altura si están en una fila */
+}
+#listaVehiculosNuevos .card-vehiculo-luxury:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3), 0 0 20px var(--luxury-gold-hover);
+}
+
+#listaVehiculosNuevos .vehiculo-imagen-container {
+    width: 100%;
+    padding-top: 65%; /* Aspect ratio para la imagen (ej. 16:9 sería 56.25%, 4:3 sería 75%) - Ajustar según el tamaño deseado */
+    position: relative;
+    overflow: hidden;
+}
+#listaVehiculosNuevos .vehiculo-imagen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cubrir el contenedor manteniendo el aspect ratio */
+    transition: transform 0.5s ease;
+}
+#listaVehiculosNuevos .card-vehiculo-luxury:hover .vehiculo-imagen {
+    transform: scale(1.08); /* Efecto zoom sutil en la imagen */
+}
+
+#listaVehiculosNuevos .vehiculo-info {
+    padding: 1.5rem; /* Más padding para un look espacioso */
+    text-align: center;
+    flex-grow: 1; /* Para que el contenido de texto ocupe el espacio restante */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para empujar el botón "Ver Detalles" hacia abajo */
+}
+#listaVehiculosNuevos .vehiculo-marca-modelo {
+    font-family: var(--luxury-font-primary);
+    font-size: 1.6rem; /* Tamaño de fuente prominente para marca y modelo */
+    color: white; /* Destacar sobre el fondo oscuro de la tarjeta */
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+#listaVehiculosNuevos .vehiculo-precio {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--luxury-gold);
+    margin-bottom: 1rem;
+}
+#listaVehiculosNuevos .vehiculo-anio,
+#listaVehiculosNuevos .vehiculo-condicion {
+    font-size: 0.9rem;
+    color: var(--luxury-text);
+    opacity: 0.8;
+    margin-bottom: 0.3rem;
+}
+#listaVehiculosNuevos .btn-ver-detalles-luxury {
+    background-color: transparent;
+    border: 2px solid var(--luxury-gold);
+    color: var(--luxury-gold);
+    padding: 0.6rem 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    border-radius: 50px; /* Botones más redondeados/píldora */
+    transition: all 0.3s ease;
+    margin-top: 1rem; /* Espacio arriba del botón */
+}
+#listaVehiculosNuevos .btn-ver-detalles-luxury:hover {
+    background-color: var(--luxury-gold);
+    color: var(--luxury-dark-bg);
+    box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
+}
+
+/* MENSAJE DE NO VEHÍCULOS Y CARGA */
+#noVehiculosListadoMessageNuevos {
+    padding: 3rem 0;
+}
+#noVehiculosListadoMessageNuevos .text-muted-luxury {
+    color: var(--luxury-text) !important;
+    opacity: 0.7;
+}
+#noVehiculosListadoMessageNuevos .text-gold {
+    color: var(--luxury-gold) !important;
+    text-decoration: none;
+}
+#noVehiculosListadoMessageNuevos .text-gold:hover {
+    color: var(--luxury-gold-hover) !important;
+    text-decoration: underline;
+}
+#loadingVehiculosListadoNuevos p {
+    color: var(--luxury-text) !important;
+    opacity: 0.8;
+}
+
+/* PAGINACIÓN ESTILO LUJOSO */
+#paginacionVehiculosNuevos .pagination .page-item .page-link {
+    background-color: transparent;
+    border: 1px solid var(--luxury-border);
+    color: var(--luxury-text);
+    margin: 0 5px;
+    border-radius: 4px; /* Bordes sutiles */
+    transition: all 0.3s ease;
+}
+#paginacionVehiculosNuevos .pagination .page-item .page-link:hover {
+    background-color: var(--luxury-gold);
+    color: var(--luxury-dark-bg);
+    border-color: var(--luxury-gold);
+}
+#paginacionVehiculosNuevos .pagination .page-item.active .page-link {
+    background-color: var(--luxury-gold);
+    border-color: var(--luxury-gold);
+    color: var(--luxury-dark-bg);
+    font-weight: bold;
+}
+#paginacionVehiculosNuevos .pagination .page-item.disabled .page-link {
+    color: var(--luxury-border);
+    border-color: var(--luxury-border);
+}
+
+/* OFFCANVAS DE FILTROS MÓVILES */
+.luxury-offcanvas {
+    background-color: var(--luxury-dark-bg);
+    color: var(--luxury-text);
+    border-left: 1px solid var(--luxury-border); /* Borde sutil */
+}
+.luxury-offcanvas .offcanvas-header {
+    border-bottom: 1px solid var(--luxury-border);
+}
+.luxury-offcanvas .btn-close-white {
+    filter: invert(70%) sepia(60%) saturate(500%) hue-rotate(10deg); /* Para que el X sea dorado */
+}
+.luxury-offcanvas .offcanvas-title .text-gold {
+     color: var(--luxury-gold) !important;
+}
+/* Estilos para el formulario clonado dentro del offcanvas */
+#filtrosMobileBodyNuevos #filtrosFormNuevosMobile {
+    /* Aquí puedes añadir estilos específicos si el formulario clonado necesita ajustes para el offcanvas */
+}
+#filtrosMobileBodyNuevos #filtrosFormNuevosMobile .form-select,
+#filtrosMobileBodyNuevos #filtrosFormNuevosMobile .form-control {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+#filtrosMobileBodyNuevos #filtrosFormNuevosMobile .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+/* Columnas para el listado de vehículos */
+/* Por defecto Bootstrap usa .row > .col-*, aquí podemos forzar un comportamiento si es necesario.
+   El HTML ya usa g-xl-5 g-lg-4 etc. para gutters, lo cual es bueno.
+   Podríamos definir cuantas columnas queremos por breakpoint si el sistema de grid de Bootstrap no es suficiente.
+   Ejemplo: 1 columna en sm, 2 en md, 3 en lg. (Actualmente el HTML tiene solo .row)
+   El HTML actual para #listaVehiculosNuevos es solo <div class="row g-xl-5 ...">,
+   el JS es el que añade las columnas (ej. col-md-4). Eso se adaptará en el JS.
+*/
+
+/* Ajustes responsivos adicionales */
+@media (max-width: 768px) {
+    .hero-section-nuevos .hero-title {
+        font-size: 2.5rem;
+    }
+    .hero-section-nuevos .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    .filtros-controles-nuevos {
+        top: 56px; /* Si el navbar es más pequeño en móviles */
+    }
+     #listaVehiculosNuevos .vehiculo-marca-modelo {
+        font-size: 1.3rem;
+    }
+    #listaVehiculosNuevos .vehiculo-precio {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section-nuevos {
+        padding: 6rem 0;
+    }
+     .filtros-sidebar-luxury {
+        padding: 0.8rem;
+    }
+    .filtros-sidebar-luxury .form-select,
+    .filtros-sidebar-luxury .form-control {
+        font-size: 0.85rem;
+    }
+}
+
+/* Estilos para el loader de página global (si se quiere personalizar más allá de styles.css) */
+#page-loader l-trefoil {
+    /* color: var(--luxury-gold); ya se define en el HTML */
+}
+
+/* Asegurar que el footer también se adapte si es necesario */
+/* body.luxury-theme footer { ... } */
+/* Esto dependerá de cómo esté estructurado el footer.php */
+
+/* Para el placeholder del navbar, si se quiere un fondo oscuro mientras carga */
+#navbar-placeholder {
+    /* min-height: 60px;  Asumiendo altura del navbar */
+    /* background-color: var(--luxury-dark-bg); */
+}

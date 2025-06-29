@@ -22,7 +22,7 @@ $currentPageNavbar = basename($_SERVER['PHP_SELF']);
                     <a class="nav-link <?php echo ($currentPageNavbar == 'inicio.php') ? 'active' : ''; ?>" href="inicio.php"><i class="bi bi-house-fill me-2"></i>Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPageNavbar == 'autos_nuevos.php') ? 'active' : ''; ?>" href="#"><i class="bi bi-car-front-fill me-2"></i>Autos Nuevos</a>
+                    <a class="nav-link <?php echo ($currentPageNavbar == 'autos_nuevos.php') ? 'active' : ''; ?>" href="autos_nuevos.php"><i class="bi bi-car-front-fill me-2"></i>Autos Nuevos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($currentPageNavbar == 'autos_usados.php') ? 'active' : ''; ?>" href="autos_usados.php"><i class="bi bi-car-front me-2"></i>Vehículos Usados</a>
