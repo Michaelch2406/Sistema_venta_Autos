@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Tus Estilos Personalizados -->
     <link href="../PUBLIC/css/styles.css" rel="stylesheet">
+    
+    <link href="../VISTAS" rel="stylesheet">
 
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>

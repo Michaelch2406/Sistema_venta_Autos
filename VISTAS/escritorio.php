@@ -136,6 +136,5 @@ $es_admin = ($rol_id == 3);
     <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/escritorio.js"></script> 
 </body>
 </html>

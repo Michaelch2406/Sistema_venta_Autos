@@ -62,6 +62,51 @@
                             <source src="../PUBLIC/Video/The new Kia Sportage _ Unveiling Film.mp4" type="video/mp4">
                         </video>
                     </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/Esto Es Nissan KICKS I Detona Tu Instinto.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/Chevy Silverado No le dice No a Nada Comercial Chevrolet.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/In its Element The Pagani Huayra R.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/ALFA ROMEO TONALE PLUG-IN HYBRID Q4_.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/ford_mustang.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/Pagani Utopia - An emotion taking shape..mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/Apollo IE Story.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/Maserati GranTurismo MC Rosso Magma 4K.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="carousel-item">
+                        <video class="d-block w-100 h-100 hero-video-element" autoplay muted playsinline>
+                            <source src="../PUBLIC/Video/Maserati, Presents, Tales of GranTurismo & GranCabrio, 2020.mp4" type="video/mp4">
+                        </video>
+                    </div>
 
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#heroVideoCarousel" data-bs-slide="prev">

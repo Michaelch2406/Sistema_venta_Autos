@@ -71,49 +71,56 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                         class="text-muted">(Ej: Doble Cabina)</span></label><input type="text"
                                     class="form-control" id="veh_subtipo_vehiculo" name="veh_subtipo_vehiculo"
                                     placeholder="Opcional"></div>
-                            <div class="col-md-6"><label for="veh_anio" class="form-label">Año Fabricación <span
-                                        class="text-danger">*</span></label><select class="form-select form-select-lg"
-                                    id="veh_anio" name="veh_anio" required>
-                                    <option value="" selected disabled>Selecciona año...</option>
-                                    <?php echo $years_options; ?>
-                                </select>
-                                <div class="invalid-feedback">Selecciona año.</div>
-                            </div>
-                            <div class="col-md-6"><label for="veh_condicion" class="form-label">Condición <span
-                                        class="text-danger">*</span></label><select class="form-select form-select-lg"
-                                    id="veh_condicion" name="veh_condicion" required>
+
+                            <!-- === CAMBIO REALIZADO AQUÍ: "Condición" AHORA ESTÁ ANTES DE "Año" === -->
+                            <div class="col-md-6">
+                                <label for="veh_condicion" class="form-label">Condición <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select form-select-lg" id="veh_condicion" name="veh_condicion"
+                                    required>
                                     <option value="" selected disabled>Selecciona...</option>
                                     <option value="nuevo">Nuevo (0 km)</option>
                                     <option value="usado">Usado</option>
                                 </select>
-                                <div class="invalid-feedback">Indica condición.</div>
+                                <div class="invalid-feedback">Indica la condición del vehículo.</div>
                             </div>
+
+                            <div class="col-md-6">
+                                <label for="veh_anio" class="form-label">Año Fabricación <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select form-select-lg" id="veh_anio" name="veh_anio" required>
+                                    <option value="" selected disabled>Selecciona año...</option>
+                                    <?php echo $years_options; ?>
+                                </select>
+                                <div class="invalid-feedback">Selecciona el año de fabricación.</div>
+                            </div>
+                            <!-- =================================================================== -->
+
                             <div class="col-md-6" id="kilometraje_div_container"><label for="veh_kilometraje"
                                     class="form-label" id="label_kilometraje">Recorrido (km)</label><input type="number"
                                     class="form-control form-control-lg" id="veh_kilometraje" name="veh_kilometraje"
                                     placeholder="Ej: 25000" min="0">
-                                <div class="invalid-feedback" id="kilometraje_feedback">Ingresa recorrido.</div>
+                                <div class="invalid-feedback" id="kilometraje_feedback">Ingresa el recorrido.</div>
                             </div>
+
                             <div class="col-12">
                                 <div class="row g-3" id="campos_placa_group" style="display: none;">
-                                    <div class="col-md-6">
-
+                                    <div class="col-md-4">
                                         <label for="veh_placa" class="form-label">Placa</label>
                                         <input type="text" class="form-control" id="veh_placa" name="veh_placa"
                                             placeholder="ABC-1234" pattern="[A-Z]{3}-\d{3,4}"
                                             title="Formato: 3 letras, guion, 3 o 4 números (ej. PBY-1234)">
                                         <div class="invalid-feedback">Placa no válida. Formato: ABC-123 o ABC-1234.
                                         </div>
-
-                                        <label for="veh_placa_provincia_origen" class="form-label">Provincia de
-                                            Placa</label>
-                                        <select class="form-select" id="veh_placa_provincia_origen"
-                                            name="veh_placa_provincia_origen">
+                                    </div>
+                                    <div class="col-md-4"><label for="veh_placa_provincia_origen"
+                                            class="form-label">Provincia de Placa</label><select class="form-select"
+                                            id="veh_placa_provincia_origen" name="veh_placa_provincia_origen">
                                             <option value="" selected disabled>Selecciona...</option>
                                         </select>
-                                        <div class="invalid-feedback">Selecciona provincia.</div>
+                                        <div class="invalid-feedback">Selecciona la provincia.</div>
                                     </div>
-                                    <div class="col-md-6"><label for="veh_ultimo_digito_placa" class="form-label">Último
+                                    <div class="col-md-4"><label for="veh_ultimo_digito_placa" class="form-label">Último
                                             Dígito Placa</label><select class="form-select" id="veh_ultimo_digito_placa"
                                             name="veh_ultimo_digito_placa">
                                             <option value="" selected disabled>Selecciona...</option>
@@ -129,27 +136,29 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                             <option value="9">9</option>
                                             <option value="Sin Placa">Sin Placa</option>
                                         </select>
-                                        <div class="invalid-feedback">Selecciona dígito.</div>
+                                        <div class="invalid-feedback">Selecciona el último dígito.</div>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="col-md-4"><label for="veh_precio" class="form-label">Precio (USD) <span
                                         class="text-danger">*</span></label><input type="number"
                                     class="form-control form-control-lg" id="veh_precio" name="veh_precio"
                                     placeholder="Ej: 15000.00" required step="0.01" min="500" max="5000000">
-                                <div class="invalid-feedback">Precio entre $500-$5M.</div>
+                                <div class="invalid-feedback">El precio debe estar entre $500 y $5,000,000.</div>
                             </div>
                             <div class="col-md-4"><label for="veh_vin" class="form-label">VIN <span
                                         class="text-muted">(Opcional)</span></label><input type="text"
                                     class="form-control" id="veh_vin" name="veh_vin" placeholder="Chasis (17 caract.)"
                                     maxlength="17" pattern="[A-HJ-NPR-Z0-9]{17}">
-                                <div class="invalid-feedback">VIN 17 carac. (sin I,O,Q).</div>
+                                <div class="invalid-feedback">El VIN debe tener 17 caracteres y no puede incluir I, O,
+                                    Q.</div>
                             </div>
                             <div class="col-md-4"><label for="veh_fecha_publicacion" class="form-label">Fecha
                                     Publicación <span class="text-danger">*</span></label><input type="date"
                                     class="form-control" id="veh_fecha_publicacion" name="veh_fecha_publicacion"
                                     required value="<?php echo date('Y-m-d'); ?>">
-                                <div class="invalid-feedback">Ingresa fecha.</div>
+                                <div class="invalid-feedback">Ingresa la fecha de publicación.</div>
                             </div>
                         </div>
                     </div>
@@ -165,20 +174,20 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                     required>
                                     <option value="" selected disabled>Selecciona...</option>
                                 </select>
-                                <div class="invalid-feedback">Selecciona provincia.</div>
+                                <div class="invalid-feedback">Selecciona la provincia de ubicación.</div>
                             </div>
                             <div class="col-md-6"><label for="veh_ubicacion_ciudad" class="form-label">Ciudad Dónde se
                                     Encuentra <span class="text-danger">*</span></label><select class="form-select"
                                     id="veh_ubicacion_ciudad" name="veh_ubicacion_ciudad" required disabled>
                                     <option value="" selected disabled>Selecciona provincia...</option>
                                 </select>
-                                <div class="invalid-feedback">Selecciona ciudad.</div>
+                                <div class="invalid-feedback">Selecciona la ciudad de ubicación.</div>
                             </div>
                             <div class="col-md-6"><label for="veh_color_exterior" class="form-label">Color Exterior
                                     <span class="text-danger">*</span></label><input type="text" class="form-control"
                                     id="veh_color_exterior" name="veh_color_exterior" placeholder="Ej: Rojo brillante"
                                     required>
-                                <div class="invalid-feedback">Ingresa color exterior.</div>
+                                <div class="invalid-feedback">Ingresa el color exterior.</div>
                             </div>
                             <div class="col-md-6"><label for="veh_color_interior" class="form-label">Color
                                     Interior</label><input type="text" class="form-control" id="veh_color_interior"
@@ -195,7 +204,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                     <span class="text-danger">*</span></label><textarea class="form-control"
                                     id="veh_detalles_motor" name="veh_detalles_motor" rows="2"
                                     placeholder="Ej: 2.0L Turbo, 4 cilindros, 250 HP" required></textarea>
-                                <div class="invalid-feedback">Ingresa detalles del motor.</div>
+                                <div class="invalid-feedback">Ingresa los detalles del motor.</div>
                             </div>
                             <div class="col-md-4"><label for="veh_tipo_transmision"
                                     class="form-label">Transmisión</label><select class="form-select"
@@ -314,7 +323,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 <textarea class="form-control" id="veh_descripcion" name="veh_descripcion" rows="5"
                                     placeholder="Cuenta más sobre tu vehículo: historial de mantenimiento, por qué lo vendes, etc."
                                     required></textarea>
-                                <div class="invalid-feedback">Ingresa una descripción.</div>
+                                <div class="invalid-feedback">Ingresa una descripción para el vehículo.</div>
                             </div>
                         </div>
                     </div>
@@ -335,8 +344,8 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 <div id="imagePreviewContainer"
                                     class="mt-3 d-flex flex-wrap gap-2 border p-2 rounded bg-light"
                                     style="min-height: 120px;">
-                                    <small class="text-muted align-self-center mx-auto">Previsualización aparecerá
-                                        aquí...</small>
+                                    <small class="text-muted align-self-center mx-auto">La previsualización de imágenes
+                                        aparecerá aquí...</small>
                                 </div>
                             </div>
                         </div>

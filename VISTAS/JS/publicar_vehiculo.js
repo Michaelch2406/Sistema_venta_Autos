@@ -147,7 +147,7 @@ $(document).ready(function() {
             // Para vehículos nuevos, mostrar solo año actual +1 y actual +2.
             // Seleccionar el más alto (actual + 2) por defecto.
             var anioOpcion1 = currentYear + 1;
-            var anioOpcion2 = currentYear + 2;
+            var anioOpcion2 = currentYear;
 
             $selectAnio.append($('<option>', { value: '', text: 'Selecciona año...', disabled: true }));
             $selectAnio.append($('<option>', { value: anioOpcion2, text: anioOpcion2 }));
