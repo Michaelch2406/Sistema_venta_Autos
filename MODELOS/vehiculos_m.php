@@ -161,6 +161,57 @@ class Vehiculo
         }
         return $out_params;
     }
+
+    /**
+     * Obtiene una lista de vehículos destacados llamando a un Stored Procedure.
+     *
+     * @param string $condicion 'nuevo' o 'usado'.
+     * @param int $limite El número máximo de vehículos a devolver.
+     * @return array Un array con los datos de los vehículos o un array vacío.
+     */
+    public function getVehiculosDestacados($condicion, $limite = 3)
+    {
+        if (!$this->conn) {
+            return [];
+        }
+
+        // --- CAMBIO PRINCIPAL: Se reemplaza la consulta SQL por la llamada al SP ---
+        $sql = "CALL sp_get_vehiculos_destacados(?, ?)";
+        // --------------------------------------------------------------------
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            if ($stmt === false) {
+                // Mensaje de error más específico
+                error_log("Error al preparar la llamada a sp_get_vehiculos_destacados: " . $this->conn->error);
+                return [];
+            }
+            
+            // Los parámetros se enlazan de la misma manera
+            $stmt->bind_param("si", $condicion, $limite);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            
+            $vehiculos = [];
+            while ($fila = $resultado->fetch_assoc()) {
+                // Preparamos la URL de la imagen para el frontend
+                if (!empty($fila['imagen_principal_url']) && strpos($fila['imagen_principal_url'], 'PUBLIC/') === 0) {
+                    $fila['imagen_principal_url'] = '../' . $fila['imagen_principal_url'];
+                } else {
+                    $fila['imagen_principal_url'] = '../PUBLIC/Img/auto_placeholder.png';
+                }
+                $vehiculos[] = $fila;
+            }
+            
+            $stmt->close();
+            return $vehiculos;
+
+        } catch (Exception $e) {
+            // Mensaje de error más específico
+            error_log("Excepción al llamar a sp_get_vehiculos_destacados: " . $e->getMessage());
+            return [];
+        }
+    }
     public function getVehiculosListado($filtros)
     {
         if (!$this->conn) return ['vehiculos' => [], 'total' => 0, 'error' => 'No hay conexión a BD'];

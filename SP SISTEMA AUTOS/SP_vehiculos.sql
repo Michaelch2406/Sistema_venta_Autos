@@ -25,6 +25,8 @@ DELIMITER ;
 -- 3. MODIFICAR STORED PROCEDURE sp_insertar_vehiculo
 USE SistemaVentaAutos;
 
+USE SistemaVentaAutos;
+
 DROP PROCEDURE IF EXISTS sp_insertar_vehiculo;
 DELIMITER //
 CREATE PROCEDURE sp_insertar_vehiculo(
@@ -38,6 +40,8 @@ CREATE PROCEDURE sp_insertar_vehiculo(
     IN p_veh_kilometraje INT,
     IN p_veh_precio DECIMAL(12, 2),
     IN p_veh_vin VARCHAR(20),
+    -- NUEVO PARÁMETRO AÑADIDO --
+    IN p_veh_placa VARCHAR(10),
     IN p_veh_ubicacion_provincia VARCHAR(100),
     IN p_veh_ubicacion_ciudad VARCHAR(100),
     IN p_veh_placa_provincia_origen VARCHAR(100),
@@ -59,24 +63,26 @@ CREATE PROCEDURE sp_insertar_vehiculo(
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    -- (El cuerpo del procedimiento va aquí)
     SET p_resultado = 0; 
     SET p_mensaje = 'Error al insertar el vehículo.';
     SET p_veh_id_insertado = NULL;
 
-    IF p_veh_vin IS NOT NULL AND p_veh_vin != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_vin = p_veh_vin) THEN
+    -- Añadimos validación para la placa única
+    IF p_veh_placa IS NOT NULL AND p_veh_placa != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_placa = p_veh_placa) THEN
+        SET p_mensaje = 'La placa ingresada ya existe para otro vehículo.';
+    ELSEIF p_veh_vin IS NOT NULL AND p_veh_vin != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_vin = p_veh_vin) THEN
         SET p_mensaje = 'El VIN ingresado ya existe para otro vehículo.';
     ELSE
         INSERT INTO Vehiculos (
             mar_id, mod_id, tiv_id, veh_subtipo_vehiculo, usu_id_gestor, veh_condicion, veh_anio, veh_kilometraje,
-            veh_precio, veh_vin, veh_ubicacion_provincia, veh_ubicacion_ciudad, veh_placa_provincia_origen, veh_ultimo_digito_placa,
+            veh_precio, veh_vin, veh_placa, veh_ubicacion_provincia, veh_ubicacion_ciudad, veh_placa_provincia_origen, veh_ultimo_digito_placa,
             veh_color_exterior, veh_color_interior, veh_detalles_motor, veh_tipo_transmision,
             veh_traccion, veh_tipo_vidrios, veh_tipo_combustible, veh_tipo_direccion, veh_sistema_climatizacion,
             veh_descripcion, veh_detalles_extra,
             veh_estado, veh_fecha_publicacion
         ) VALUES (
             p_mar_id, p_mod_id, p_tiv_id, p_veh_subtipo_vehiculo, p_usu_id_gestor, p_veh_condicion, p_veh_anio, p_veh_kilometraje,
-            p_veh_precio, p_veh_vin, p_veh_ubicacion_provincia, p_veh_ubicacion_ciudad, p_veh_placa_provincia_origen, p_veh_ultimo_digito_placa,
+            p_veh_precio, p_veh_vin, p_veh_placa, p_veh_ubicacion_provincia, p_veh_ubicacion_ciudad, p_veh_placa_provincia_origen, p_veh_ultimo_digito_placa,
             p_veh_color_exterior, p_veh_color_interior, p_veh_detalles_motor, p_veh_tipo_transmision,
             p_veh_traccion, p_veh_tipo_vidrios, p_veh_tipo_combustible, p_veh_tipo_direccion, p_veh_sistema_climatizacion,
             p_veh_descripcion, p_veh_detalles_extra,
@@ -304,10 +310,10 @@ CREATE PROCEDURE sp_get_vehiculo_detalle(
     IN p_veh_id INT
 )
 BEGIN
-    -- Obtener detalles principales del vehículo
     SELECT
         v.veh_id, v.veh_subtipo_vehiculo, v.veh_condicion, v.veh_anio, v.veh_kilometraje,
-        v.veh_precio, v.veh_vin, v.veh_ubicacion_provincia, v.veh_ubicacion_ciudad,
+        v.veh_precio, v.veh_vin, v.veh_placa, -- CAMPO AÑADIDO
+        v.veh_ubicacion_provincia, v.veh_ubicacion_ciudad,
         v.veh_placa_provincia_origen, v.veh_ultimo_digito_placa,
         v.veh_color_exterior, v.veh_color_interior, v.veh_detalles_motor,
         v.veh_tipo_transmision, v.veh_traccion, v.veh_tipo_vidrios, v.veh_tipo_combustible,
@@ -316,19 +322,13 @@ BEGIN
         m.mar_nombre, mo.mod_nombre, tv.tiv_nombre,
         u_gestor.usu_usuario AS gestor_usuario, 
         CONCAT(u_gestor.usu_nombre, ' ', u_gestor.usu_apellido) AS gestor_nombre_completo,
-        u_gestor.usu_telefono AS gestor_telefono -- Teléfono del vendedor/gestor
+        u_gestor.usu_telefono AS gestor_telefono
     FROM Vehiculos v
     JOIN Marcas m ON v.mar_id = m.mar_id
     JOIN Modelos mo ON v.mod_id = mo.mod_id
     JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id
-    LEFT JOIN Usuarios u_gestor ON v.usu_id_gestor = u_gestor.usu_id -- LEFT JOIN por si usu_id_gestor es NULL
-    WHERE v.veh_id = p_veh_id AND v.veh_estado = 'disponible'; -- Solo mostrar si está disponible
-
-    -- Obtener imágenes del vehículo (se manejará en un segundo result set o llamada separada)
-    -- SELECT ima_url, ima_es_principal
-    -- FROM ImagenesVehiculo
-    -- WHERE veh_id = p_veh_id
-    -- ORDER BY ima_es_principal DESC, ima_id ASC;
+    LEFT JOIN Usuarios u_gestor ON v.usu_id_gestor = u_gestor.usu_id
+    WHERE v.veh_id = p_veh_id;
 END //
 DELIMITER ;
 
@@ -365,3 +365,38 @@ BEGIN
 END//
 DELIMITER ;
 
+
+USE SistemaVentaAutos; -- Asegúrate de usar la base de datos correcta
+
+DROP PROCEDURE IF EXISTS sp_get_vehiculos_destacados;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_get_vehiculos_destacados(
+    IN p_condicion VARCHAR(10),
+    IN p_limite INT
+)
+BEGIN
+    SELECT 
+        v.veh_id, 
+        v.veh_anio, 
+        v.veh_kilometraje, 
+        v.veh_precio, 
+        v.veh_ubicacion_ciudad,
+        v.veh_condicion,
+        m.mar_nombre, 
+        mo.mod_nombre,
+        (SELECT ima_url 
+         FROM ImagenesVehiculo iv 
+         WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE 
+         LIMIT 1) AS imagen_principal_url
+    FROM Vehiculos v
+    JOIN Marcas m ON v.mar_id = m.mar_id
+    JOIN Modelos mo ON v.mod_id = mo.mod_id
+    WHERE v.veh_condicion = p_condicion 
+      AND v.veh_estado = 'disponible'
+    ORDER BY v.veh_fecha_publicacion DESC, v.veh_creado_en DESC
+    LIMIT p_limite;
+END //
+
+DELIMITER ;

@@ -1,3 +1,56 @@
+<?php
+require_once __DIR__ . '/../MODELOS/vehiculos_m.php';
+
+$vehiculo_model = new Vehiculo();
+$vehiculos_nuevos_destacados = $vehiculo_model->getVehiculosDestacados('nuevo', 3);
+$vehiculos_usados_destacados = $vehiculo_model->getVehiculosDestacados('usado', 3);
+
+/**
+ * Función auxiliar para renderizar una tarjeta de vehículo.
+ * Esto evita repetir código HTML.
+ */
+function render_vehicle_card($vehiculo) {
+    $precio_formateado = number_format((float)$vehiculo['veh_precio'], 0, ',', '.');
+    $kilometraje_texto = ($vehiculo['veh_condicion'] == 'usado')
+        ? '<i class="bi bi-speedometer2 me-1"></i>' . number_format((int)$vehiculo['veh_kilometraje']) . ' Kms'
+        : '<i class="bi bi-star-fill me-1"></i>0 Kms';
+
+    $etiqueta = '';
+    if ($vehiculo['veh_condicion'] == 'nuevo') {
+        $etiqueta = '<span class="badge bg-info px-3 py-2 rounded-pill">Nuevo</span>';
+    } else {
+        // Puedes añadir más lógica aquí si tienes etiquetas como 'Destacado' o 'Premium'
+        $etiqueta = '<span class="badge bg-success px-3 py-2 rounded-pill">Seminuevo</span>';
+    }
+
+    echo '
+    <div class="col animate-on-scroll">
+        <div class="card h-100 car-card shadow-sm">
+            <div class="position-relative overflow-hidden">
+                <a href="detalle_vehiculo.php?id=' . htmlspecialchars($vehiculo['veh_id']) . '">
+                    <img src="' . htmlspecialchars($vehiculo['imagen_principal_url']) . '" alt="' . htmlspecialchars($vehiculo['mar_nombre'] . ' ' . $vehiculo['mod_nombre']) . '" class="card-img-top">
+                </a>
+                <div class="position-absolute top-0 end-0 m-3">
+                    ' . $etiqueta . '
+                </div>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title"><a href="detalle_vehiculo.php?id=' . htmlspecialchars($vehiculo['veh_id']) . '" class="text-decoration-none">' . htmlspecialchars($vehiculo['mar_nombre'] . ' ' . $vehiculo['mod_nombre']) . '</a></h5>
+                <p class="card-text text-muted small">
+                    ' . $kilometraje_texto . ' · 
+                    <i class="bi bi-geo-alt me-1"></i>' . htmlspecialchars($vehiculo['veh_ubicacion_ciudad']) . '
+                </p>
+                <p class="card-text fw-bold fs-4 mt-auto price-highlight">$' . $precio_formateado . '</p>
+            </div>
+            <div class="card-footer text-center bg-transparent border-top-0">
+               <a href="detalle_vehiculo.php?id=' . htmlspecialchars($vehiculo['veh_id']) . '" class="btn btn-primary">
+                   <i class="bi bi-eye me-2"></i>Ver Detalles
+               </a>
+            </div>
+        </div>
+    </div>';
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -134,53 +187,28 @@
         </section>
 
         <!-- Sección de Autos Destacados -->
+        <?php if (!empty($vehiculos_nuevos_destacados)): ?>
         <section class="container my-5">
-            <h2 class="text-center mb-5 section-title animate-on-scroll">Vehículos Destacados</h2>
+            <h2 class="text-center mb-5 section-title animate-on-scroll">Novedades 0km</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <div class="col animate-on-scroll">
-                    <div class="card h-100 car-card shadow-sm">
-                        <div class="position-relative overflow-hidden">
-                            <img src="https://images.patiotuerca.com/thumbs/w/1024x768/amz_ptf_ecuador/2892023/1777027/o_o/1777027_1740278343736_730.jpg" alt="BMW X1 2021 blanco" class="card-img-top">
-                            <div class="position-absolute top-0 end-0 m-3"><span class="badge bg-success px-3 py-2 rounded-pill">Destacado</span></div>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">BMW X1 2021</h5>
-                            <p class="card-text text-muted small"><i class="bi bi-speedometer2 me-1"></i>30,000 Kms · <i class="bi bi-geo-alt me-1"></i>Quito</p>
-                            <p class="card-text fw-bold fs-4 mt-auto price-highlight">$39,990</p>
-                        </div>
-                        <div class="card-footer text-center bg-transparent border-top-0"><a href="#" class="btn btn-primary"><i class="bi bi-eye me-2"></i>Ver Detalles</a></div>
-                    </div>
-                </div>
-                <div class="col animate-on-scroll">
-                    <div class="card h-100 car-card shadow-sm">
-                        <div class="position-relative overflow-hidden">
-                            <img src="https://images.patiotuerca.com/thumbs/w/1024x768/amz_ptf_ecuador/2025422/1893272/o_o/pt_1893272_7610706.jpg" alt="Maserati Levante GTS 2019" class="card-img-top">
-                            <div class="position-absolute top-0 end-0 m-3"><span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Premium</span></div>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Maserati Levante GTS 2019</h5>
-                            <p class="card-text text-muted small"><i class="bi bi-speedometer2 me-1"></i>13,000 Kms · <i class="bi bi-geo-alt me-1"></i>Quito</p>
-                            <p class="card-text fw-bold fs-4 mt-auto price-highlight">$140,000</p>
-                        </div>
-                        <div class="card-footer text-center bg-transparent border-top-0"><a href="#" class="btn btn-primary"><i class="bi bi-eye me-2"></i>Ver Detalles</a></div>
-                    </div>
-                </div>
-                <div class="col animate-on-scroll">
-                    <div class="card h-100 car-card shadow-sm">
-                        <div class="position-relative overflow-hidden">
-                            <img src="https://images.patiotuerca.com/thumbs/w/1024x768/amz_ptf_ecuador/2082023/1767640/o_o/1767640_1692540850529_189.jpeg" alt="Audi Q5 Quattro 2022 blanco" class="card-img-top">
-                            <div class="position-absolute top-0 end-0 m-3"><span class="badge bg-info px-3 py-2 rounded-pill">Nuevo</span></div>
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">Audi Q5 Quattro 2022</h5>
-                            <p class="card-text text-muted small"><i class="bi bi-speedometer2 me-1"></i>9,500 Kms · <i class="bi bi-geo-alt me-1"></i>Quito</p>
-                            <p class="card-text fw-bold fs-4 mt-auto price-highlight">$55,000</p>
-                        </div>
-                        <div class="card-footer text-center bg-transparent border-top-0"><a href="#" class="btn btn-primary"><i class="bi bi-eye me-2"></i>Ver Detalles</a></div>
-                    </div>
-                </div>
+                <?php foreach ($vehiculos_nuevos_destacados as $vehiculo): ?>
+                    <?php render_vehicle_card($vehiculo); ?>
+                <?php endforeach; ?>
             </div>
         </section>
+        <?php endif; ?>
+
+        <!-- Sección de Seminuevos Destacados -->
+        <?php if (!empty($vehiculos_usados_destacados)): ?>
+        <section class="container my-5">
+            <h2 class="text-center mb-5 section-title animate-on-scroll">Seminuevos Destacados</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <?php foreach ($vehiculos_usados_destacados as $vehiculo): ?>
+                    <?php render_vehicle_card($vehiculo); ?>
+                <?php endforeach; ?>
+            </div>
+        </section>
+        <?php endif; ?>
 
         <!-- Sección de características mejorada -->
         <section class="features-section py-5">
