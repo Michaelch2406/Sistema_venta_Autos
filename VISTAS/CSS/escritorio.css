@@ -1,0 +1,44 @@
+.dashboard-header {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1.5rem;
+}
+
+.dashboard-header h1 {
+    font-weight: 300;
+}
+
+.dashboard-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+}
+
+.dashboard-card-icon {
+    font-size: 3rem; /* Tamaño de los íconos */
+    margin-bottom: 1rem;
+}
+
+.dashboard-card .card-body {
+    padding: 1.5rem;
+}
+
+.dashboard-card .card-title {
+    font-weight: 500;
+}
+
+/* Animación de entrada para las tarjetas */
+.dashboard-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn-up 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn-up {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

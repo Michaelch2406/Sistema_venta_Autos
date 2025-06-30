@@ -175,9 +175,8 @@ class Vehiculo
             return [];
         }
 
-        // --- CAMBIO PRINCIPAL: Se reemplaza la consulta SQL por la llamada al SP ---
+        // --- Preparar y ejecutar la llamada al SP ---
         $sql = "CALL sp_get_vehiculos_destacados(?, ?)";
-        // --------------------------------------------------------------------
 
         try {
             $stmt = $this->conn->prepare($sql);

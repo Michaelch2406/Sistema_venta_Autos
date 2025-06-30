@@ -45,7 +45,7 @@ $(document).ready(function() {
                                                     Más Acciones
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-${vehiculo.veh_id}">
-                                                    <li><a class="dropdown-item" href="ver_vehiculo_publico.php?id=${vehiculo.veh_id}" target="_blank"><i class="bi bi-eye-fill me-2"></i>Ver Anuncio</a></li>
+                                                    <li><a class="dropdown-item" href="detalle_vehiculo.php?id=${vehiculo.veh_id}" target="_blank"><i class="bi bi-eye-fill me-2"></i>Ver Anuncio</a></li>
                                                     <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="reservado"><i class="bi bi-calendar-check me-2"></i>Marcar como Reservado</a></li>
                                                     <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido"><i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido</a></li>
                                                     <li><hr class="dropdown-divider"></li>
@@ -57,7 +57,7 @@ $(document).ready(function() {
                                         </div>
                                     </div>
                                     <div class="card-footer text-muted small">
-                                        ID: ${vehiculo.veh_id} | Imágenes: ${vehiculo.total_imagenes}
+                                        Total de Imágenes: ${vehiculo.total_imagenes}
                                     </div>
                                 </div>
                             </div>

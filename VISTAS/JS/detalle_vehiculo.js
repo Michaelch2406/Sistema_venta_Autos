@@ -1,5 +1,6 @@
 $(document).ready(function() {
-    // Inicializar Lightbox (código existente)
+    
+    // --- LÓGICA DE LIGHTBOX PARA GALERÍA ---
     if (typeof lightbox !== 'undefined') {
         lightbox.option({
           'resizeDuration': 200,
@@ -9,18 +10,16 @@ $(document).ready(function() {
         });
     }
 
-    // Lógica para Favoritos
-    const $btnFavorito = $('.btn-agregar-favoritos'); // Selector del botón que proporcionaste en la tarea
-    const $favTextSpan = $('#favText'); // El span que contiene el texto del botón
-    const $favIcon = $btnFavorito.find('i.bi'); // El icono dentro del botón
+    // --- LÓGICA PARA AGREGAR/QUITAR FAVORITOS ---
+    const $btnFavorito = $('.btn-agregar-favoritos');
+    const $favTextSpan = $('#favText');
+    const $favIcon = $btnFavorito.find('i.bi');
 
     if ($btnFavorito.length > 0) {
         const vehId = $btnFavorito.data('veh-id');
 
         function actualizarBotonUI(esFavorito) {
-            // Guardar el estado actual en el botón para referencia en el click handler
             $btnFavorito.data('es-favorito', esFavorito); 
-
             if (esFavorito) {
                 if ($favTextSpan.length) $favTextSpan.text('Quitar de Favoritos');
                 if ($favIcon.length) $favIcon.removeClass('bi-heart').addClass('bi-heart-fill');
@@ -32,113 +31,93 @@ $(document).ready(function() {
             }
         }
 
-        // Función para mostrar el spinner y deshabilitar el botón
-        function iniciarCargaBoton() {
-            $btnFavorito.prop('disabled', true);
-            if ($favTextSpan.length) $favTextSpan.text('Procesando...'); // Ocultar texto y mostrar spinner
-            // Si tienes un spinner específico, puedes añadirlo aquí. El código original tenía:
-            // $btnFavorito.prepend('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>');
+        function toggleBotonCarga(cargando) {
+            $btnFavorito.prop('disabled', cargando);
+            if (cargando) {
+                if ($favTextSpan.length) $favTextSpan.text('Procesando...');
+            } else {
+                actualizarBotonUI($btnFavorito.data('es-favorito'));
+            }
         }
 
-        // Función para quitar el spinner y habilitar el botón
-        function finalizarCargaBoton(esFavoritoOriginal) {
-            $btnFavorito.prop('disabled', false);
-            // $btnFavorito.find('.spinner-border').remove();
-            // El texto se actualizará con actualizarBotonUI
-            actualizarBotonUI(esFavoritoOriginal); // Restaurar texto basado en el estado conocido
-        }
-
-
-        // 1. Verificar estado inicial al cargar la página
         if (vehId) {
-            iniciarCargaBoton(); // Mostrar carga mientras se verifica
-
+            toggleBotonCarga(true);
             $.ajax({
                 url: '../AJAX/favoritos_ajax.php',
-                type: 'POST', // Estandarizado a POST en favoritos_ajax.php
-                data: {
-                    accion: 'verificar', // Acción estandarizada
-                    veh_id: vehId
-                },
+                type: 'POST',
+                data: { accion: 'verificar', veh_id: vehId },
                 dataType: 'json',
                 success: function(response) {
                     if (response.status === 'success') {
                         actualizarBotonUI(response.esFavorito);
-                    } else {
-                        if ($favTextSpan.length) $favTextSpan.text('Error al verificar');
-                        console.error('Error al verificar favorito:', response.message);
                     }
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    if ($favTextSpan.length) $favTextSpan.text('Error (conexión)');
-                    console.error('Error AJAX al verificar favorito:', textStatus, errorThrown, jqXHR.responseText);
-                },
-                complete: function() {
-                    // Habilitar botón y restaurar texto según el estado obtenido (o error)
-                    // La función actualizarBotonUI ya se llamó en success, o se mostró texto de error.
-                    // Solo necesitamos asegurar que el botón esté habilitado si no lo hizo success/error.
-                    $btnFavorito.prop('disabled', false);
-                    // Si no hubo success, el texto de "Procesando..." o "Error..." podría quedarse.
-                    // Para evitarlo, si no es success, podemos llamar a actualizarBotonUI con un estado conocido,
-                    // o el estado que tenía antes de la llamada (si lo guardamos).
-                    // Por ahora, success/error manejan el texto.
-                }
+                error: function() { if ($favTextSpan.length) $favTextSpan.text('Error'); },
+                complete: function() { toggleBotonCarga(false); }
             });
         }
 
-        // 2. Manejar clic en el botón
         $btnFavorito.on('click', function(e) {
             e.preventDefault();
-
-            if (!vehId) {
-                console.error('No se pudo obtener el ID del vehículo desde el botón.');
-                alert('Error: No se pudo identificar el vehículo.');
-                return;
-            }
-
-            const esFavoritoActual = $(this).data('es-favorito'); // Leer estado guardado
-            const accionParaEnviar = esFavoritoActual ? 'quitar' : 'agregar'; // Acciones estandarizadas
-            
-            iniciarCargaBoton();
-
+            const esFavoritoActual = $(this).data('es-favorito');
+            const accionParaEnviar = esFavoritoActual ? 'quitar' : 'agregar';
+            toggleBotonCarga(true);
             $.ajax({
                 url: '../AJAX/favoritos_ajax.php',
                 type: 'POST',
-                data: {
-                    accion: accionParaEnviar,
-                    veh_id: vehId
-                },
+                data: { accion: accionParaEnviar, veh_id: vehId },
                 dataType: 'json',
                 success: function(response) {
                     if (response.status === 'success' || response.status === 'info') {
-                        actualizarBotonUI(response.esFavorito); // Actualizar con el estado devuelto por el servidor
-                        
-                        // Notificación
-                        if (response.message) {
-                            console.log('Favoritos:', response.message);
-                            // Aquí se podría integrar una librería de notificaciones (Toastr, Noty, etc.)
-                            // Ejemplo: if (typeof Noty !== 'undefined') { new Noty({ text: response.message, type: response.status }).show(); }
-                        }
+                        actualizarBotonUI(response.esFavorito);
                     } else {
-                        // Error en la operación, revertir UI al estado anterior al clic
-                        finalizarCargaBoton(esFavoritoActual); 
                         alert('Error: ' + (response.message || 'No se pudo actualizar el favorito.'));
-                        console.error('Error en acción de favorito:', response.message);
                     }
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    finalizarCargaBoton(esFavoritoActual); // Revertir UI
-                    alert('Error de conexión al guardar favorito. Intente de nuevo.');
-                    console.error('Error AJAX en acción de favorito:', textStatus, errorThrown, jqXHR.responseText);
-                },
-                complete: function() {
-                    // El complete de la llamada de acción no necesita hacer mucho si success/error manejan el estado del botón.
-                    // Asegurar que el botón esté habilitado si no lo hizo success/error.
-                     $btnFavorito.prop('disabled', false);
-                }
+                error: function() { alert('Error de conexión al guardar favorito.'); },
+                complete: function() { toggleBotonCarga(false); }
             });
         });
-    } else {
-        // console.log("Botón de favoritos no encontrado.");
     }
+
+    // --- LÓGICA PARA EL FORMULARIO DE CONTACTO/COTIZACIÓN ---
+    $('#formContactoVendedor').on('submit', function(e) {
+        e.preventDefault();
+
+        var $form = $(this);
+        var $submitButton = $('#btnEnviarCotizacion');
+        var $messageContainer = $('#contactFormMessage');
+        var originalButtonHtml = $submitButton.html();
+
+        $submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...');
+        $messageContainer.html('').removeClass('alert alert-success alert-danger');
+
+        $.ajax({
+            url: '../AJAX/cotizaciones_ajax.php',
+            type: 'POST',
+            data: $form.serialize(),
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    $messageContainer.html('<div class="alert alert-success">' + response.message + '</div>');
+                    $form.find('textarea, button').prop('disabled', true);
+                    
+                    setTimeout(function() {
+                        var modalEl = document.getElementById('modalContactoVendedor');
+                        if(modalEl) {
+                           var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                           if(modalInstance) modalInstance.hide();
+                        }
+                    }, 4000);
+                } else {
+                    $messageContainer.html('<div class="alert alert-danger">' + (response.message || 'Ocurrió un error.') + '</div>');
+                    $submitButton.prop('disabled', false).html(originalButtonHtml);
+                }
+            },
+            error: function() {
+                $messageContainer.html('<div class="alert alert-danger">Error de conexión. Por favor, inténtalo de nuevo.</div>');
+                $submitButton.prop('disabled', false).html(originalButtonHtml);
+            }
+        });
+    });
 });

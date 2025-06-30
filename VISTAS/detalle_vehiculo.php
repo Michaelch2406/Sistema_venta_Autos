@@ -70,11 +70,7 @@ if (!empty($imagenes)) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
     <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    
-    <!-- === CAMBIO REALIZADO AQUÍ === -->
     <link href="../VISTAS/css/detalle_vehiculo.css" rel="stylesheet">
-    <!-- ============================= -->
-
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 
@@ -140,9 +136,7 @@ if (!empty($imagenes)) {
                                 <?php echo htmlspecialchars($vehiculo['tiv_nombre']) . ($vehiculo['veh_subtipo_vehiculo'] ? ' / ' . htmlspecialchars($vehiculo['veh_subtipo_vehiculo']) : ''); ?>
                             </p>
                         </div>
-
                         <p class="precio-destacado">$<?php echo $precio_formateado; ?> USD</p>
-
                         <ul class="detalle-lista mb-4">
                             <li><strong>Condición:</strong>
                                 <span><?php echo htmlspecialchars(ucfirst($vehiculo['veh_condicion'])); ?></span></li>
@@ -150,10 +144,9 @@ if (!empty($imagenes)) {
                                 <span><?php echo htmlspecialchars($vehiculo['veh_anio']); ?></span></li>
                             <?php if ($vehiculo['veh_condicion'] == 'usado'): ?>
                             <li><strong>Recorrido:</strong> <span><?php echo $kilometraje_formateado; ?></span></li>
-                            <?php if ($vehiculo['veh_placa_provincia_origen']): ?>
+                            <?php if (!empty($vehiculo['veh_placa'])): ?>
                             <li><strong>Placa:</strong>
-                                <span><?php echo htmlspecialchars($vehiculo['veh_placa_provincia_origen']) . " - termina en " . htmlspecialchars($vehiculo['veh_ultimo_digito_placa']); ?></span>
-                            </li>
+                                <span><?php echo htmlspecialchars($vehiculo['veh_placa']); ?></span></li>
                             <?php endif; ?>
                             <?php endif; ?>
                             <li><strong>Ubicación:</strong>
@@ -164,26 +157,47 @@ if (!empty($imagenes)) {
                             </li>
                         </ul>
 
-                        <?php if ($vehiculo['gestor_telefono'] || $vehiculo['gestor_usuario']): ?>
+                        <!-- SECCIÓN DE CONTACTO/COTIZACIÓN -->
                         <div class="card contact-card shadow-sm">
                             <div class="card-body text-center">
                                 <h5 class="card-title mb-3">Contactar al Vendedor</h5>
-                                <?php if ($vehiculo['gestor_nombre_completo']): ?>
-                                <p class="mb-2"><i
-                                        class="bi bi-person-check-fill me-2"></i><?php echo htmlspecialchars($vehiculo['gestor_nombre_completo']); ?>
-                                </p>
-                                <?php endif; ?>
-                                <?php if ($vehiculo['gestor_telefono']): ?>
+
+                                <?php // CASO 1: Es el vehículo del propio usuario
+                                if (isset($_SESSION['usu_id']) && isset($vehiculo['usu_id_gestor']) && $_SESSION['usu_id'] == $vehiculo['usu_id_gestor']): ?>
+                                <p class="text-muted small">Este es uno de tus vehículos publicados.</p>
+                                <a href="mis_vehiculos.php" class="btn btn-success w-100"><i
+                                        class="bi bi-car-front-fill me-2"></i>Gestionar Mis Vehículos</a>
+
+                                <?php // CASO 2: Es un visitante (logueado o no)
+                                else: ?>
+
+                                <?php // Opción 1: WhatsApp (visible para todos si el teléfono existe)
+                                    if (!empty($vehiculo['gestor_telefono'])): ?>
                                 <a href="https://wa.me/593<?php echo substr(preg_replace('/[^0-9]/', '', $vehiculo['gestor_telefono']), -9); ?>?text=Hola, me interesa el <?php echo urlencode($nombre_vehiculo_completo); ?> (ID: <?php echo $veh_id; ?>) que vi en AutoMercado Total."
-                                    target="_blank" class="btn btn-lg btn-whatsapp w-100 mb-2">
+                                    target="_blank" class="btn btn-lg btn-whatsapp w-100 mb-3">
                                     <i class="bi bi-whatsapp me-2"></i>Contactar por WhatsApp
                                 </a>
-                                <p class="small text-muted">Tel:
-                                    <?php echo htmlspecialchars($vehiculo['gestor_telefono']); ?></p>
+                                <?php endif; ?>
+
+                                <?php // Opción 2: Sistema Interno (depende del login)
+                                    if (isset($_SESSION['usu_id'])): ?>
+                                <p class="text-muted small mt-2 mb-2">O usa nuestro sistema para registrar tu interés:
+                                </p>
+                                <button class="btn btn-primary w-100" data-bs-toggle="modal"
+                                    data-bs-target="#modalContactoVendedor">
+                                    <i class="bi bi-chat-dots-fill me-2"></i>Solicitar Información
+                                </button>
+                                <?php else: ?>
+                                <p class="text-muted small mt-2 mb-2">Inicia sesión para usar nuestro sistema de
+                                    contacto:</p>
+                                <a href="login.php?redirect=detalle_vehiculo.php?id=<?php echo $veh_id; ?>"
+                                    class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión para Solicitar
+                                </a>
+                                <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -196,7 +210,6 @@ if (!empty($imagenes)) {
                             <p><?php echo nl2br(htmlspecialchars($vehiculo['veh_descripcion'] ?: 'No se proporcionó una descripción detallada.')); ?>
                             </p>
                         </section>
-
                         <section class="detalle-seccion">
                             <h3><i class="bi bi-tools me-2"></i>Especificaciones Técnicas</h3>
                             <div class="row">
@@ -237,7 +250,6 @@ if (!empty($imagenes)) {
                                 </div>
                             </div>
                         </section>
-
                         <?php if (!empty($detalles_extra_array)): ?>
                         <section class="detalle-seccion">
                             <h3><i class="bi bi-check-circle-fill me-2"></i>Detalles Adicionales</h3>
@@ -250,26 +262,14 @@ if (!empty($imagenes)) {
                             </ul>
                         </section>
                         <?php endif; ?>
-
-                        <?php if ($vehiculo['veh_vin']): ?>
-                        <section class="detalle-seccion">
-                            <h3><i class="bi bi-fingerprint me-2"></i>Identificación</h3>
-                            <ul class="detalle-lista">
-                                <li><strong>VIN:</strong>
-                                    <span><?php echo htmlspecialchars($vehiculo['veh_vin']); ?></span></li>
-                            </ul>
-                        </section>
-                        <?php endif; ?>
                     </div>
                     <div class="col-lg-4">
                         <div class="sticky-top" style="top: 80px;">
                             <div class="card shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title">¿Interesado?</h5>
-                                    <p class="card-text small text-muted">Contacta directamente al vendedor o solicita
-                                        más información.</p>
-                                    <a href="#contactFormVehiculo" class="btn btn-outline-primary w-100 mb-2"><i
-                                            class="bi bi-envelope-fill me-2"></i>Enviar Mensaje al Vendedor</a>
+                                    <p class="card-text small text-muted">Guarda este vehículo en tus favoritos o
+                                        compártelo.</p>
                                     <?php if (isset($_SESSION['usu_id'])): ?>
                                     <button class="btn btn-outline-danger w-100 btn-agregar-favoritos"
                                         data-veh-id="<?php echo $veh_id; ?>">
@@ -278,7 +278,7 @@ if (!empty($imagenes)) {
                                     <?php else: ?>
                                     <a href="login.php?redirect=detalle_vehiculo.php?id=<?php echo $veh_id; ?>"
                                         class="btn btn-outline-danger w-100"><i class="bi bi-heart me-2"></i>Agregar a
-                                        Favoritos (Requiere Login)</a>
+                                        Favoritos</a>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -303,6 +303,37 @@ if (!empty($imagenes)) {
             </div>
         </div>
     </main>
+
+    <!-- Modal para Contactar al Vendedor -->
+    <div class="modal fade" id="modalContactoVendedor" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Contactar al Vendedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formContactoVendedor">
+                    <div class="modal-body">
+                        <p>Se enviará una notificación al vendedor con tus datos de contacto. Puedes añadir un mensaje
+                            opcional.</p>
+                        <input type="hidden" name="veh_id" value="<?php echo $veh_id; ?>">
+                        <input type="hidden" name="accion" value="enviarCotizacion">
+                        <div class="mb-3">
+                            <label for="cot_mensaje" class="form-label">Mensaje Adicional (Opcional):</label>
+                            <textarea class="form-control" id="cot_mensaje" name="mensaje" rows="4"
+                                placeholder="Ej: Hola, ¿aún está disponible? Me gustaría más información."></textarea>
+                        </div>
+                        <div id="contactFormMessage" class="mt-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnEnviarCotizacion"><i
+                                class="bi bi-send-fill me-2"></i>Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <?php include __DIR__ . '/partials/footer.php'; ?>
 

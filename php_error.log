@@ -9,3 +9,44 @@
 [27-Jun-2025 22:55:11 America/New_York] [SP ERROR] MySQL Error: 1318 - Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_insertar_vehiculo; expected 28, got 29
 [27-Jun-2025 22:55:11 America/New_York] [SP ERROR] SQL ejecutado: CALL sp_insertar_vehiculo( 13, 81, 2, NULL, '1', 'usado', 2023, '50000', 18500, NULL, 'Loja', 'Loja', 'Manabí', '6', 'Blanco', NULL, '1.6', NULL, NULL, NULL, NULL, NULL, NULL, 'RENAULT DUSTER', 'Unico Dueño', '2025-06-27', @p_veh_id_insertado, @p_resultado, @p_mensaje )
 [29-Jun-2025 17:14:41 America/New_York] PHP Notice:  session_start(): ps_files_cleanup_dir: opendir(C:\Windows\Temp\) failed: No error (0) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[29-Jun-2025 18:13:25 America/New_York] PHP Notice:  session_start(): ps_files_cleanup_dir: opendir(C:\Windows\Temp\) failed: No error (0) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[29-Jun-2025 18:16:50 America/New_York] Error al llamar a sp_actualizar_estado_vehiculo: PROCEDURE sistemaventaautos.sp_actualizar_estado_vehiculo does not exist (SQL: CALL sp_actualizar_estado_vehiculo(
+            2, 'reservado', 1,
+            @p_resultado, @p_mensaje
+        ))
+[29-Jun-2025 18:33:21 America/New_York] Error en la consulta SQL: PROCEDURE sistemaventaautos.sp_get_vehiculo_para_editar does not exist (SQL: CALL sp_get_vehiculo_para_editar(3, 1))
+[29-Jun-2025 18:33:21 America/New_York] Error al ejecutar sp_get_vehiculo_para_editar para veh_id 3 y gestor 1: PROCEDURE sistemaventaautos.sp_get_vehiculo_para_editar does not exist (SQL: CALL sp_get_vehiculo_para_editar(3, 1))
+[29-Jun-2025 18:33:21 America/New_York] vehiculos_ajax.php: getVehiculoParaEditar - Error del modelo: Error técnico al obtener datos del vehículo.
+[29-Jun-2025 18:33:29 America/New_York] Error en la consulta SQL: PROCEDURE sistemaventaautos.sp_get_vehiculo_para_editar does not exist (SQL: CALL sp_get_vehiculo_para_editar(3, 1))
+[29-Jun-2025 18:33:29 America/New_York] Error al ejecutar sp_get_vehiculo_para_editar para veh_id 3 y gestor 1: PROCEDURE sistemaventaautos.sp_get_vehiculo_para_editar does not exist (SQL: CALL sp_get_vehiculo_para_editar(3, 1))
+[29-Jun-2025 18:33:29 America/New_York] vehiculos_ajax.php: getVehiculoParaEditar - Error del modelo: Error técnico al obtener datos del vehículo.
+[30-Jun-2025 13:47:32 America/New_York] PHP Warning:  require_once(C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php): Failed to open stream: No such file or directory in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 13:47:32 America/New_York] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php' (include_path='.;C:\php\pear') in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:14:12 America/New_York] PHP Warning:  require_once(C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php): Failed to open stream: No such file or directory in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:14:12 America/New_York] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php' (include_path='.;C:\php\pear') in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:14:24 America/New_York] PHP Warning:  require_once(C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php): Failed to open stream: No such file or directory in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:14:24 America/New_York] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php' (include_path='.;C:\php\pear') in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:28:10 America/New_York] PHP Warning:  require_once(C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php): Failed to open stream: No such file or directory in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:28:10 America/New_York] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php' (include_path='.;C:\php\pear') in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:34:50 America/New_York] PHP Warning:  require_once(C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php): Failed to open stream: No such file or directory in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:34:50 America/New_York] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php' (include_path='.;C:\php\pear') in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:38:48 America/New_York] PHP Warning:  require_once(C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php): Failed to open stream: No such file or directory in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[30-Jun-2025 14:38:48 America/New_York] PHP Fatal error:  Uncaught Error: Failed opening required 'C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX/../MODELOS/cotizaciones_m.php' (include_path='.;C:\php\pear') in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php:8
+Stack trace:
+#0 {main}
+  thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
