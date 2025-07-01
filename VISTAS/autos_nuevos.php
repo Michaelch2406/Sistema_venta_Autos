@@ -70,6 +70,7 @@
             </div>
             <nav id="paginacionVehiculosNuevos" aria-label="Paginación de vehículos nuevos" class="mt-5 d-flex justify-content-center"></nav>
         </div>
+        
 
         <!-- Offcanvas para filtros móviles -->
         <div class="offcanvas offcanvas-start luxury-offcanvas" tabindex="-1" id="filtrosOffcanvasNuevos" aria-labelledby="filtrosOffcanvasLabelNuevos">
@@ -89,6 +90,7 @@
     <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/autos_nuevos.js"></script> 
+    <script src="../VISTAS/JS/autos_nuevos.js"></script> <!-- JS Específico para Autos Nuevos -->
+    
 </body>
 </html>
