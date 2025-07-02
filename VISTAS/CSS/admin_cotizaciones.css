@@ -1,0 +1,417 @@
+/* admin_cotizaciones.css */
+
+body {
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más moderna */
+    margin: 0;
+    padding: 0;
+    background-color: #eef2f7; /* Azul grisáceo muy claro para fondo */
+    color: #1a202c; /* Gris muy oscuro para texto principal */
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+header {
+    background: linear-gradient(to right, #1a202c, #2d3748); /* Gradiente oscuro */
+    color: #e2e8f0; /* Texto gris claro */
+    padding: 1.2rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem; /* Ligeramente más pequeño */
+    font-weight: 700; /* Más peso */
+    letter-spacing: 0.5px;
+}
+header nav a {
+    color: #a0aec0; /* Gris medio para enlaces */
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+}
+header nav a:hover {
+    color: #ffffff; /* Blanco al hover */
+}
+
+main {
+    padding: 30px;
+    max-width: 1300px; /* Ancho generoso */
+    margin: 30px auto;
+    background-color: #ffffff;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07); /* Sombra más pronunciada */
+    border-radius: 10px; /* Bordes más redondeados */
+}
+
+h2 { /* Estilo general para H2 de secciones */
+    color: #2c3e50; /* Azul oscuro */
+    border-bottom: 3px solid #4a90e2; /* Azul más brillante para borde */
+    padding-bottom: 15px;
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+/* H3 para subsecciones o títulos de modal */
+h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+h4 { /* Para títulos dentro de detalles de modal */
+    color: #4a5568; /* Gris oscuro */
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+
+#filtros-busqueda {
+    background-color: #f8fafc; /* Fondo blanco hueso */
+    padding: 25px;
+    margin-bottom: 35px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0; /* Borde sutil */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+}
+
+#form-filtros-admin {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Columnas flexibles */
+    gap: 20px; /* Más espacio */
+    align-items: flex-end; /* Alinear al final para botones */
+}
+
+#form-filtros-admin > div { /* Contenedor para label + input */
+    display: flex;
+    flex-direction: column;
+}
+
+#form-filtros-admin label {
+    margin-bottom: 8px; /* Más espacio */
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #4a5568; /* Gris para labels */
+}
+
+#form-filtros-admin input[type="text"],
+#form-filtros-admin input[type="date"],
+#form-filtros-admin select {
+    width: 100%;
+    padding: 12px 15px; /* Inputs más grandes */
+    border: 1px solid #cbd5e0; /* Borde más definido */
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#form-filtros-admin input:focus, #form-filtros-admin select:focus {
+    border-color: #4a90e2; /* Azul al focus */
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+.btn-filtrar, .btn-limpiar-filtros { /* Estilo común para botones de filtro */
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    text-decoration: none; /* Para el enlace de limpiar */
+    display: inline-block; /* Para el enlace */
+    text-align: center;
+    min-height: 46px; /* Para alinear con inputs */
+    box-sizing: border-box;
+}
+.btn-filtrar {
+    background-color: #4a90e2; /* Azul brillante */
+    color: white;
+}
+.btn-filtrar:hover {
+    background-color: #357abd; /* Azul más oscuro */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.btn-limpiar-filtros {
+    background-color: #718096; /* Gris medio */
+    color: white;
+}
+.btn-limpiar-filtros:hover {
+    background-color: #4a5568; /* Gris más oscuro */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tabla-responsive-contenedor {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem; 
+}
+table th, table td {
+    border: 1px solid #e2e8f0; /* Borde claro */
+    padding: 14px 12px; /* Más padding */
+    text-align: left;
+    vertical-align: middle;
+}
+table th {
+    background-color: #f1f5f9; /* Fondo de encabezado muy claro */
+    font-weight: 600;
+    color: #2d3748; /* Texto de encabezado más oscuro */
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+table tbody tr:nth-child(even) {
+    background-color: #f8fafc; /* Fondo alterno muy sutil */
+}
+table tbody tr:hover {
+    background-color: #e6f0ff; /* Hover azulado muy suave */
+}
+.text-right { text-align: right; }
+
+/* Botones de acción en la tabla */
+.btn-admin-accion {
+    background-color: transparent;
+    color: #4a5568; /* Gris oscuro para iconos */
+    border: 1px solid transparent; /* Borde invisible para mantener tamaño */
+    padding: 6px 8px; /* Padding ajustado para iconos */
+    text-align: center;
+    display: inline-flex; /* Para centrar icono */
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem; /* Tamaño de icono */
+    border-radius: 50%; /* Botones redondos */
+    cursor: pointer;
+    margin: 0 3px;
+    transition: all 0.2s ease;
+    width: 32px; /* Ancho y alto fijos */
+    height: 32px;
+}
+.btn-admin-accion:hover {
+    background-color: #e2e8f0; /* Fondo gris claro al hover */
+    color: #1a202c; /* Icono más oscuro al hover */
+}
+.btn-admin-accion i { /* Si usas FontAwesome o similar */
+    line-height: 1; /* Asegurar que el icono esté centrado */
+}
+/* Colores específicos para acciones comunes */
+.btn-admin-ver-detalle:hover { color: #3182ce; background-color: #ebf8ff;} /* Azul */
+.btn-admin-aprobar:hover { color: #38a169; background-color: #f0fff4;} /* Verde */
+.btn-admin-rechazar:hover { color: #e53e3e; background-color: #fff5f5;} /* Rojo */
+.btn-admin-editar:hover { color: #dd6b20; background-color: #fffaf0;} /* Naranja */
+
+/* Tags de Estado (igual que en mis_cotizaciones.css o se pueden unificar) */
+.estado-tag {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    display: inline-block; /* Para que el padding funcione bien */
+}
+.estado-pendiente { background-color: #ecc94b; color:#422006;} /* Amarillo/Dorado */
+.estado-aprobada { background-color: #48bb78; } /* Verde */
+.estado-rechazada { background-color: #f56565; } /* Rojo */
+.estado-completada { background-color: #4299e1; } /* Azul */
+.estado-pagada { background-color: #38b2ac; } /* Teal */
+
+
+/* Estilos para el Modal (compartidos o específicos de admin) */
+.modal {
+    position: fixed;
+    z-index: 1050; /* Por encima de otros elementos */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(26, 32, 44, 0.7); /* Fondo más oscuro para admin */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; /* Espacio para que el modal no toque los bordes */
+    box-sizing: border-box;
+}
+.modal-contenido {
+    background-color: #fff;
+    padding: 30px 35px;
+    border: none; /* Sin borde, la sombra es suficiente */
+    width: 90%;
+    max-width: 800px; /* Modal de admin puede ser más ancho */
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    position: relative;
+    animation: slideInUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.modal-cerrar {
+    color: #a0aec0; /* Gris para cerrar */
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+.modal-cerrar:hover, .modal-cerrar:focus {
+    color: #2d3748;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-contenido h3 { /* Título dentro del modal */
+     border-bottom: 2px solid #e2e8f0; padding-bottom:15px;
+}
+.modal-contenido .tabla-detalle { margin-top: 15px; font-size: 0.9rem; }
+.modal-contenido .tabla-detalle th { background-color: #f8fafc; font-size: 0.8rem; }
+.modal-contenido .tabla-detalle td, .modal-contenido .tabla-detalle th { padding: 10px 12px; }
+
+.loading-message, .error-message { padding: 20px; text-align: center; font-size: 1.05rem; }
+.error-message { color: #c53030; background-color: #fed7d7; border: 1px solid #f56565; border-radius: 6px; }
+
+.detalle-grid-admin { /* Grid para mostrar info clave-valor en modal */
+    display: grid;
+    grid-template-columns: minmax(150px, auto) 1fr; /* Columna de etiqueta con ancho min/max */
+    gap: 10px 20px;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+}
+.detalle-grid-admin strong { color: #4a5568; font-weight: 500; }
+.detalle-grid-admin a { color: #3182ce; text-decoration: none; }
+.detalle-grid-admin a:hover { text-decoration: underline; }
+
+.totales-detalle { margin-top: 25px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+.totales-detalle p { display: flex; justify-content: space-between; margin: 6px 0; font-size: 1rem; }
+.totales-detalle .total-final strong { font-size: 1.2rem; color: #2c3e50; }
+
+textarea.admin-textarea { /* Textarea para notas internas */
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    min-height: 80px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+textarea.admin-textarea:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+.btn-guardar-notas, .modal-admin-acciones button { /* Estilo común para botones en modal */
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 8px; /* Espacio entre botones */
+}
+.btn-guardar-notas:hover, .modal-admin-acciones button:hover {
+    background-color: #357abd;
+    transform: translateY(-1px);
+}
+.btn-guardar-notas:disabled, .modal-admin-acciones button:disabled {
+    background-color: #a0aec0; cursor: not-allowed;
+}
+.modal-admin-acciones { margin-top: 25px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: right; }
+.modal-admin-acciones .btn-modal-rechazar { background-color: #e53e3e; }
+.modal-admin-acciones .btn-modal-rechazar:hover { background-color: #c53030; }
+
+
+ul.historial-estados {
+    list-style: none;
+    padding-left: 0;
+    font-size: 0.85rem;
+    color: #4a5568;
+}
+ul.historial-estados li {
+    padding: 6px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+ul.historial-estados li:last-child { border-bottom: none; }
+
+
+.error { /* Error general, si se usa fuera de modal */
+    color: #9B2C2C; background-color: #FED7D7; border: 1px solid #F56565;
+    padding: 15px; margin-bottom: 20px; border-radius: 6px; font-weight: 500;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    background-color: #1a202c; /* Negro-azulado */
+    color: #a0aec0; /* Gris claro */
+    margin-top: 50px;
+    font-size: 0.9rem;
+}
+
+/* Íconos (ejemplo si se usa una clase genérica para iconos) */
+.icon-eye::before { content: "👁️"; } /* Reemplazar con iconos reales (font, svg) */
+.icon-check::before { content: "✔️"; }
+.icon-cancel::before { content: "❌"; }
+.icon-edit::before { content: "✏️"; }
+.icon-save::before { content: "💾"; }
+.icon-dollar::before { content: "💲"; }
+.icon-undo::before { content: "↩️"; }
+
+
+/* Responsive */
+@media (max-width: 992px) {
+    #form-filtros-admin { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    main { padding: 25px; }
+}
+
+@media (max-width: 768px) {
+    header { flex-direction: column; padding: 1rem; }
+    header h1 { margin-bottom: 0.8rem; font-size: 1.8rem; }
+    header nav { margin-top: 0.5rem; }
+    #form-filtros-admin { grid-template-columns: 1fr; } /* Un filtro por línea */
+    .btn-filtrar, .btn-limpiar-filtros { width: 100%; margin-bottom: 10px; }
+    
+    .tabla-responsive-contenedor { /* Asegurar que la tabla tenga scroll */
+        width: 100%; 
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    }
+    table { display: table; width: 100%; } /* Reset para que no sea block */
+    table th, table td { white-space: normal; } /* Permitir que el texto se rompa */
+    .btn-admin-accion { margin: 2px; } /* Menos margen en móvil */
+    .modal-contenido { width: 95%; padding: 20px 25px; max-height: 90vh; overflow-y: auto; }
+}
+
+@media (max-width: 480px) {
+    body { font-size: 15px; }
+    header h1 { font-size: 1.6rem; }
+    main { padding: 20px 15px; margin: 20px auto; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.3rem; }
+    .btn-admin-accion { padding: 5px 7px; font-size: 1rem; }
+    .modal-admin-acciones button { display: block; width: 100%; margin: 8px 0; }
+}

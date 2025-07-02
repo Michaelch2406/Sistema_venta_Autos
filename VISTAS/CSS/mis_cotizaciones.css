@@ -1,63 +1,408 @@
-.page-header {
-    border-bottom: 1px solid #dee2e6;
+/* mis_cotizaciones.css */
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f7f7; /* Un gris un poco más claro */
+    color: #333;
+    line-height: 1.6;
+    font-size: 16px;
 }
 
-.cotizacion-card {
-    border: 1px solid #e0e0e0;
-    border-left-width: 5px;
-    border-radius: 0.5rem;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+header {
+    background-color: #2c5282; /* Azul oscuro corporativo */
+    color: #ffffff;
+    padding: 1rem 2rem; /* Más padding horizontal */
+    display: flex; /* Para alinear título y nav */
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.cotizacion-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+header h1 {
+    margin: 0;
+    font-size: 1.8rem; /* Ligeramente más pequeño para header con nav */
+    font-weight: 600;
+}
+header nav a {
+    color: #e2e8f0; /* Color de texto más suave para enlaces de nav */
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 0.95rem;
+    transition: color 0.2s ease-in-out;
+}
+header nav a:hover {
+    color: #ffffff;
+    text-decoration: underline;
 }
 
-.cotizacion-card .card-header {
-    background-color: #f8f9fa;
+
+main {
+    padding: 25px;
+    max-width: 1000px; /* Un poco más de ancho */
+    margin: 30px auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Sombra más suave y difusa */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+#lista-cotizaciones h2 {
+    color: #2d3748; /* Gris oscuro para títulos de sección */
+    border-bottom: 2px solid #cbd5e0; /* Borde más sutil */
+    padding-bottom: 12px;
+    margin-top: 0; /* Quitar margen superior si es el primer elemento */
+    margin-bottom: 25px;
+    font-size: 1.6rem;
+}
+
+.tabla-responsive-contenedor {
+    overflow-x: auto; /* Permite scroll horizontal en tablas en pantallas pequeñas */
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Mantenemos esto */
+    /* quitamos margin-bottom de aquí, lo maneja el contenedor */
+}
+
+table th, table td {
+    border: 1px solid #e2e8f0; /* Borde más claro */
+    padding: 12px 15px; /* Más padding */
+    text-align: left;
+    vertical-align: middle; /* Mejor alineación vertical */
+}
+
+table th {
+    background-color: #f1f5f9; /* Fondo muy claro para encabezados */
+    font-weight: 600; /* Un poco más de peso */
+    color: #4a5568; /* Color de texto gris oscuro para th */
     font-size: 0.9rem;
+    text-transform: uppercase; /* Mayúsculas para encabezados */
+    letter-spacing: 0.05em;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f8fafc; /* Alternar color de fila muy sutil */
+}
+
+table tbody tr:hover {
+    background-color: #eef2ff; /* Hover más notable pero suave */
+}
+
+/* Estilos para los botones de acción en la tabla y modal */
+.btn-ver-detalle, .btn-accion {
+    background-color: #3182ce; /* Azul primario */
+    color: white;
+    border: none;
+    padding: 8px 16px; /* Padding ajustado */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px; /* Bordes más redondeados */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-ver-detalle:hover, .btn-accion:hover {
+    background-color: #2b6cb0; /* Azul más oscuro al hover */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.btn-ver-detalle:disabled, .btn-accion:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* Tags de Estado */
+.estado-tag {
+    padding: 4px 10px;
+    border-radius: 12px; /* Más redondeado para tags */
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff; /* Color de texto blanco por defecto para tags */
+}
+.estado-pendiente { background-color: #f6ad55; /* Naranja */ }
+.estado-aprobada { background-color: #48bb78; /* Verde */ }
+.estado-rechazada { background-color: #f56565; /* Rojo */ }
+.estado-completada { background-color: #4299e1; /* Azul */ }
+.estado-pagada { background-color: #38b2ac; /* Teal */ }
+
+
+/* Estilos para el Modal */
+.modal {
+    position: fixed;
+    z-index: 1000; /* Asegurar que esté por encima de todo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Permitir scroll si el contenido es largo */
+    background-color: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente */
+    display: flex; /* Para centrar el contenido del modal */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-contenido {
+    background-color: #fff;
+    margin: auto; /* Centrado automático */
+    padding: 25px 30px;
+    border: 1px solid #cbd5e0;
+    width: 90%;
+    max-width: 700px; /* Ancho máximo del modal */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative; /* Para posicionar el botón de cerrar */
+    animation: fadeInModal 0.3s ease-out;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-cerrar {
+    color: #718096; /* Gris para el icono de cerrar */
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.modal-cerrar:hover,
+.modal-cerrar:focus {
+    color: #2d3748; /* Más oscuro al hover */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-contenido h3 {
+    color: #2c5282; /* Mismo azul que el header para títulos de modal */
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+.modal-contenido h4 {
+    color: #4a5568;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+/* Estilos para la tabla dentro del modal */
+.modal-contenido .tabla-detalle {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+.modal-contenido .tabla-detalle th {
+    background-color: #edf2f7; /* Fondo aún más claro para th en modal */
+    font-size: 0.85rem;
+}
+.modal-contenido .tabla-detalle td, 
+.modal-contenido .tabla-detalle th {
+    padding: 8px 10px;
+}
+
+.text-right { text-align: right; }
+
+.loading-message, .error-message {
+    padding: 15px;
+    text-align: center;
+    font-size: 1rem;
+}
+.error-message {
+    color: #c53030; /* Rojo oscuro para errores */
+    background-color: #fed7d7; /* Fondo rojo claro */
+    border: 1px solid #f56565;
+    border-radius: 4px;
+}
+
+.detalle-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 15px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+.detalle-grid strong {
+    color: #4a5568;
+}
+
+.totales-detalle {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+}
+.totales-detalle p {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 1rem;
+}
+.totales-detalle .total-final strong {
+    font-size: 1.15rem;
+    color: #2c5282;
+}
+
+.modal-acciones {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    text-align: right; /* Alinea botones a la derecha */
+}
+.modal-acciones .btn-accion {
+    margin-left: 10px;
+}
+.btn-aceptar-cot { background-color: #38a169; /* Verde para aceptar */}
+.btn-aceptar-cot:hover { background-color: #2f855a; }
+.btn-rechazar-cot { background-color: #e53e3e; /* Rojo para rechazar */}
+.btn-rechazar-cot:hover { background-color: #c53030; }
+.btn-imprimir-cot { background-color: #718096; /* Gris para imprimir/secundario */}
+.btn-imprimir-cot:hover { background-color: #4a5568; }
+
+
+.error { /* Estilo de error general, si se usa fuera del modal */
+    color: #9B2C2C; /* Rojo oscuro */
+    background-color: #FED7D7; /* Rojo muy claro */
+    border: 1px solid #F56565; /* Rojo claro */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
     font-weight: 500;
 }
 
-.cotizacion-card .card-body h5 {
-    font-weight: 600;
-}
-
-.solicitante-info p {
-    margin-bottom: 0.5rem;
-}
-
-.solicitante-info i {
-    width: 20px;
-}
-
-.mensaje-solicitante {
-    background-color: #f8f9fa;
-    border-radius: 0.3rem;
-    padding: 1rem;
-    font-style: italic;
-    color: #495057;
-    border-left: 3px solid #0d6efd;
-}
-
-.card-footer {
-    background-color: #f8f9fa;
-}
-
-/* Colores de borde y badge por estado */
-.border-pendiente { border-left-color: #ffc107 !important; /* Amarillo */ }
-.badge-pendiente { background-color: #ffc107 !important; color: #000 !important; }
-
-.border-contactado { border-left-color: #0dcaf0 !important; /* Cyan */ }
-.badge-contactado { background-color: #0dcaf0 !important; color: #000 !important; }
-
-.border-cerrado { border-left-color: #198754 !important; /* Verde */ }
-.badge-cerrado { background-color: #198754 !important; }
-
-.border-rechazado { border-left-color: #dc3545 !important; /* Rojo */ }
-.badge-rechazado { background-color: #dc3545 !important; }
-
-.status-select {
-    max-width: 200px;
+footer {
+    text-align: center;
+    padding: 25px;
+    background-color: #1a202c; /* Gris muy oscuro, casi negro */
+    color: #a0aec0; /* Gris claro para texto de footer */
+    margin-top: 40px;
     font-size: 0.9rem;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    header h1 {
+        margin-bottom: 0.5rem;
+        font-size: 1.6rem;
+    }
+    header nav {
+        margin-top: 0.5rem;
+    }
+    main {
+        padding: 20px;
+        margin: 20px 15px; /* Menos margen horizontal en móviles */
+    }
+    table th, table td { /* Reducir padding en tablas en móvil */
+        padding: 10px 8px;
+        font-size: 0.85rem;
+    }
+    .modal-contenido {
+        width: 95%; /* Modal más ancho en móviles */
+        padding: 20px;
+        max-height: 90vh; /* Evitar que el modal sea más alto que la pantalla */
+        overflow-y: auto; /* Scroll vertical para el modal si es necesario */
+    }
+    .modal-acciones {
+        text-align: center;
+    }
+    .modal-acciones .btn-accion {
+        display: block; /* Botones en bloque para ocupar todo el ancho */
+        width: calc(100% - 20px); /* Ajustar ancho con padding */
+        margin: 10px auto; /* Centrar y espaciar */
+    }
+}
+
+@media (max-width: 480px) {
+    body { font-size: 15px; }
+    header h1 { font-size: 1.4rem; }
+    header nav a { font-size: 0.9rem; margin-left: 10px; }
+    
+    #lista-cotizaciones h2 { font-size: 1.4rem; }
+    .btn-ver-detalle, .btn-accion { font-size: 0.85rem; padding: 7px 12px; }
+
+    .modal-contenido h3 { font-size: 1.3rem; }
+    .detalle-grid { grid-template-columns: 1fr; gap: 5px 0; } /* Una columna en móvil */
+    .detalle-grid div:nth-child(odd) { font-weight: bold; margin-bottom: 2px;} /* Etiqueta */
+    .detalle-grid div:nth-child(even) { margin-bottom: 8px;} /* Valor */
+}
+/* ================================================================ */
+/* --- ESTILOS PARA CORREGIR EL MODAL DE DETALLE DE COTIZACIÓN --- */
+/* ================================================================ */
+
+/* 1. El contenedor/fondo oscuro del modal */
+.modal {
+  display: block; /* Asegurarse que es visible cuando no tiene style="display:none;" */
+  position: fixed; /* ¡Clave! Lo saca del flujo normal y lo posiciona relativo a la ventana del navegador. */
+  z-index: 1050;   /* ¡La solución principal! Un z-index alto lo pone al frente de todo. */
+  left: 0;
+  top: 0;
+  width: 100%;     /* Cubre toda la pantalla */
+  height: 100%;    /* Cubre toda la pantalla */
+  overflow-y: auto; /* Permite hacer scroll si el contenido es muy largo */
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+  
+  /* Para centrar el contenido del modal vertical y horizontalmente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 2. La caja blanca con el contenido del modal */
+.modal-contenido {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  width: 90%; /* Ancho responsivo */
+  max-width: 650px; /* Un ancho máximo para pantallas grandes */
+  position: relative; /* Necesario para posicionar el botón de cerrar 'X' */
+  animation: fadeIn 0.3s ease-in-out; /* Una pequeña animación de entrada */
+}
+
+/* 3. El botón para cerrar (la '×') */
+.modal-cerrar {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: #aaa;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.modal-cerrar:hover,
+.modal-cerrar:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Animación opcional para la aparición */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

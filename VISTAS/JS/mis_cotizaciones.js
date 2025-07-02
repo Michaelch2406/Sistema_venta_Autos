@@ -1,118 +1,125 @@
-$(document).ready(function() {
-    const container = $('#cotizacionesContainer');
-    const loadingIndicator = $('#loadingIndicator');
-    const noCotizacionesMessage = $('#noCotizacionesMessage');
+// mis_cotizaciones.js
 
-    function getStatusBadge(estado) {
-        const estadoLower = estado.toLowerCase();
-        return `<span class="badge badge-${estadoLower}">${estado.charAt(0).toUpperCase() + estado.slice(1)}</span>`;
-    }
-
-    function renderCotizacionCard(cotizacion) {
-        const fecha = new Date(cotizacion.cot_fecha_solicitud).toLocaleDateString('es-ES', {
-            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        });
-
-        return `
-            <div class="col-lg-6">
-                <div class="card cotizacion-card border-${cotizacion.cot_estado.toLowerCase()}">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <i class="bi bi-card-text me-2"></i>
-                            <strong>Vehículo:</strong> ${cotizacion.cot_detalles_vehiculo_solicitado}
-                        </div>
-                        <span class="text-muted small">${fecha}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="solicitante-info mb-3">
-                            <h5 class="card-title mb-3">Información del Solicitante</h5>
-                            <p><i class="bi bi-person-fill me-2"></i>${cotizacion.usu_nombre} ${cotizacion.usu_apellido}</p>
-                            <p><i class="bi bi-envelope-fill me-2"></i><a href="mailto:${cotizacion.usu_email}">${cotizacion.usu_email}</a></p>
-                            <p><i class="bi bi-telephone-fill me-2"></i><a href="tel:${cotizacion.usu_telefono}">${cotizacion.usu_telefono}</a></p>
-                        </div>
-                        <p class="mb-2"><strong>Mensaje:</strong></p>
-                        <div class="mensaje-solicitante">
-                            ${cotizacion.cot_mensaje}
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>Estado:</strong> ${getStatusBadge(cotizacion.cot_estado)}
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <label for="status-select-${cotizacion.cot_id}" class="form-label me-2 small mb-0">Cambiar a:</label>
-                            <select class="form-select form-select-sm status-select" data-cot-id="${cotizacion.cot_id}">
-                                <option value="pendiente" ${cotizacion.cot_estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
-                                <option value="contactado" ${cotizacion.cot_estado === 'contactado' ? 'selected' : ''}>Contactado</option>
-                                <option value="cerrado" ${cotizacion.cot_estado === 'cerrado' ? 'selected' : ''}>Cerrado</option>
-                                <option value="rechazado" ${cotizacion.cot_estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-    }
-
-    function cargarCotizaciones() {
-        loadingIndicator.show();
-        noCotizacionesMessage.hide();
-        container.empty().append(loadingIndicator); // Mover el spinner dentro del contenedor
-
-        $.ajax({
-            url: '../AJAX/cotizaciones_ajax.php',
-            type: 'GET',
-            data: { accion: 'getMisCotizaciones' },
-            dataType: 'json',
-            success: function(response) {
-                loadingIndicator.hide();
-                if (response.status === 'success' && response.data.length > 0) {
-                    response.data.forEach(cotizacion => {
-                        container.append(renderCotizacionCard(cotizacion));
-                    });
-                } else {
-                    noCotizacionesMessage.show();
-                }
-            },
-            error: function() {
-                loadingIndicator.hide();
-                container.html('<div class="alert alert-danger">Error de conexión al cargar las cotizaciones.</div>');
-            }
-        });
-    }
-
-    // Cargar cotizaciones al iniciar la página
-    cargarCotizaciones();
-
-    // Manejar cambio de estado con delegación de eventos
-    container.on('change', '.status-select', function() {
-        const select = $(this);
-        const cotId = select.data('cot-id');
-        const nuevoEstado = select.val();
-        
-        select.prop('disabled', true);
-
-        $.ajax({
-            url: '../AJAX/cotizaciones_ajax.php',
-            type: 'POST',
-            data: {
-                accion: 'actualizarEstado',
-                cot_id: cotId,
-                nuevo_estado: nuevoEstado
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    // Refrescar la lista para mostrar el cambio visualmente
-                    cargarCotizaciones();
-                } else {
-                    alert('Error: ' + response.message);
-                    select.prop('disabled', false);
-                }
-            },
-            error: function() {
-                alert('Error de conexión al actualizar el estado.');
-                select.prop('disabled', false);
-            }
-        });
+// --- FUNCIONES AUXILIARES DE JAVASCRIPT ---
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, function(m) {
+        switch (m) {
+            case '&': return '&';
+            case '<': return '<';
+            case '>': return '>';
+            case '"': return '"';
+            default: return '"';     // '
+        }
     });
+}
+
+function nl2br(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/(\r\n|\n\r|\r|\n)/g, '<br>');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('mis_cotizaciones.js cargado y listo.');
+
+    // --- MANEJO DEL MODAL DE DETALLES (USUARIO) ---
+    const modalDetalleUsuario = document.getElementById('modal-detalle-cotizacion');
+    const spanCerrarModalUsuario = document.getElementById('modal-cerrar-detalle');
+    const detalleUsuarioIdModalSpan = document.getElementById('detalle-cotizacion-id-modal');
+    const detalleUsuarioContenidoModal = document.getElementById('detalle-cotizacion-contenido-modal');
+    const tablaCotizacionesBody = document.querySelector('#lista-cotizaciones tbody');
+
+    // Event listener para botones "Ver Detalle"
+    if (tablaCotizacionesBody) {
+        tablaCotizacionesBody.addEventListener('click', function(event) {
+            const botonVerDetalle = event.target.closest('.btn-ver-detalle');
+            if (botonVerDetalle) {
+                const cotizacionId = botonVerDetalle.dataset.id;
+                abrirDetalleUsuarioModal(cotizacionId);
+            }
+        });
+    }
+
+    function abrirDetalleUsuarioModal(cotizacionId) {
+        if (!modalDetalleUsuario) return;
+        detalleUsuarioIdModalSpan.textContent = cotizacionId;
+        detalleUsuarioContenidoModal.innerHTML = '<p class="loading-message">Cargando detalles...</p>';
+        modalDetalleUsuario.style.display = 'block';
+        fetchDetalleCotizacionUsuario(cotizacionId);
+    }
+
+    if (spanCerrarModalUsuario) {
+        spanCerrarModalUsuario.onclick = function() {
+            modalDetalleUsuario.style.display = 'none';
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modalDetalleUsuario) {
+            modalDetalleUsuario.style.display = 'none';
+        }
+    }
+
+    async function fetchDetalleCotizacionUsuario(cotizacionId) {
+        // --- RUTA CORREGIDA ---
+        const apiUrl = `../AJAX/cotizaciones_ajax.php?action=obtener_detalle_cotizacion_usuario&id_cotizacion=${encodeURIComponent(cotizacionId)}`;
+        
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error de red: ${response.status} ${response.statusText}. Respuesta: ${errorText}`);
+            }
+            const resultado = await response.json();
+
+            if (resultado.success && resultado.data) {
+                renderizarDetalleUsuarioModal(resultado.data);
+            } else {
+                mostrarErrorDetalleUsuarioModal(resultado.message || "No se pudo cargar la información.");
+            }
+        } catch (error) {
+            console.error('Error en fetchDetalleCotizacionUsuario:', error);
+            // El error "htmlspecialchars is not defined" que viste venía de aquí, al intentar renderizar el error.
+            // Ahora usamos escapeHTML para mostrar el mensaje de error de forma segura.
+            mostrarErrorDetalleUsuarioModal(`Error de conexión o respuesta inesperada: ${escapeHTML(error.message)}. Inténtelo más tarde.`);
+        }
+    }
+
+    function renderizarDetalleUsuarioModal(cotData) {
+        let fechaSolicitudFormateada = 'N/A';
+        if (cotData.cot_fecha_solicitud) {
+            try {
+                fechaSolicitudFormateada = new Date(cotData.cot_fecha_solicitud).toLocaleString('es-ES', {
+                    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+            } catch (e) { console.error("Error formateando fecha (usuario):", e); }
+        }
+
+        // Usamos escapeHTML() y nl2br() para mostrar los datos de forma segura
+        let html = `
+            <div class="detalle-grid-usuario">
+                <div><strong>ID Cotización:</strong></div><div>${cotData.cot_id}</div>
+                <div><strong>Fecha Solicitud:</strong></div><div>${fechaSolicitudFormateada}</div>
+                <div><strong>Estado:</strong></div><div><span class="estado-tag estado-${escapeHTML((cotData.cot_estado || '').toLowerCase())}">${escapeHTML(cotData.cot_estado.replace('_', ' '))}</span></div>
+                <div><strong>Vehículo Solicitado:</strong></div><div>${escapeHTML(cotData.cot_detalles_vehiculo_solicitado)}</div>
+                <div><strong>Monto Estimado:</strong></div><div><strong>${parseFloat(cotData.cot_monto_estimado || 0).toFixed(2)} €</strong></div>
+            </div>
+            <h4>Tu Mensaje Enviado:</h4>
+            <p class="mensaje-usuario">${cotData.cot_mensaje ? nl2br(escapeHTML(cotData.cot_mensaje)) : '<em>No enviaste un mensaje adicional.</em>'}</p>
+            
+            <h4>Notas del Administrador:</h4>
+            <p class="notas-admin">${cotData.cot_notas_admin ? nl2br(escapeHTML(cotData.cot_notas_admin)) : '<em>Aún no hay notas del administrador.</em>'}</p>`;
+        
+        detalleUsuarioContenidoModal.innerHTML = html;
+        
+        // Actualizar botón de imprimir si existe
+        const btnImprimir = modalDetalleUsuario.querySelector('.btn-imprimir-cot');
+        if(btnImprimir) {
+            btnImprimir.dataset.id = cotData.cot_id;
+        }
+    }
+    
+    function mostrarErrorDetalleUsuarioModal(mensaje) {
+        detalleUsuarioContenidoModal.innerHTML = `<p class="error-message">${escapeHTML(mensaje)}</p>`;
+    }
 });

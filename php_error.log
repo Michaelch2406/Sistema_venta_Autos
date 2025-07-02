@@ -89,3 +89,5 @@ Stack trace:
     [rol_id] => 2
 )
 
+[02-Jul-2025 13:51:02 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_tvcd7mkl9q9gtsnai7b2eud19i, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 30
+[02-Jul-2025 13:51:02 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 30

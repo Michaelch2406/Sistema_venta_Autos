@@ -1,6 +1,12 @@
-$(document).ready(function() {
+/**
+ * DETALLE VEHICULO - JAVASCRIPT INTERACTIVO
+ * Maneja animaciones, interacciones y funcionalidades dinámicas reales.
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
     
     // --- LÓGICA DE LIGHTBOX PARA GALERÍA ---
+    // Asegurarse que lightbox está definido antes de usarlo.
     if (typeof lightbox !== 'undefined') {
         lightbox.option({
           'resizeDuration': 200,
@@ -10,114 +16,235 @@ $(document).ready(function() {
         });
     }
 
-    // --- LÓGICA PARA AGREGAR/QUITAR FAVORITOS ---
-    const $btnFavorito = $('.btn-agregar-favoritos');
-    const $favTextSpan = $('#favText');
-    const $favIcon = $btnFavorito.find('i.bi');
+    // --- LÓGICA PARA CAMBIAR IMAGEN PRINCIPAL CON MINIATURAS ---
+    const imagenPrincipal = document.getElementById('imagenPrincipalVehiculo');
+    const miniaturas = document.querySelectorAll('.thumbnail-item');
 
-    if ($btnFavorito.length > 0) {
-        const vehId = $btnFavorito.data('veh-id');
-
-        function actualizarBotonUI(esFavorito) {
-            $btnFavorito.data('es-favorito', esFavorito); 
-            if (esFavorito) {
-                if ($favTextSpan.length) $favTextSpan.text('Quitar de Favoritos');
-                if ($favIcon.length) $favIcon.removeClass('bi-heart').addClass('bi-heart-fill');
-                $btnFavorito.removeClass('btn-outline-danger').addClass('btn-danger');
-            } else {
-                if ($favTextSpan.length) $favTextSpan.text('Agregar a Favoritos');
-                if ($favIcon.length) $favIcon.removeClass('bi-heart-fill').addClass('bi-heart');
-                $btnFavorito.removeClass('btn-danger').addClass('btn-outline-danger');
-            }
-        }
-
-        function toggleBotonCarga(cargando) {
-            $btnFavorito.prop('disabled', cargando);
-            if (cargando) {
-                if ($favTextSpan.length) $favTextSpan.text('Procesando...');
-            } else {
-                actualizarBotonUI($btnFavorito.data('es-favorito'));
-            }
-        }
-
-        if (vehId) {
-            toggleBotonCarga(true);
-            $.ajax({
-                url: '../AJAX/favoritos_ajax.php',
-                type: 'POST',
-                data: { accion: 'verificar', veh_id: vehId },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        actualizarBotonUI(response.esFavorito);
-                    }
-                },
-                error: function() { if ($favTextSpan.length) $favTextSpan.text('Error'); },
-                complete: function() { toggleBotonCarga(false); }
-            });
-        }
-
-        $btnFavorito.on('click', function(e) {
+    miniaturas.forEach(item => {
+        item.addEventListener('click', function(e) {
             e.preventDefault();
-            const esFavoritoActual = $(this).data('es-favorito');
-            const accionParaEnviar = esFavoritoActual ? 'quitar' : 'agregar';
-            toggleBotonCarga(true);
-            $.ajax({
-                url: '../AJAX/favoritos_ajax.php',
-                type: 'POST',
-                data: { accion: accionParaEnviar, veh_id: vehId },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success' || response.status === 'info') {
-                        actualizarBotonUI(response.esFavorito);
-                    } else {
-                        alert('Error: ' + (response.message || 'No se pudo actualizar el favorito.'));
+            
+            // Obtener la imagen dentro del enlace de la miniatura
+            const thumbnailImg = this.querySelector('.thumbnail-image');
+            const nuevaSrc = thumbnailImg.getAttribute('data-fullimage');
+
+            if (imagenPrincipal && nuevaSrc) {
+                // Animación de cambio
+                imagenPrincipal.style.opacity = '0';
+                setTimeout(() => {
+                    imagenPrincipal.src = nuevaSrc;
+                    
+                    // Actualizar también el enlace del lightbox de la imagen principal
+                    const linkPrincipal = imagenPrincipal.closest('a');
+                    if (linkPrincipal) {
+                        linkPrincipal.href = nuevaSrc;
                     }
-                },
-                error: function() { alert('Error de conexión al guardar favorito.'); },
-                complete: function() { toggleBotonCarga(false); }
+
+                    imagenPrincipal.style.opacity = '1';
+                }, 300); // Coincide con la duración de la transición en CSS
+            }
+
+            // Actualizar la clase activa
+            miniaturas.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // --- LÓGICA PARA AGREGAR/QUITAR FAVORITOS (ADAPTADA DE ARCHIVO ANTIGUO) ---
+    const btnFavorito = document.querySelector('.btn-favoritos');
+
+    if (btnFavorito) {
+        const vehId = btnFavorito.dataset.vehId;
+        const favTextSpan = document.getElementById('favText');
+        const favIcon = btnFavorito.querySelector('i.bi');
+
+        const actualizarBotonUI = (esFavorito) => {
+            btnFavorito.dataset.esFavorito = esFavorito;
+            if (esFavorito) {
+                favTextSpan.textContent = 'Quitar de Favoritos';
+                favIcon.classList.remove('bi-heart');
+                favIcon.classList.add('bi-heart-fill');
+                btnFavorito.classList.add('active'); // Clase para estilizar estado activo si se desea
+            } else {
+                favTextSpan.textContent = 'Agregar a Favoritos';
+                favIcon.classList.remove('bi-heart-fill');
+                favIcon.classList.add('bi-heart');
+                btnFavorito.classList.remove('active');
+            }
+        };
+        
+        const toggleBotonCarga = (cargando) => {
+            btnFavorito.disabled = cargando;
+            if (cargando) {
+                favTextSpan.textContent = 'Procesando...';
+            } else {
+                // La UI se actualiza en las funciones de éxito/error
+            }
+        };
+
+        // Verificar estado inicial al cargar la página
+        toggleBotonCarga(true);
+        const dataVerificar = new FormData();
+        dataVerificar.append('accion', 'verificar');
+        dataVerificar.append('veh_id', vehId);
+
+        fetch('../AJAX/favoritos_ajax.php', {
+            method: 'POST',
+            body: dataVerificar
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                actualizarBotonUI(data.esFavorito);
+            }
+        })
+        .catch(error => {
+            console.error('Error al verificar favorito:', error);
+            favTextSpan.textContent = 'Error';
+        })
+        .finally(() => {
+            toggleBotonCarga(false);
+        });
+        
+
+        // Evento click para agregar/quitar
+        btnFavorito.addEventListener('click', (e) => {
+            e.preventDefault();
+            const esFavoritoActual = btnFavorito.dataset.esFavorito === 'true';
+            const accionParaEnviar = esFavoritoActual ? 'quitar' : 'agregar';
+            
+            toggleBotonCarga(true);
+
+            const dataAccion = new FormData();
+            dataAccion.append('accion', accionParaEnviar);
+            dataAccion.append('veh_id', vehId);
+
+            fetch('../AJAX/favoritos_ajax.php', {
+                method: 'POST',
+                body: dataAccion
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' || data.status === 'info') {
+                    actualizarBotonUI(data.esFavorito);
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo actualizar el favorito.'));
+                    actualizarBotonUI(esFavoritoActual); // Revertir UI en caso de error
+                }
+            })
+            .catch(error => {
+                console.error('Error de conexión al guardar favorito:', error);
+                alert('Error de conexión al guardar favorito.');
+                actualizarBotonUI(esFavoritoActual); // Revertir UI
+            })
+            .finally(() => {
+                toggleBotonCarga(false);
             });
         });
     }
 
-    // --- LÓGICA PARA EL FORMULARIO DE CONTACTO/COTIZACIÓN ---
-    $('#formContactoVendedor').on('submit', function(e) {
-        e.preventDefault();
+    // --- LÓGICA PARA EL FORMULARIO DE CONTACTO/COTIZACIÓN (ADAPTADA DE ARCHIVO ANTIGUO) ---
+    const formContacto = document.getElementById('formContactoVendedor');
 
-        var $form = $(this);
-        var $submitButton = $('#btnEnviarCotizacion');
-        var $messageContainer = $('#contactFormMessage');
-        var originalButtonHtml = $submitButton.html();
+    if (formContacto) {
+        formContacto.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        $submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...');
-        $messageContainer.html('').removeClass('alert alert-success alert-danger');
+            const submitButton = document.getElementById('btnEnviarCotizacion');
+            const messageContainer = document.getElementById('contactFormMessage');
+            const originalButtonContent = submitButton.innerHTML;
 
-        $.ajax({
-            url: '../AJAX/cotizaciones_ajax.php',
-            type: 'POST',
-            data: $form.serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    $messageContainer.html('<div class="alert alert-success">' + response.message + '</div>');
-                    $form.find('textarea, button').prop('disabled', true);
-                    
-                    setTimeout(function() {
-                        var modalEl = document.getElementById('modalContactoVendedor');
-                        if(modalEl) {
-                           var modalInstance = bootstrap.Modal.getInstance(modalEl);
-                           if(modalInstance) modalInstance.hide();
-                        }
+            submitButton.disabled = true;
+            submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...`;
+            messageContainer.innerHTML = '';
+            messageContainer.className = 'mt-3';
+            
+            const formData = new FormData(formContacto);
+
+            fetch('../AJAX/cotizaciones_ajax.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    messageContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    formContacto.querySelector('textarea').disabled = true;
+                    submitButton.disabled = true;
+
+                    setTimeout(() => {
+                        const modalEl = document.getElementById('modalContactoVendedor');
+                        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        if(modalInstance) modalInstance.hide();
                     }, 4000);
                 } else {
-                    $messageContainer.html('<div class="alert alert-danger">' + (response.message || 'Ocurrió un error.') + '</div>');
-                    $submitButton.prop('disabled', false).html(originalButtonHtml);
+                    messageContainer.innerHTML = `<div class="alert alert-danger">${data.message || 'Ocurrió un error.'}</div>`;
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonContent;
                 }
-            },
-            error: function() {
-                $messageContainer.html('<div class="alert alert-danger">Error de conexión. Por favor, inténtalo de nuevo.</div>');
-                $submitButton.prop('disabled', false).html(originalButtonHtml);
+            })
+            .catch(error => {
+                console.error('Error de conexión en formulario de contacto:', error);
+                messageContainer.innerHTML = `<div class="alert alert-danger">Error de conexión. Por favor, inténtalo de nuevo.</div>`;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonContent;
+            });
+        });
+    }
+
+    // --- LÓGICA PARA COMPARTIR ---
+    const shareButton = document.querySelector('.btn-share');
+    if (shareButton) {
+        shareButton.addEventListener('click', () => {
+            const title = shareButton.dataset.shareTitle;
+            const url = shareButton.dataset.shareUrl;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: decodeURIComponent(title),
+                    text: `¡Mira este increíble vehículo que encontré!`,
+                    url: decodeURIComponent(url)
+                }).catch(console.error);
+            } else {
+                // Fallback para navegadores que no soportan la API
+                alert('Usa los botones de tu navegador para compartir esta página.');
             }
         });
+    }
+
+    // --- LÓGICA DE ANIMACIONES AL SCROLL ---
+    const revealElements = document.querySelectorAll('.reveal-on-scroll');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    revealElements.forEach(el => observer.observe(el));
+
+
+    // --- LÓGICA PARA OCULTAR EL LOADER ---
+    const loader = document.getElementById('page-loader');
+    const mainContent = document.querySelector('.main-content');
+    
+    // Ocultar el loader cuando la página esté completamente cargada
+    window.addEventListener('load', () => {
+      if (loader) loader.classList.add('hidden');
+      if (mainContent) {
+          mainContent.classList.remove('content-hidden');
+          mainContent.classList.add('visible');
+      }
+
+      // Disparar animaciones de entrada después de que el loader se oculte
+      setTimeout(() => {
+        document.querySelectorAll('.fade-in-left, .fade-in-right, .fade-in-up').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'translate(0, 0)';
+        });
+      }, 100);
     });
 });
