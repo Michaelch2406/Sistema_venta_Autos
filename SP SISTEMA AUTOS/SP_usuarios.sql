@@ -1,56 +1,51 @@
 USE SistemaVentaAutos;
 
 -- Stored Procedure para Registrar un Nuevo Usuario
+USE SistemaVentaAutos;
+
+DROP PROCEDURE IF EXISTS sp_registrar_usuario;
+
 DELIMITER //
+
 CREATE PROCEDURE sp_registrar_usuario(
     IN p_rol_id INT,
     IN p_usu_usuario VARCHAR(50),
     IN p_usu_nombre VARCHAR(100),
     IN p_usu_apellido VARCHAR(100),
     IN p_usu_email VARCHAR(100),
-    IN p_usu_password VARCHAR(255), -- Recibe la contraseña ya hasheada
+    -- Nuevo parámetro añadido
+    IN p_usu_cedula VARCHAR(13),
+    IN p_usu_password_hash VARCHAR(255),
     IN p_usu_telefono VARCHAR(20),
     IN p_usu_direccion VARCHAR(255),
     IN p_usu_fnacimiento DATE,
-    OUT p_resultado INT, -- 1: Éxito, 0: Usuario ya existe, -1: Email ya existe, -2: Error
+    OUT p_resultado INT,
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    DECLARE v_count_usuario INT;
-    DECLARE v_count_email INT;
-    SET p_resultado = -2; -- Error por defecto
-    SET p_mensaje = 'Error desconocido al registrar el usuario.';
+    SET p_resultado = 0;
 
-    -- Verificar si el nombre de usuario ya existe
-    SELECT COUNT(*) INTO v_count_usuario FROM Usuarios WHERE usu_usuario = p_usu_usuario;
-    IF v_count_usuario > 0 THEN
-        SET p_resultado = 0;
+    IF EXISTS (SELECT 1 FROM Usuarios WHERE usu_usuario = p_usu_usuario) THEN
         SET p_mensaje = 'El nombre de usuario ya está en uso.';
+    ELSEIF EXISTS (SELECT 1 FROM Usuarios WHERE usu_email = p_usu_email) THEN
+        SET p_mensaje = 'El correo electrónico ya está registrado.';
+    ELSEIF EXISTS (SELECT 1 FROM Usuarios WHERE usu_cedula = p_usu_cedula) THEN
+        SET p_mensaje = 'La cédula ingresada ya está registrada.';
     ELSE
-        -- Verificar si el email ya existe
-        SELECT COUNT(*) INTO v_count_email FROM Usuarios WHERE usu_email = p_usu_email;
-        IF v_count_email > 0 THEN
-            SET p_resultado = -1;
-            SET p_mensaje = 'El correo electrónico ya está registrado.';
-        ELSE
-            -- Insertar el nuevo usuario
-            INSERT INTO Usuarios (
-                rol_id, usu_usuario, usu_nombre, usu_apellido, usu_email,
-                usu_password, usu_telefono, usu_direccion, usu_fnacimiento, usu_verificado
-            ) VALUES (
-                p_rol_id, p_usu_usuario, p_usu_nombre, p_usu_apellido, p_usu_email,
-                p_usu_password, p_usu_telefono, p_usu_direccion, p_usu_fnacimiento, FALSE -- usu_verificado por defecto FALSE
-            );
-
-            IF ROW_COUNT() > 0 THEN
-                SET p_resultado = 1;
-                SET p_mensaje = 'Usuario registrado exitosamente.';
-            ELSE
-                SET p_mensaje = 'Error al insertar el usuario en la base de datos.';
-            END IF;
-        END IF;
+        INSERT INTO Usuarios (
+            rol_id, usu_usuario, usu_nombre, usu_apellido, usu_email, 
+            usu_cedula, -- Campo añadido
+            usu_password, usu_telefono, usu_direccion, usu_fnacimiento
+        ) VALUES (
+            p_rol_id, p_usu_usuario, p_usu_nombre, p_usu_apellido, p_usu_email, 
+            p_usu_cedula, -- Valor añadido
+            p_usu_password_hash, p_usu_telefono, p_usu_direccion, p_usu_fnacimiento
+        );
+        SET p_resultado = 1;
+        SET p_mensaje = 'Usuario registrado exitosamente.';
     END IF;
 END //
+
 DELIMITER ;
 
 -- Stored Procedure para Iniciar Sesión

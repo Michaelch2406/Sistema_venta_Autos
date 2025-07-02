@@ -19,6 +19,9 @@ class Usuario
     // --- Métodos existentes (registrarUsuario, loginUsuario) ---
     public function registrarUsuario(
         $rol_id, $usuario, $nombre, $apellido, $email,
+        // === PARÁMETRO AÑADIDO ===
+        $cedula,
+        // =========================
         $password_plana, $telefono, $direccion, $fnacimiento
     ) {
         $password_hash = password_hash($password_plana, PASSWORD_DEFAULT);
@@ -27,12 +30,16 @@ class Usuario
         $nombre_esc = $this->conn->real_escape_string($nombre);
         $apellido_esc = $this->conn->real_escape_string($apellido);
         $email_esc = $this->conn->real_escape_string($email);
+        // === VARIABLE AÑADIDA ===
+        $cedula_esc = $this->conn->real_escape_string($cedula);
+        // ========================
         $telefono_esc = $telefono ? "'" . $this->conn->real_escape_string($telefono) . "'" : "NULL";
         $direccion_esc = $direccion ? "'" . $this->conn->real_escape_string($direccion) . "'" : "NULL";
         $fnacimiento_esc = $fnacimiento ? "'" . $this->conn->real_escape_string($fnacimiento) . "'" : "NULL";
 
         $sql = "CALL sp_registrar_usuario(
             $rol_id_esc, '$usuario_esc', '$nombre_esc', '$apellido_esc', '$email_esc',
+            '$cedula_esc', -- Parámetro añadido en la llamada
             '$password_hash', $telefono_esc, $direccion_esc, $fnacimiento_esc,
             @p_resultado, @p_mensaje
         )";

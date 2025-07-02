@@ -50,3 +50,42 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\cotizaciones_ajax.php on line 8
+[01-Jul-2025 22:40:55 America/New_York] Iniciando 'publicarVehiculo'.
+  - ID de sesión (session_id): kkuqngds1vvlrgl8ggqlo7kmmn
+  - Contenido de $_SESSION: Array
+(
+    [usu_id] => 3
+    [usu_nombre_completo] => Alejandro Daniel Cevallos Lomas
+    [usu_email] => alejandroc@gmail.com
+    [rol_id] => 2
+)
+
+[01-Jul-2025 22:46:01 America/New_York] Iniciando 'publicarVehiculo'.
+  - ID de sesión (session_id): kkuqngds1vvlrgl8ggqlo7kmmn
+  - Contenido de $_SESSION: Array
+(
+    [usu_id] => 3
+    [usu_nombre_completo] => Alejandro Daniel Cevallos Lomas
+    [usu_email] => alejandroc@gmail.com
+    [rol_id] => 2
+)
+
+[01-Jul-2025 23:02:17 America/New_York] Error al llamar a sp_registrar_usuario: Field 'usu_cedula' doesn't have a default value
+[01-Jul-2025 23:14:40 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_ltanq1ja3pivrt971pakflcffe, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:40 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:40 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_ltanq1ja3pivrt971pakflcffe, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:40 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:43 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_ltanq1ja3pivrt971pakflcffe, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:43 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_ltanq1ja3pivrt971pakflcffe, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:43 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:14:43 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[01-Jul-2025 23:25:33 America/New_York] Iniciando 'publicarVehiculo'.
+  - ID de sesión (session_id): 5ip3cr5r80dl3b4lstafcu6db8
+  - Contenido de $_SESSION: Array
+(
+    [usu_id] => 3
+    [usu_nombre_completo] => Alejandro Daniel Cevallos Lomas
+    [usu_email] => alejandroc@gmail.com
+    [rol_id] => 2
+)
+

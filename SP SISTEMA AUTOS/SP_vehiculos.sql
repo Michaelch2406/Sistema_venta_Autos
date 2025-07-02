@@ -28,19 +28,21 @@ USE SistemaVentaAutos;
 USE SistemaVentaAutos;
 
 DROP PROCEDURE IF EXISTS sp_insertar_vehiculo;
+
 DELIMITER //
+
 CREATE PROCEDURE sp_insertar_vehiculo(
+    -- PARÁMETROS DE ENTRADA (IN)
     IN p_mar_id INT,
     IN p_mod_id INT,
     IN p_tiv_id INT,
     IN p_veh_subtipo_vehiculo VARCHAR(100),
-    IN p_usu_id_gestor INT,
+    IN p_usu_id_gestor INT, -- <-- Este es el ID del vendedor que llega desde PHP
     IN p_veh_condicion ENUM('nuevo', 'usado'),
     IN p_veh_anio INT,
     IN p_veh_kilometraje INT,
     IN p_veh_precio DECIMAL(12, 2),
     IN p_veh_vin VARCHAR(20),
-    -- NUEVO PARÁMETRO AÑADIDO --
     IN p_veh_placa VARCHAR(10),
     IN p_veh_ubicacion_provincia VARCHAR(100),
     IN p_veh_ubicacion_ciudad VARCHAR(100),
@@ -58,21 +60,26 @@ CREATE PROCEDURE sp_insertar_vehiculo(
     IN p_veh_descripcion TEXT,
     IN p_veh_detalles_extra TEXT,
     IN p_veh_fecha_publicacion DATE,
+    -- PARÁMETROS DE SALIDA (OUT)
     OUT p_veh_id_insertado INT,
     OUT p_resultado INT, 
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    SET p_resultado = 0; 
-    SET p_mensaje = 'Error al insertar el vehículo.';
+    -- Inicializar variables de salida
+    SET p_resultado = 0;
+    SET p_mensaje = 'Error desconocido al insertar el vehículo.';
     SET p_veh_id_insertado = NULL;
 
-    -- Añadimos validación para la placa única
+    -- Validaciones antes de insertar
     IF p_veh_placa IS NOT NULL AND p_veh_placa != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_placa = p_veh_placa) THEN
         SET p_mensaje = 'La placa ingresada ya existe para otro vehículo.';
     ELSEIF p_veh_vin IS NOT NULL AND p_veh_vin != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_vin = p_veh_vin) THEN
         SET p_mensaje = 'El VIN ingresado ya existe para otro vehículo.';
     ELSE
+        -- === PUNTO CLAVE DE LA CORRECCIÓN ===
+        -- La sentencia INSERT utiliza el parámetro p_usu_id_gestor que viene de PHP.
+        -- No hay ningún valor '1' escrito en el código.
         INSERT INTO Vehiculos (
             mar_id, mod_id, tiv_id, veh_subtipo_vehiculo, usu_id_gestor, veh_condicion, veh_anio, veh_kilometraje,
             veh_precio, veh_vin, veh_placa, veh_ubicacion_provincia, veh_ubicacion_ciudad, veh_placa_provincia_origen, veh_ultimo_digito_placa,
@@ -89,15 +96,17 @@ BEGIN
             'disponible', p_veh_fecha_publicacion
         );
 
+        -- Verificar si la inserción fue exitosa
         IF ROW_COUNT() > 0 THEN
             SET p_veh_id_insertado = LAST_INSERT_ID();
             SET p_resultado = 1;
             SET p_mensaje = 'Vehículo publicado exitosamente.';
         ELSE
-            SET p_mensaje = 'No se pudo insertar el vehículo en la base de datos.';
+            SET p_mensaje = 'No se pudo insertar el vehículo en la base de datos. Verifique los datos.';
         END IF;
     END IF;
 END //
+
 DELIMITER ;
 
 
@@ -304,6 +313,8 @@ DELIMITER ;
 
 USE SistemaVentaAutos;
 
+USE SistemaVentaAutos;
+
 DROP PROCEDURE IF EXISTS sp_get_vehiculo_detalle;
 DELIMITER //
 CREATE PROCEDURE sp_get_vehiculo_detalle(
@@ -311,9 +322,12 @@ CREATE PROCEDURE sp_get_vehiculo_detalle(
 )
 BEGIN
     SELECT
-        v.veh_id, v.veh_subtipo_vehiculo, v.veh_condicion, v.veh_anio, v.veh_kilometraje,
-        v.veh_precio, v.veh_vin, v.veh_placa, -- CAMPO AÑADIDO
-        v.veh_ubicacion_provincia, v.veh_ubicacion_ciudad,
+        v.veh_id, 
+        -- === CAMPO AÑADIDO AQUÍ ===
+        v.usu_id_gestor,
+        -- ========================
+        v.veh_subtipo_vehiculo, v.veh_condicion, v.veh_anio, v.veh_kilometraje,
+        v.veh_precio, v.veh_vin, v.veh_placa, v.veh_ubicacion_provincia, v.veh_ubicacion_ciudad,
         v.veh_placa_provincia_origen, v.veh_ultimo_digito_placa,
         v.veh_color_exterior, v.veh_color_interior, v.veh_detalles_motor,
         v.veh_tipo_transmision, v.veh_traccion, v.veh_tipo_vidrios, v.veh_tipo_combustible,
