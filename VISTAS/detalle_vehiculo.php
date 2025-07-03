@@ -1,8 +1,20 @@
 <?php
+// Ensure session cookie parameters are robustly set
+if (session_status() == PHP_SESSION_NONE) {
+    $cookieParams = session_get_cookie_params();
+    session_set_cookie_params(
+        $cookieParams["lifetime"],
+        '/', // Path - make sure this matches the login script
+        $cookieParams["domain"], // Domain - make sure this matches
+        isset($_SERVER['HTTPS']), // Secure - true if HTTPS
+        true // HttpOnly
+    );
+    session_start();
+}
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-session_start();
+// session_start(); // Now handled above with params
 require_once __DIR__ . "/../MODELOS/vehiculos_m.php";
 require_once __DIR__ . "/../MODELOS/imagenes_vehiculo_m.php";
 
