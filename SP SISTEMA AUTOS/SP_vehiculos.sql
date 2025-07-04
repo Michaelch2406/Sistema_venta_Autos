@@ -311,7 +311,63 @@ BEGIN
 END //
 DELIMITER ;
 
-USE SistemaVentaAutos;
+USE SISTEMAVENTAAUTOS;
+DROP PROCEDURE IF EXISTS sp_actualizar_estado_vehiculo;
+DELIMITER //
+CREATE PROCEDURE sp_actualizar_estado_vehiculo(
+    IN p_veh_id INT,
+    IN p_nuevo_estado ENUM('disponible','reservado','vendido','desactivado'),
+    IN p_usu_id_sesion INT, -- ID del usuario que realiza la acción
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_usu_id_gestor_vehiculo INT;
+    DECLARE v_rol_id_sesion INT;
+    DECLARE v_estado_actual ENUM('disponible','reservado','vendido','desactivado');
+
+    SET p_resultado = 0; -- Error por defecto
+    SET p_mensaje = 'Error desconocido al actualizar el estado.';
+
+    -- Obtener el usu_id_gestor del vehículo y el estado actual
+    SELECT usu_id_gestor, veh_estado INTO v_usu_id_gestor_vehiculo, v_estado_actual
+    FROM Vehiculos
+    WHERE veh_id = p_veh_id;
+
+    IF v_usu_id_gestor_vehiculo IS NULL THEN
+        SET p_mensaje = 'Vehículo no encontrado.';
+    ELSE
+        -- Obtener el rol del usuario de la sesión directamente desde la tabla Usuarios
+        SELECT rol_id INTO v_rol_id_sesion
+        FROM Usuarios
+        WHERE usu_id = p_usu_id_sesion;
+
+        -- Verificar permisos: 
+        -- El usuario de la sesión debe ser el gestor del vehículo O tener rol de Administrador (rol_id = 3)
+        IF v_usu_id_gestor_vehiculo = p_usu_id_sesion OR v_rol_id_sesion = 3 THEN
+            IF v_estado_actual = p_nuevo_estado THEN
+                SET p_mensaje = CONCAT('El vehículo ya se encuentra en estado ', p_nuevo_estado, '.');
+                -- Considerar p_resultado = 1 aquí si no se considera un error, o incluso 0 si no se hizo cambio.
+            ELSE
+                UPDATE Vehiculos
+                SET veh_estado = p_nuevo_estado,
+                    veh_actualizado_en = CURRENT_TIMESTAMP
+                WHERE veh_id = p_veh_id;
+
+                IF ROW_COUNT() > 0 THEN
+                    SET p_resultado = 1;
+                    SET p_mensaje = CONCAT('Estado del vehículo actualizado a ', p_nuevo_estado, ' exitosamente.');
+                ELSE
+                    SET p_mensaje = 'No se pudo actualizar el estado del vehículo en la base de datos.';
+                END IF;
+            END IF;
+        ELSE
+            SET p_mensaje = 'No tienes permiso para modificar el estado de este vehículo.';
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
 
 USE SistemaVentaAutos;
 

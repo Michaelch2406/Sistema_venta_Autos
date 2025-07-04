@@ -96,3 +96,15 @@ Stack trace:
 [02-Jul-2025 18:11:57 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_oplroslomoua80r844j7eafa2v, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
 [02-Jul-2025 18:11:57 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
 [03-Jul-2025 14:22:09 America/New_York] PHP Notice:  session_start(): ps_files_cleanup_dir: opendir(C:\Windows\Temp\) failed: No error (0) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 7
+[03-Jul-2025 23:40:54 America/New_York] Error al llamar a sp_actualizar_estado_vehiculo: Table 'sistemaventaautos.usuariosroles' doesn't exist (SQL: CALL sp_actualizar_estado_vehiculo(
+            1, 'desactivado', 3,
+            @p_resultado, @p_mensaje
+        ))
+[03-Jul-2025 23:41:14 America/New_York] Error al llamar a sp_actualizar_estado_vehiculo: Table 'sistemaventaautos.usuariosroles' doesn't exist (SQL: CALL sp_actualizar_estado_vehiculo(
+            1, 'desactivado', 3,
+            @p_resultado, @p_mensaje
+        ))
+[03-Jul-2025 23:44:34 America/New_York] Error al llamar a sp_actualizar_estado_vehiculo: Column 'rol_id' in field list is ambiguous (SQL: CALL sp_actualizar_estado_vehiculo(
+            1, 'desactivado', 3,
+            @p_resultado, @p_mensaje
+        ))

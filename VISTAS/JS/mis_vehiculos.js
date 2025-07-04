@@ -40,17 +40,33 @@ $(document).ready(function() {
                                         
                                         <div class="mt-auto d-flex justify-content-between align-items-center">
                                             <a href="editar_vehiculo.php?id=${vehiculo.veh_id}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i> Editar</a>
-                                            <div class="dropdown actions-dropdown">
+                                            <div class="dropup actions-dropdown"> 
                                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton-${vehiculo.veh_id}" data-bs-toggle="dropdown" aria-expanded="false">
                                                     Más Acciones
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton-${vehiculo.veh_id}">
                                                     <li><a class="dropdown-item" href="detalle_vehiculo.php?id=${vehiculo.veh_id}" target="_blank"><i class="bi bi-eye-fill me-2"></i>Ver Anuncio</a></li>
-                                                    <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="reservado"><i class="bi bi-calendar-check me-2"></i>Marcar como Reservado</a></li>
-                                                    <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido"><i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido</a></li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado"><i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio</a></li>
-                                                    <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible"><i class="bi bi-play-circle me-2"></i>Reactivar Anuncio</a></li>
+                                                    ${vehiculo.veh_estado === 'disponible' ? `
+                                                        <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="reservado"><i class="bi bi-calendar-check me-2"></i>Marcar como Reservado</a></li>
+                                                        <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido"><i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido</a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado"><i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio</a></li>
+                                                    ` : ''}
+                                                    ${vehiculo.veh_estado === 'reservado' ? `
+                                                        <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible"><i class="bi bi-arrow-clockwise me-2"></i>Marcar como Disponible</a></li>
+                                                        <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido"><i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido</a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado"><i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio</a></li>
+                                                    ` : ''}
+                                                    ${vehiculo.veh_estado === 'vendido' ? `
+                                                        <li><span class="dropdown-item-text text-muted fst-italic">Vehículo vendido</span></li>
+                                                        <!-- Opcional: Permitir reactivar un vehículo vendido si la lógica de negocio lo permite -->
+                                                        <!-- <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item cambiar-estado-btn text-info" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible"><i class="bi bi-arrow-counterclockwise me-2"></i>Re-Publicar (si fue error)</a></li> -->
+                                                    ` : ''}
+                                                    ${vehiculo.veh_estado === 'desactivado' ? `
+                                                        <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible"><i class="bi bi-play-circle me-2"></i>Reactivar Anuncio</a></li>
+                                                    ` : ''}
                                                     <!-- <li><a class="dropdown-item text-danger eliminar-vehiculo-btn" href="#" data-id="${vehiculo.veh_id}"><i class="bi bi-trash3-fill me-2"></i>Eliminar Anuncio</a></li> -->
                                                 </ul>
                                             </div>
