@@ -308,3 +308,284 @@ CREATE TABLE `vehiculooferta` (
   CONSTRAINT `fk_vehiculooferta_ofertaspromociones` FOREIGN KEY (`ofe_id`) REFERENCES `ofertaspromociones` (`ofe_id`),
   CONSTRAINT `fk_vehiculooferta_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`)
 );
+
+
+
+
+
+
+
+=======================================================
+DESCRIBE MYSQL
+=======================================================
+
+mysql> show tables;
++-----------------------------+
+| Tables_in_sistemaventaautos |
++-----------------------------+
+| cotizaciones                |
+| detallesventa               |
+| favoritos                   |
+| formaspago                  |
+| imagenesvehiculo            |
+| marcas                      |
+| modelos                     |
+| ofertaspromociones          |
+| pagos                       |
+| roles                       |
+| tiposvehiculo               |
+| usuarios                    |
+| vehiculooferta              |
+| vehiculos                   |
+| ventas                      |
+| videosvehiculo              |
++-----------------------------+
+16 rows in set (0.00 sec)
+
+mysql> clear
+mysql> DESCRIBE cotizaciones;
++----------------------------------+-----------------------------------------------------------------------+------+-----+-------------------+-------------------+
+| Field                            | Type                                                                  | Null | Key | Default           | Extra             |
++----------------------------------+-----------------------------------------------------------------------+------+-----+-------------------+-------------------+
+| cot_id                           | int                                                                   | NO   | PRI | NULL              | auto_increment    |
+| usu_id_solicitante               | int                                                                   | NO   | MUL | NULL              |                   |
+| veh_id                           | int                                                                   | YES  | MUL | NULL              |                   |
+| cot_detalles_vehiculo_solicitado | text                                                                  | YES  |     | NULL              |                   |
+| cot_mensaje                      | text                                                                  | YES  |     | NULL              |                   |
+| cot_estado                       | enum('pendiente','aprobada_admin','contactado','cerrado','rechazado') | YES  | MUL | pendiente         |                   |
+| cot_fecha_solicitud              | timestamp                                                             | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| cot_notas_admin                  | text                                                                  | YES  |     | NULL              |                   |
++----------------------------------+-----------------------------------------------------------------------+------+-----+-------------------+-------------------+
+8 rows in set (0.00 sec)
+
+mysql> DESCRIBE detallesventa;
++---------------------+---------------+------+-----+---------+----------------+
+| Field               | Type          | Null | Key | Default | Extra          |
++---------------------+---------------+------+-----+---------+----------------+
+| dve_id              | int           | NO   | PRI | NULL    | auto_increment |
+| ven_id              | int           | NO   | MUL | NULL    |                |
+| veh_id              | int           | NO   | UNI | NULL    |                |
+| dve_precio_unitario | decimal(12,2) | NO   |     | NULL    |                |
+| dve_cantidad        | int           | YES  |     | 1       |                |
++---------------------+---------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> DESCRIBE favoritos;
++--------------------+-----------+------+-----+-------------------+-------------------+
+| Field              | Type      | Null | Key | Default           | Extra             |
++--------------------+-----------+------+-----+-------------------+-------------------+
+| fav_id             | int       | NO   | PRI | NULL              | auto_increment    |
+| usu_id             | int       | NO   | MUL | NULL              |                   |
+| veh_id             | int       | NO   | MUL | NULL              |                   |
+| fav_fecha_agregado | timestamp | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++--------------------+-----------+------+-----+-------------------+-------------------+
+4 rows in set (0.00 sec)
+
+mysql> DESCRIBE formaspago;
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| fpa_id     | int         | NO   | PRI | NULL    | auto_increment |
+| fpa_nombre | varchar(50) | NO   | UNI | NULL    |                |
+| fpa_activo | tinyint(1)  | YES  |     | 1       |                |
++------------+-------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> DESCRIBE imagenesvehiculo;
++------------------+--------------+------+-----+-------------------+-------------------+
+| Field            | Type         | Null | Key | Default           | Extra             |
++------------------+--------------+------+-----+-------------------+-------------------+
+| ima_id           | int          | NO   | PRI | NULL              | auto_increment    |
+| veh_id           | int          | NO   | MUL | NULL              |                   |
+| ima_url          | varchar(255) | NO   |     | NULL              |                   |
+| ima_es_principal | tinyint(1)   | YES  |     | 0                 |                   |
+| ima_creado_en    | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++------------------+--------------+------+-----+-------------------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> DESCRIBE marcas;
++--------------------+--------------+------+-----+---------+----------------+
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| mar_id             | int          | NO   | PRI | NULL    | auto_increment |
+| mar_nombre         | varchar(100) | NO   | UNI | NULL    |                |
+| mar_logo_url       | varchar(255) | YES  |     | NULL    |                |
+| mar_actualizado_en | datetime     | YES  |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> DESCRIBE modelos;
++--------------------+--------------+------+-----+---------+----------------+
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| mod_id             | int          | NO   | PRI | NULL    | auto_increment |
+| mar_id             | int          | NO   | MUL | NULL    |                |
+| mod_nombre         | varchar(100) | NO   |     | NULL    |                |
+| mod_actualizado_en | datetime     | YES  |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> DESCRIBE ofertaspromociones;
++---------------------+---------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| Field               | Type                                                                | Null | Key | Default           | Extra                                         |
++---------------------+---------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| ofe_id              | int                                                                 | NO   | PRI | NULL              | auto_increment                                |
+| ofe_nombre          | varchar(150)                                                        | NO   |     | NULL              |                                               |
+| ofe_descripcion     | text                                                                | YES  |     | NULL              |                                               |
+| ofe_tipo            | enum('descuento_porcentaje','descuento_fijo','envio_gratis','otro') | NO   |     | NULL              |                                               |
+| ofe_valor           | decimal(10,2)                                                       | YES  |     | NULL              |                                               |
+| ofe_codigo_cupon    | varchar(50)                                                         | YES  | UNI | NULL              |                                               |
+| ofe_fecha_inicio    | datetime                                                            | NO   |     | NULL              |                                               |
+| ofe_fecha_fin       | datetime                                                            | NO   |     | NULL              |                                               |
+| ofe_estado          | enum('activa','inactiva','caducada')                                | YES  | MUL | activa            |                                               |
+| ofe_uso_maximo      | int                                                                 | YES  |     | NULL              |                                               |
+| ofe_uso_por_cliente | int                                                                 | YES  |     | 1                 |                                               |
+| ofe_creado_en       | timestamp                                                           | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| ofe_actualizado_en  | timestamp                                                           | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++---------------------+---------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+13 rows in set (0.00 sec)
+
+mysql> DESCRIBE pagos;
++----------------+--------------------------------------------------------+------+-----+-------------------+-------------------+
+| Field          | Type                                                   | Null | Key | Default           | Extra             |
++----------------+--------------------------------------------------------+------+-----+-------------------+-------------------+
+| pag_id         | int                                                    | NO   | PRI | NULL              | auto_increment    |
+| ven_id         | int                                                    | NO   | MUL | NULL              |                   |
+| fpa_id         | int                                                    | NO   | MUL | NULL              |                   |
+| pag_monto      | decimal(12,2)                                          | NO   |     | NULL              |                   |
+| pag_fecha      | timestamp                                              | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| pag_referencia | varchar(100)                                           | YES  |     | NULL              |                   |
+| pag_estado     | enum('pendiente','completado','fallido','reembolsado') | YES  | MUL | pendiente         |                   |
+| pag_notas      | text                                                   | YES  |     | NULL              |                   |
++----------------+--------------------------------------------------------+------+-----+-------------------+-------------------+
+8 rows in set (0.00 sec)
+
+mysql> DESCRIBE roles;
++--------------------+-------------+------+-----+-------------------+-----------------------------------------------+
+| Field              | Type        | Null | Key | Default           | Extra                                         |
++--------------------+-------------+------+-----+-------------------+-----------------------------------------------+
+| rol_id             | int         | NO   | PRI | NULL              | auto_increment                                |
+| rol_nombre         | varchar(50) | NO   | UNI | NULL              |                                               |
+| rol_descripcion    | text        | YES  |     | NULL              |                                               |
+| rol_activo         | tinyint(1)  | YES  |     | 1                 |                                               |
+| rol_creado_en      | timestamp   | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| rol_actualizado_en | timestamp   | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++--------------------+-------------+------+-----+-------------------+-----------------------------------------------+
+6 rows in set (0.00 sec)
+
+mysql> DESCRIBE tiposvehiculo;
++--------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field              | Type         | Null | Key | Default           | Extra                                         |
++--------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| tiv_id             | int          | NO   | PRI | NULL              | auto_increment                                |
+| tiv_nombre         | varchar(100) | NO   | UNI | NULL              |                                               |
+| tiv_descripcion    | text         | YES  |     | NULL              |                                               |
+| tiv_icono_url      | varchar(255) | YES  |     | NULL              |                                               |
+| tiv_activo         | tinyint(1)   | YES  |     | 1                 |                                               |
+| tiv_creado_en      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| tiv_actualizado_en | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++--------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+7 rows in set (0.00 sec)
+
+mysql> DESCRIBE usuarios;
++--------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field              | Type         | Null | Key | Default           | Extra                                         |
++--------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| usu_id             | int          | NO   | PRI | NULL              | auto_increment                                |
+| rol_id             | int          | NO   | MUL | NULL              |                                               |
+| usu_usuario        | varchar(50)  | NO   | UNI | NULL              |                                               |
+| usu_nombre         | varchar(100) | NO   |     | NULL              |                                               |
+| usu_apellido       | varchar(100) | NO   |     | NULL              |                                               |
+| usu_email          | varchar(100) | NO   | UNI | NULL              |                                               |
+| usu_password       | varchar(255) | NO   |     | NULL              |                                               |
+| usu_telefono       | varchar(20)  | YES  |     | NULL              |                                               |
+| usu_direccion      | varchar(255) | YES  |     | NULL              |                                               |
+| usu_fnacimiento    | date         | YES  |     | NULL              |                                               |
+| usu_verificado     | tinyint(1)   | YES  |     | 0                 |                                               |
+| usu_creado_en      | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| usu_actualizado_en | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
+| usu_cedula         | varchar(13)  | NO   | UNI | NULL              |                                               |
++--------------------+--------------+------+-----+-------------------+-----------------------------------------------+
+14 rows in set (0.00 sec)
+
+mysql> DESCRIBE vehiculooferta;
++--------+------+------+-----+---------+----------------+
+| Field  | Type | Null | Key | Default | Extra          |
++--------+------+------+-----+---------+----------------+
+| vof_id | int  | NO   | PRI | NULL    | auto_increment |
+| veh_id | int  | NO   | MUL | NULL    |                |
+| ofe_id | int  | NO   | MUL | NULL    |                |
++--------+------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> DESCRIBE vehiculos;
++----------------------------+--------------------------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| Field                      | Type                                                                                                               | Null | Key | Default           | Extra                                         |
++----------------------------+--------------------------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| veh_id                     | int                                                                                                                | NO   | PRI | NULL              | auto_increment                                |
+| mar_id                     | int                                                                                                                | NO   | MUL | NULL              |                                               |
+| mod_id                     | int                                                                                                                | NO   | MUL | NULL              |                                               |
+| tiv_id                     | int                                                                                                                | NO   | MUL | NULL              |                                               |
+| veh_subtipo_vehiculo       | varchar(100)                                                                                                       | YES  |     | NULL              |                                               |
+| usu_id_gestor              | int                                                                                                                | YES  | MUL | NULL              |                                               |
+| veh_condicion              | enum('nuevo','usado')                                                                                              | NO   |     | NULL              |                                               |
+| veh_anio                   | int                                                                                                                | NO   |     | NULL              |                                               |
+| veh_kilometraje            | int                                                                                                                | NO   |     | NULL              |                                               |
+| veh_precio                 | decimal(12,2)                                                                                                      | NO   |     | NULL              |                                               |
+| veh_vin                    | varchar(20)                                                                                                        | YES  | UNI | NULL              |                                               |
+| veh_placa                  | varchar(10)                                                                                                        | YES  | UNI | NULL              |                                               |
+| veh_ubicacion_ciudad       | varchar(100)                                                                                                       | NO   |     | NULL              |                                               |
+| veh_ubicacion_provincia    | varchar(100)                                                                                                       | NO   | MUL | NULL              |                                               |
+| veh_color_exterior         | varchar(50)                                                                                                        | YES  |     | NULL              |                                               |
+| veh_color_interior         | varchar(50)                                                                                                        | YES  |     | NULL              |                                               |
+| veh_detalles_motor         | text                                                                                                               | YES  |     | NULL              |                                               |
+| veh_tipo_transmision       | varchar(50)                                                                                                        | YES  |     | NULL              |                                               |
+| veh_sistema_climatizacion  | enum('Ninguno','Aire Acondicionado','Climatizador Manual','Climatizador Automatico','Climatizador Bi-Zona','Otro') | YES  |     | NULL              |                                               |
+| veh_ultimo_digito_placa    | char(1)                                                                                                            | YES  |     | NULL              |                                               |
+| veh_placa_provincia_origen | varchar(100)                                                                                                       | YES  |     | NULL              |                                               |
+| veh_traccion               | enum('Delantera','Trasera','4x4','AWD','Otro')                                                                     | YES  |     | NULL              |                                               |
+| veh_tipo_vidrios           | enum('Manuales','Electricos Delanteros','Electricos Completos','Otro')                                             | YES  |     | NULL              |                                               |
+| veh_tipo_combustible       | enum('Gasolina','Diesel','Hibrido','Electrico','Flex (Gasolina/Etanol)','GLP','GNV','Otro')                        | YES  |     | NULL              |                                               |
+| veh_tipo_direccion         | enum('Mecanica','Hidraulica','Electroasistida','Electrica','Otra')                                                 | YES  |     | NULL              |                                               |
+| veh_descripcion            | text                                                                                                               | YES  |     | NULL              |                                               |
+| veh_detalles_extra         | text                                                                                                               | YES  |     | NULL              |                                               |
+| veh_estado                 | enum('disponible','reservado','vendido','desactivado')                                                             | YES  | MUL | disponible        |                                               |
+| veh_fecha_publicacion      | date                                                                                                               | NO   |     | NULL              |                                               |
+| veh_creado_en              | timestamp                                                                                                          | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| veh_actualizado_en         | timestamp                                                                                                          | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++----------------------------+--------------------------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+31 rows in set (0.00 sec)
+
+mysql> DESCRIBE ventas;
++--------------------+-------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| Field              | Type                                                                                            | Null | Key | Default           | Extra                                         |
++--------------------+-------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+| ven_id             | int                                                                                             | NO   | PRI | NULL              | auto_increment                                |
+| usu_id_comprador   | int                                                                                             | NO   | MUL | NULL              |                                               |
+| usu_id_gestor      | int                                                                                             | YES  | MUL | NULL              |                                               |
+| ofe_id             | int                                                                                             | YES  | MUL | NULL              |                                               |
+| ven_fecha_venta    | date                                                                                            | NO   |     | NULL              |                                               |
+| ven_subtotal       | decimal(12,2)                                                                                   | NO   |     | NULL              |                                               |
+| ven_descuento      | decimal(12,2)                                                                                   | YES  |     | 0.00              |                                               |
+| ven_impuestos      | decimal(12,2)                                                                                   | YES  |     | 0.00              |                                               |
+| ven_precio_total   | decimal(12,2)                                                                                   | NO   |     | NULL              |                                               |
+| ven_estado         | enum('pendiente_pago','pagado_parcial','pagado_completo','en_entrega','completado','cancelado') | YES  | MUL | pendiente_pago    |                                               |
+| ven_notas_internas | text                                                                                            | YES  |     | NULL              |                                               |
+| ven_creado_en      | timestamp                                                                                       | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| ven_actualizado_en | timestamp                                                                                       | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++--------------------+-------------------------------------------------------------------------------------------------+------+-----+-------------------+-----------------------------------------------+
+13 rows in set (0.00 sec)
+
+mysql> DESCRIBE videosvehiculo;
++-------------------+----------------------------------------+------+-----+-------------------+-------------------+
+| Field             | Type                                   | Null | Key | Default           | Extra             |
++-------------------+----------------------------------------+------+-----+-------------------+-------------------+
+| viv_id            | int                                    | NO   | PRI | NULL              | auto_increment    |
+| veh_id            | int                                    | NO   | MUL | NULL              |                   |
+| viv_url           | varchar(255)                           | NO   |     | NULL              |                   |
+| viv_titulo        | varchar(150)                           | YES  |     | NULL              |                   |
+| viv_plataforma    | enum('youtube','vimeo','local','otro') | YES  |     | otro              |                   |
+| viv_id_plataforma | varchar(100)                           | YES  |     | NULL              |                   |
+| viv_es_principal  | tinyint(1)                             | YES  |     | 0                 |                   |
+| viv_creado_en     | timestamp                              | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-------------------+----------------------------------------+------+-----+-------------------+-------------------+
