@@ -166,6 +166,83 @@ switch ($action) {
             echo json_encode(['success' => false, 'message' => 'Error al guardar las notas administrativas. Verifique que la cotización exista.']);
         }
         break;
+
+    case 'registrar_cotizacion_nuevo':
+        $usu_id_solicitante = verificar_sesion_y_rol(); // Cualquier usuario logueado puede solicitar
+
+        $veh_id = filter_input(INPUT_POST, 'veh_id', FILTER_VALIDATE_INT);
+        $cot_detalles_vehiculo_solicitado = $_POST['cot_detalles_vehiculo_solicitado'] ?? null; // JSON string
+        $cot_mensaje = $_POST['cot_mensaje'] ?? null; // Mensaje adicional, cédula, etc.
+
+        if (!$veh_id) {
+            echo json_encode(['success' => false, 'message' => 'ID de vehículo no válido.']);
+            exit;
+        }
+        if (empty($cot_detalles_vehiculo_solicitado)) {
+            echo json_encode(['success' => false, 'message' => 'Los detalles del vehículo solicitado son requeridos.']);
+            exit;
+        }
+        // Validar que $cot_detalles_vehiculo_solicitado sea un JSON válido
+        json_decode($cot_detalles_vehiculo_solicitado);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            echo json_encode(['success' => false, 'message' => 'Formato de detalles de vehículo no válido.']);
+            exit;
+        }
+
+        $resultado = $cotizacionModelo->registrar_cotizacion_vehiculo_nuevo(
+            $usu_id_solicitante,
+            $veh_id,
+            $cot_detalles_vehiculo_solicitado,
+            $cot_mensaje
+        );
+
+        if (isset($resultado['success']) && $resultado['success']) {
+            // Intentar obtener el precio base del vehículo para devolverlo y ayudar con el resumen estimado
+            $vehiculoInfo = null;
+            $precioBase = null;
+            // Para que funcione, VehiculoModelo debe estar disponible y su constructor adaptado para recibir mysqli
+            // o instanciar su propia conexión de forma segura.
+            // Por ahora, asumimos que VehiculoModelo está en MODELOS/vehiculos_m.php
+            $vehiculo_modelo_path = __DIR__ . '/../MODELOS/vehiculos_m.php';
+            if (file_exists($vehiculo_modelo_path)) {
+                require_once $vehiculo_modelo_path; // Asegurar que la clase esté cargada
+                if (class_exists('Vehiculo')) { // La clase se llama Vehiculo, no VehiculoModelo
+                    // Pasar $db_conn_mysqli al constructor de Vehiculo si está adaptado para ello.
+                    // Si no, Vehiculo instanciará su propia conexión.
+                    // Para este ejemplo, asumiré que Vehiculo puede instanciar su propia conexión
+                    // o que su constructor ha sido adaptado.
+                    // Si Vehiculo requiere el objeto Conexion, y no mysqli:
+                    // $tempConexionObj = new Conexion(); // Esto podría ser problemático si Conexion no es singleton
+                    // $vehiculoModelo = new Vehiculo($tempConexionObj);
+                    
+                    // Si Vehiculo puede tomar mysqli, o si ya tienes una instancia de Conexion que lo usa:
+                     try {
+                        // Si el constructor de Vehiculo fue adaptado para tomar mysqli:
+                        // $vehiculoModelo = new Vehiculo($db_conn_mysqli); 
+                        // Si no, y usa su propio constructor:
+                        $vehiculoModelo = new Vehiculo(); // Asumiendo que el constructor de Vehiculo maneja la conexión
+                        $precioBase = $vehiculoModelo->obtenerPrecioBasePorId($veh_id);
+                    } catch (Exception $e) {
+                        error_log("Error al instanciar VehiculoModelo o llamar a obtenerPrecioBasePorId: " . $e->getMessage());
+                        // No es crítico para la cotización, así que no fallamos la respuesta.
+                    }
+                } else {
+                     error_log("Clase Vehiculo no encontrada en AJAX/cotizaciones_ajax.php");
+                }
+            } else {
+                error_log("Archivo MODELOS/vehiculos_m.php no encontrado en AJAX/cotizaciones_ajax.php");
+            }
+
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Solicitud de cotización registrada exitosamente. Un asesor se pondrá en contacto con usted.',
+                'cot_id' => $resultado['cot_id'] ?? null,
+                'vehiculo_base_precio' => $precioBase
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => $resultado['message'] ?? 'Error al registrar la cotización.']);
+        }
+        break;
     
     default:
         echo json_encode(['success' => false, 'message' => 'Acción desconocida o no implementada: ' . htmlspecialchars($action)]);

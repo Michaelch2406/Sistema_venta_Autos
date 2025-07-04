@@ -56,6 +56,39 @@ DELIMITER ;
 
 USE SistemaVentaAutos;
 
+-- Stored Procedure para registrar cotización de vehículo nuevo
+DROP PROCEDURE IF EXISTS sp_registrar_cotizacion_nuevo;
+DELIMITER //
+CREATE PROCEDURE sp_registrar_cotizacion_nuevo(
+    IN p_usu_id_solicitante INT,
+    IN p_veh_id INT,
+    IN p_cot_detalles_vehiculo_solicitado TEXT,
+    IN p_cot_mensaje TEXT
+)
+BEGIN
+    INSERT INTO cotizaciones (
+        usu_id_solicitante, 
+        veh_id, 
+        cot_detalles_vehiculo_solicitado, 
+        cot_mensaje, 
+        cot_estado, 
+        cot_fecha_solicitud
+    )
+    VALUES (
+        p_usu_id_solicitante, 
+        p_veh_id, 
+        p_cot_detalles_vehiculo_solicitado, 
+        p_cot_mensaje, 
+        'pendiente', 
+        NOW()
+    );
+    SELECT LAST_INSERT_ID() as cot_id;
+END //
+DELIMITER ;
+
+
+
+
 
 DELIMITER $$
 

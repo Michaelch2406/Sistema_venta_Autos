@@ -292,6 +292,27 @@ class Vehiculo
         return $vehiculo_detalle; // Puede ser null si no se encontró el vehículo
     }
 
+    public function obtenerPrecioBasePorId($veh_id) {
+        if (!$this->conn) return null;
+
+        $veh_id_esc = $this->conn->real_escape_string($veh_id);
+        $sql = "CALL sp_get_vehiculo_precio_base($veh_id_esc)";
+        
+        $resultado = $this->conn_obj->ejecutarSP($sql);
+        $precio = null;
+
+        if ($resultado && $resultado instanceof mysqli_result) {
+            if ($resultado->num_rows > 0) {
+                $fila = $resultado->fetch_assoc();
+                $precio = $fila['veh_precio'];
+            }
+            $resultado->free();
+            while($this->conn->more_results() && $this->conn->next_result()){;}
+        } elseif ($resultado === false) {
+            error_log("Error al ejecutar sp_get_vehiculo_precio_base para veh_id $veh_id_esc: " . $this->conn->error . " (SQL: $sql)");
+        }
+        return $precio;
+    }
 }
 
 ?>

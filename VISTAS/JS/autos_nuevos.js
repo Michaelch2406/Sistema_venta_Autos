@@ -93,11 +93,14 @@ $(document).ready(function() {
             const price = v.veh_precio
                 ? parseFloat(v.veh_precio).toLocaleString('es-EC', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 })
                 : 'Precio a Consultar';
+            
+            // El enlace ahora apunta a detalle_nuevo_veh.php
+            const detalleUrl = `detalle_nuevo_veh.php?id=${v.veh_id}`;
 
             const html = `
                 <div class="col-lg-6 col-md-6 mb-4 mb-xl-5">
                     <div class="card-vehiculo-luxury">
-                        <a href="detalle_vehiculo.php?id=${v.veh_id}" class="vehiculo-imagen-container">
+                        <a href="${detalleUrl}" class="vehiculo-imagen-container">
                             <img src="${img}" class="vehiculo-imagen" alt="${v.mar_nombre} ${v.mod_nombre}">
                         </a>
                         <div class="vehiculo-info">
@@ -105,7 +108,7 @@ $(document).ready(function() {
                             <p class="vehiculo-precio">${price}</p>
                             <p class="vehiculo-anio">Año: ${v.veh_anio}</p>
                             <p class="vehiculo-condicion"><i class="bi bi-gem me-2"></i>Nuevo (0km)</p>
-                            <a href="detalle_vehiculo.php?id=${v.veh_id}" class="btn btn-ver-detalles-luxury mt-3">
+                            <a href="${detalleUrl}" class="btn btn-ver-detalles-luxury mt-3">
                                 <i class="bi bi-arrow-right-circle me-2"></i>Ver Detalles
                             </a>
                         </div>
