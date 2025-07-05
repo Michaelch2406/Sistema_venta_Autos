@@ -109,6 +109,127 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS sp_actualizar_vehiculo;
+DELIMITER //
+
+CREATE PROCEDURE sp_actualizar_vehiculo(
+    IN p_veh_id INT,
+    IN p_mar_id INT,
+    IN p_mod_id INT,
+    IN p_tiv_id INT,
+    IN p_veh_subtipo_vehiculo VARCHAR(100),
+    IN p_veh_condicion ENUM('nuevo', 'usado'),
+    IN p_veh_anio INT,
+    IN p_veh_kilometraje INT,
+    IN p_veh_precio DECIMAL(12, 2),
+    IN p_veh_vin VARCHAR(20),
+    IN p_veh_placa VARCHAR(10),
+    IN p_veh_ubicacion_provincia VARCHAR(100),
+    IN p_veh_ubicacion_ciudad VARCHAR(100),
+    IN p_veh_placa_provincia_origen VARCHAR(100),
+    IN p_veh_ultimo_digito_placa CHAR(1),
+    IN p_veh_color_exterior VARCHAR(50),
+    IN p_veh_color_interior VARCHAR(50),
+    IN p_veh_detalles_motor TEXT,
+    IN p_veh_tipo_transmision VARCHAR(50),
+    IN p_veh_traccion ENUM('Delantera', 'Trasera', '4x4', 'AWD', 'Otro'),
+    IN p_veh_tipo_vidrios ENUM('Manuales', 'Electricos Delanteros', 'Electricos Completos', 'Otro'),
+    IN p_veh_tipo_combustible ENUM('Gasolina', 'Diesel', 'Hibrido', 'Electrico', 'Flex (Gasolina/Etanol)', 'GLP', 'GNV', 'Otro'),
+    IN p_veh_tipo_direccion ENUM('Mecanica', 'Hidraulica', 'Electroasistida', 'Electrica', 'Otra'),
+    IN p_veh_sistema_climatizacion ENUM('Ninguno', 'Aire Acondicionado', 'Climatizador Manual', 'Climatizador Automatico', 'Climatizador Bi-Zona', 'Otro'),
+    IN p_veh_descripcion TEXT,
+    IN p_veh_detalles_extra TEXT,
+    IN p_veh_fecha_publicacion DATE,
+    IN p_usu_id_admin_actualiza INT,
+    OUT p_resultado INT, 
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_vehiculo_existe INT DEFAULT 0;
+    DECLARE v_placa_duplicada INT DEFAULT 0;
+    DECLARE v_vin_duplicado INT DEFAULT 0;
+
+    SET p_resultado = 0;
+    SET p_mensaje = 'Error desconocido al actualizar el vehículo.';
+
+    main_block: BEGIN
+
+        SELECT COUNT(*) INTO v_vehiculo_existe FROM Vehiculos WHERE veh_id = p_veh_id;
+
+        IF v_vehiculo_existe = 0 THEN
+            SET p_mensaje = CONCAT('Error: El vehículo con ID ', p_veh_id, ' no existe.');
+            LEAVE main_block;
+        END IF;
+
+        -- Validar duplicidad de placa
+        IF p_veh_placa IS NOT NULL AND p_veh_placa != '' THEN
+            SELECT COUNT(*) INTO v_placa_duplicada 
+            FROM Vehiculos 
+            WHERE veh_placa = p_veh_placa AND veh_id != p_veh_id;
+
+            IF v_placa_duplicada > 0 THEN
+                SET p_mensaje = 'La placa ingresada ya existe para otro vehículo.';
+                LEAVE main_block;
+            END IF;
+        END IF;
+
+        -- Validar duplicidad de VIN
+        IF p_veh_vin IS NOT NULL AND p_veh_vin != '' THEN
+            SELECT COUNT(*) INTO v_vin_duplicado 
+            FROM Vehiculos 
+            WHERE veh_vin = p_veh_vin AND veh_id != p_veh_id;
+
+            IF v_vin_duplicado > 0 THEN
+                SET p_mensaje = 'El VIN ingresado ya existe para otro vehículo.';
+                LEAVE main_block;
+            END IF;
+        END IF;
+
+        -- Actualizar vehículo
+        UPDATE Vehiculos SET
+            mar_id = p_mar_id,
+            mod_id = p_mod_id,
+            tiv_id = p_tiv_id,
+            veh_subtipo_vehiculo = p_veh_subtipo_vehiculo,
+            veh_condicion = p_veh_condicion,
+            veh_anio = p_veh_anio,
+            veh_kilometraje = p_veh_kilometraje,
+            veh_precio = p_veh_precio,
+            veh_vin = p_veh_vin,
+            veh_placa = p_veh_placa,
+            veh_ubicacion_provincia = p_veh_ubicacion_provincia,
+            veh_ubicacion_ciudad = p_veh_ubicacion_ciudad,
+            veh_placa_provincia_origen = p_veh_placa_provincia_origen,
+            veh_ultimo_digito_placa = p_veh_ultimo_digito_placa,
+            veh_color_exterior = p_veh_color_exterior,
+            veh_color_interior = p_veh_color_interior,
+            veh_detalles_motor = p_veh_detalles_motor,
+            veh_tipo_transmision = p_veh_tipo_transmision,
+            veh_traccion = p_veh_traccion,
+            veh_tipo_vidrios = p_veh_tipo_vidrios,
+            veh_tipo_combustible = p_veh_tipo_combustible,
+            veh_tipo_direccion = p_veh_tipo_direccion,
+            veh_sistema_climatizacion = p_veh_sistema_climatizacion,
+            veh_descripcion = p_veh_descripcion,
+            veh_detalles_extra = p_veh_detalles_extra,
+            veh_fecha_publicacion = p_veh_fecha_publicacion,
+            veh_actualizado_en = CURRENT_TIMESTAMP
+        WHERE veh_id = p_veh_id;
+
+        IF ROW_COUNT() > 0 THEN
+            SET p_resultado = 1;
+            SET p_mensaje = 'Vehículo actualizado exitosamente.';
+        ELSE
+            SET p_mensaje = 'No se realizaron cambios en los datos del vehículo (posiblemente eran idénticos o error).';
+        END IF;
+
+    END main_block;
+END;
+//
+DELIMITER ;
+
+
+
 -- SP para que el Administrador obtenga todos los vehículos con detalles extendidos
 DROP PROCEDURE IF EXISTS sp_get_todos_vehiculos_admin;
 DELIMITER //
