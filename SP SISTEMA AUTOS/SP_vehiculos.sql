@@ -109,6 +109,96 @@ END //
 
 DELIMITER ;
 
+-- SP para que el Administrador obtenga todos los vehículos con detalles extendidos
+DROP PROCEDURE IF EXISTS sp_get_todos_vehiculos_admin;
+DELIMITER //
+CREATE PROCEDURE sp_get_todos_vehiculos_admin()
+BEGIN
+    SELECT
+        v.veh_id,
+        (SELECT ima.ima_url FROM ImagenesVehiculo ima WHERE ima.veh_id = v.veh_id AND ima.ima_es_principal = TRUE LIMIT 1) AS imagen_principal_url,
+        m.mar_nombre,
+        mo.mod_nombre,
+        v.veh_anio,
+        CONCAT(u.usu_nombre, ' ', u.usu_apellido) AS usu_nombre_completo, -- Nombre del publicador
+        u.usu_usuario AS usu_alias_publicador, -- Alias del publicador
+        v.veh_precio,
+        v.veh_condicion,
+        v.veh_estado AS veh_estado_actual, -- Renombrado para claridad en el JS
+        v.veh_fecha_publicacion,
+        v.veh_ubicacion_ciudad,
+        v.veh_ubicacion_provincia,
+        v.veh_creado_en,
+        v.veh_actualizado_en
+    FROM Vehiculos v
+    JOIN Marcas m ON v.mar_id = m.mar_id
+    JOIN Modelos mo ON v.mod_id = mo.mod_id
+    JOIN Usuarios u ON v.usu_id_gestor = u.usu_id -- Asumiendo que usu_id_gestor es el publicador
+    ORDER BY v.veh_creado_en DESC; -- O por el criterio que prefiera el admin
+END //
+DELIMITER ;
+
+
+-- SP para que el Administrador elimine un vehículo y sus datos relacionados
+DROP PROCEDURE IF EXISTS sp_eliminar_vehiculo_admin;
+DELIMITER //
+CREATE PROCEDURE sp_eliminar_vehiculo_admin(
+    IN p_veh_id_a_eliminar INT,
+    IN p_usu_id_admin INT, -- Para auditoría, si se implementa
+    OUT p_resultado INT,
+    OUT p_mensaje VARCHAR(255)
+)
+BEGIN
+    DECLARE v_vehiculo_existe INT DEFAULT 0;
+    DECLARE v_imagenes_eliminadas INT DEFAULT 0;
+    -- DECLARE v_cotizaciones_eliminadas INT DEFAULT 0; -- Descomentar si se eliminan cotizaciones
+
+    SET p_resultado = 0; -- 0 = Error, 1 = Éxito
+
+    -- Verificar si el vehículo existe
+    SELECT COUNT(*) INTO v_vehiculo_existe FROM Vehiculos WHERE veh_id = p_veh_id_a_eliminar;
+
+    IF v_vehiculo_existe = 0 THEN
+        SET p_mensaje = CONCAT('Error: El vehículo con ID ', p_veh_id_a_eliminar, ' no existe.');
+    ELSE
+        -- Iniciar transacción para asegurar atomicidad
+        START TRANSACTION;
+
+        -- 1. Eliminar imágenes asociadas al vehículo
+        -- Es importante también eliminar los archivos físicos del servidor, lo cual este SP no puede hacer.
+        -- Esa lógica debe estar en el backend PHP después de una ejecución exitosa de este SP.
+        DELETE FROM ImagenesVehiculo WHERE veh_id = p_veh_id_a_eliminar;
+        SET v_imagenes_eliminadas = ROW_COUNT();
+
+        -- 2. Eliminar cotizaciones asociadas (OPCIONAL, según política de negocio)
+        -- Si se decide mantener las cotizaciones por razones históricas, omitir esta parte.
+        -- Si se eliminan, considerar el impacto en los usuarios que hicieron esas cotizaciones.
+        /*
+        DELETE FROM Cotizaciones WHERE veh_id = p_veh_id_a_eliminar;
+        SET v_cotizaciones_eliminadas = ROW_COUNT();
+        */
+
+        -- 3. Eliminar de la tabla de favoritos (si existe y está implementada)
+        DELETE FROM Favoritos WHERE veh_id = p_veh_id_a_eliminar;
+        
+        -- 4. Finalmente, eliminar el vehículo de la tabla principal
+        DELETE FROM Vehiculos WHERE veh_id = p_veh_id_a_eliminar;
+
+        IF ROW_COUNT() > 0 THEN
+            COMMIT;
+            SET p_resultado = 1;
+            SET p_mensaje = CONCAT('Vehículo ID ', p_veh_id_a_eliminar, ' eliminado exitosamente. Imágenes eliminadas: ', v_imagenes_eliminadas, '.');
+            -- Agregar a p_mensaje: ', Cotizaciones eliminadas: ', v_cotizaciones_eliminadas
+            -- Aquí se podría insertar en una tabla de auditoría el evento de eliminación.
+            -- INSERT INTO Auditoria_Eliminaciones (veh_id, usu_id_admin, fecha_eliminacion) VALUES (p_veh_id_a_eliminar, p_usu_id_admin, NOW());
+        ELSE
+            ROLLBACK;
+            SET p_mensaje = CONCAT('Error: No se pudo eliminar el vehículo ID ', p_veh_id_a_eliminar, ' de la tabla principal. Se revirtieron los cambios.');
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
 
 -- Usar la base de datos
 USE SistemaVentaAutos;
