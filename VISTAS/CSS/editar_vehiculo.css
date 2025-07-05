@@ -1,0 +1,115 @@
+/* Estilos para VISTAS/editar_auto.php */
+
+/* Hereda la mayoría de los estilos de publicar_vehiculo.css a través de styles.css global si está bien configurado.
+   Añadir aquí solo estilos específicos o modificaciones para la página de edición. */
+
+body {
+    background-color: #f8f9fa; /* Un fondo ligeramente diferente si se desea distinguir */
+}
+
+.publishing-title {
+    color: #0056b3; /* Un azul más oscuro para el título de editar */
+}
+
+/* Estilos para la previsualización de imágenes actuales */
+#currentImagesPreviewContainer .img-preview-wrapper {
+    position: relative;
+    display: inline-block; /* O flex item si se usa flexbox para el contenedor */
+    margin: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #fff;
+    text-align: center; /* Para centrar el texto de "Principal" */
+}
+
+#currentImagesPreviewContainer .img-preview-wrapper img {
+    max-width: 150px;
+    max-height: 100px;
+    object-fit: cover;
+    display: block; /* Para que el margen auto funcione si es necesario */
+    margin-bottom: 5px; /* Espacio antes del botón o texto */
+}
+
+#currentImagesPreviewContainer .btn-remove-img,
+#newImagePreviewContainer .btn-remove-new-img {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px; /* Ajustar para centrar el icono verticalmente */
+    padding: 0;
+    border-radius: 50%;
+    font-size: 12px; /* Tamaño del icono */
+    display: flex; /* Para centrar el icono fácilmente */
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+
+#currentImagesPreviewContainer .img-preview-wrapper .badge-principal {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+}
+
+#currentImagesPreviewContainer .img-preview-wrapper .btn-set-principal {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    margin-top: 5px;
+}
+
+/* Estilos para la previsualización de nuevas imágenes (similar a publicar_vehiculo.js) */
+#newImagePreviewContainer .img-preview-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+#newImagePreviewContainer .img-preview-wrapper img {
+    max-width: 150px;
+    max-height: 100px;
+    object-fit: cover;
+}
+
+/* Ajustes para el loader dentro de la sección de imágenes si es necesario */
+.image-loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* O la altura de las imágenes */
+    width: 100%;
+}
+
+.card-form-section .card-header {
+    background-color: #e9ecef; /* Un color ligeramente diferente para las cabeceras de sección en editar */
+    font-weight: 500;
+}
+
+/* Indicador de carga específico para el formulario de edición */
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#loadingOverlay l-trefoil {
+    /* Ajustes específicos para el trefoil en la página de edición */
+    color: #0d6efd; /* Azul para mantener la consistencia con el tema */
+    /* El componente l-trefoil ya tiene sus propios estilos, pero se puede ajustar el color si es necesario */
+}

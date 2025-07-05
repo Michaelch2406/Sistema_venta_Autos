@@ -378,6 +378,276 @@ class Vehiculo
         return $out_params;
     }
 
+    public function getDetallesVehiculoParaEdicionDB($veh_id)
+    {
+        if (!$this->conn) {
+            error_log("getDetallesVehiculoParaEdicionDB: No hay conexión a BD.");
+            return ['error' => 'Error de conexión interna.'];
+        }
+        $veh_id_esc = $this->conn->real_escape_string($veh_id);
+
+        // 1. Obtener los detalles básicos del vehículo usando el SP existente o uno modificado.
+        // Asumimos que sp_get_vehiculo_detalle ya devuelve la mayoría de los campos necesarios.
+        // Si sp_get_vehiculo_detalle no es suficiente, se necesitaría un SP específico para edición
+        // que devuelva TODOS los campos editables del formulario.
+        $sql_vehiculo = "CALL sp_get_vehiculo_detalle($veh_id_esc)"; // O sp_get_vehiculo_detalles_edicion si se crea
+        
+        $resultado_vehiculo = $this->conn_obj->ejecutarSP($sql_vehiculo);
+        $detalles_vehiculo = null;
+
+        if ($resultado_vehiculo && $resultado_vehiculo instanceof mysqli_result) {
+            if ($resultado_vehiculo->num_rows > 0) {
+                $detalles_vehiculo = $resultado_vehiculo->fetch_assoc();
+            }
+            $resultado_vehiculo->free();
+            while($this->conn->more_results() && $this->conn->next_result()){
+                if($rs = $this->conn->store_result()){ $rs->free(); }
+            }
+        } elseif ($resultado_vehiculo === false) {
+            error_log("Error al ejecutar SP para detalles de vehículo (edición) para veh_id $veh_id_esc: " . ($this->conn->error ?? 'Error desconocido') . " (SQL: $sql_vehiculo)");
+            return ['error' => 'Error al obtener datos del vehículo.'];
+        }
+
+        if (!$detalles_vehiculo) {
+            return ['error' => 'Vehículo no encontrado.'];
+        }
+
+        // 2. Obtener las imágenes del vehículo.
+        // Es buena práctica tener un modelo separado para imágenes, como ImagenesVehiculo_M.
+        // Si no existe, se puede incluir la lógica aquí o llamarla desde el controlador/AJAX.
+        // Por ahora, asumimos que existe ImagenesVehiculo_M y su método getImagenesPorVehiculo.
+        $imagenes_model = new ImagenesVehiculo_M(); // Asegúrate que este modelo esté cargado o requerido.
+        $imagenes = $imagenes_model->getImagenesPorVehiculo($veh_id_esc);
+
+        if ($imagenes === false) {
+            // No es un error fatal si no se pueden cargar imágenes, pero se debe loguear.
+            error_log("getDetallesVehiculoParaEdicionDB: No se pudieron cargar las imágenes para veh_id $veh_id_esc, pero se devuelven los detalles del vehículo.");
+            // Podríamos devolver el error de imágenes si es crítico: return ['error' => 'Error al obtener imágenes del vehículo.'];
+        }
+        
+        // Combinar los detalles del vehículo y sus imágenes.
+        // El JS esperará algo como: { vehiculo: {...}, imagenes: [...] }
+        return [
+            'vehiculo' => $detalles_vehiculo,
+            'imagenes' => $imagenes ?: [] // Devolver array vacío si no hay imágenes o hubo error leve.
+        ];
+    }
+
+    public function actualizarVehiculoDB(
+        $veh_id,
+        $datos_vehiculo,
+        $nuevas_imagenes_subidas,
+        $ids_imagenes_a_eliminar,
+        $imagen_principal_actual_id, // ID de la imagen existente que se ha marcado como principal
+        $nueva_imagen_principal_nombre_temporal, // Nombre temporal de la nueva imagen subida que se ha marcado como principal
+        $usu_id_admin
+    ) {
+        if (!$this->conn) {
+            return ['resultado' => 0, 'mensaje' => 'Error de conexión a la base de datos.'];
+        }
+
+        // Iniciar transacción para asegurar atomicidad
+        $this->conn->begin_transaction();
+
+        try {
+            // 1. Actualizar los datos del vehículo en la tabla Vehiculos
+            // Se necesita un SP `sp_actualizar_vehiculo`
+            // Este SP debe tomar todos los campos de $datos_vehiculo y actualizar el registro con $veh_id.
+            // Es importante que el SP maneje correctamente los valores NULL si algunos campos son opcionales.
+            
+            // Sanitizar y preparar datos para el SP de actualización del vehículo
+            $mar_id = $this->conn->real_escape_string($datos_vehiculo['mar_id']);
+            $mod_id = $this->conn->real_escape_string($datos_vehiculo['mod_id']);
+            $tiv_id = $this->conn->real_escape_string($datos_vehiculo['tiv_id']);
+            $veh_subtipo_vehiculo = isset($datos_vehiculo['veh_subtipo_vehiculo']) && trim($datos_vehiculo['veh_subtipo_vehiculo']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_subtipo_vehiculo'])) . "'" : "NULL";
+            // usu_id_gestor no debería cambiar en una edición por admin, a menos que se permita explícitamente.
+            // Si se permite cambiar, se debe añadir al formulario y aquí. Por ahora, se asume que no cambia.
+            $veh_condicion = $this->conn->real_escape_string($datos_vehiculo['veh_condicion']);
+            $veh_anio = $this->conn->real_escape_string($datos_vehiculo['veh_anio']);
+            $veh_precio = $this->conn->real_escape_string($datos_vehiculo['veh_precio']);
+            $veh_vin = isset($datos_vehiculo['veh_vin']) && trim($datos_vehiculo['veh_vin']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_vin'])) . "'" : "NULL";
+            $veh_placa = isset($datos_vehiculo['veh_placa']) && trim($datos_vehiculo['veh_placa']) !== '' ? "'" . $this->conn->real_escape_string(strtoupper(trim($datos_vehiculo['veh_placa']))) . "'" : "NULL";
+
+            $p_veh_kilometraje = "NULL";
+            $p_veh_placa_provincia_origen = "NULL";
+            $p_veh_ultimo_digito_placa = "NULL";
+
+            if ($veh_condicion == 'nuevo') {
+                $p_veh_kilometraje = "0";
+            } else { // 'usado'
+                $p_veh_kilometraje = (isset($datos_vehiculo['veh_kilometraje']) && trim($datos_vehiculo['veh_kilometraje']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_kilometraje'])) . "'" : "NULL";
+                $p_veh_placa_provincia_origen = (isset($datos_vehiculo['veh_placa_provincia_origen']) && trim($datos_vehiculo['veh_placa_provincia_origen']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_placa_provincia_origen'])) . "'" : "NULL";
+                $p_veh_ultimo_digito_placa = (isset($datos_vehiculo['veh_ultimo_digito_placa']) && trim($datos_vehiculo['veh_ultimo_digito_placa']) !== '') ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_ultimo_digito_placa'])) . "'" : "NULL";
+            }
+            
+            $veh_ubicacion_provincia = $this->conn->real_escape_string($datos_vehiculo['veh_ubicacion_provincia']);
+            $veh_ubicacion_ciudad = $this->conn->real_escape_string($datos_vehiculo['veh_ubicacion_ciudad']);
+            $veh_color_exterior = $this->conn->real_escape_string(trim($datos_vehiculo['veh_color_exterior']));
+            $veh_color_interior = isset($datos_vehiculo['veh_color_interior']) && trim($datos_vehiculo['veh_color_interior']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_color_interior'])) . "'" : "NULL";
+            $veh_detalles_motor = $this->conn->real_escape_string(trim($datos_vehiculo['veh_detalles_motor']));
+            $veh_tipo_transmision = isset($datos_vehiculo['veh_tipo_transmision']) && trim($datos_vehiculo['veh_tipo_transmision']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_tipo_transmision'])) . "'" : "NULL";
+            $veh_traccion = isset($datos_vehiculo['veh_traccion']) && trim($datos_vehiculo['veh_traccion']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_traccion'])) . "'" : "NULL";
+            $veh_tipo_vidrios = isset($datos_vehiculo['veh_tipo_vidrios']) && trim($datos_vehiculo['veh_tipo_vidrios']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_tipo_vidrios'])) . "'" : "NULL";
+            $veh_tipo_combustible = isset($datos_vehiculo['veh_tipo_combustible']) && trim($datos_vehiculo['veh_tipo_combustible']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_tipo_combustible'])) . "'" : "NULL";
+            $veh_tipo_direccion = isset($datos_vehiculo['veh_tipo_direccion']) && trim($datos_vehiculo['veh_tipo_direccion']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_tipo_direccion'])) . "'" : "NULL";
+            $veh_sistema_climatizacion = isset($datos_vehiculo['veh_sistema_climatizacion']) && trim($datos_vehiculo['veh_sistema_climatizacion']) !== '' ? "'" . $this->conn->real_escape_string(trim($datos_vehiculo['veh_sistema_climatizacion'])) . "'" : "NULL";
+            $veh_descripcion = $this->conn->real_escape_string(trim($datos_vehiculo['veh_descripcion']));
+            $detalles_extra_array = isset($datos_vehiculo['veh_detalles_extra']) && is_array($datos_vehiculo['veh_detalles_extra']) ? $datos_vehiculo['veh_detalles_extra'] : [];
+            $veh_detalles_extra_str = !empty($detalles_extra_array) ? "'" . $this->conn->real_escape_string(implode(', ', $detalles_extra_array)) . "'" : "NULL";
+            $veh_fecha_publicacion = $this->conn->real_escape_string($datos_vehiculo['veh_fecha_publicacion']);
+            // veh_estado no se actualiza desde aquí directamente, se usa cambiarEstadoVehiculo.
+            // usu_id_admin para auditoría en el SP.
+
+            $sql_update_vehiculo = "CALL sp_actualizar_vehiculo(
+                {$veh_id}, {$mar_id}, {$mod_id}, {$tiv_id}, {$veh_subtipo_vehiculo}, '{$veh_condicion}', {$veh_anio}, {$p_veh_kilometraje},
+                {$veh_precio}, {$veh_vin}, {$veh_placa}, '{$veh_ubicacion_provincia}', '{$veh_ubicacion_ciudad}', {$p_veh_placa_provincia_origen},
+                {$p_veh_ultimo_digito_placa}, '{$veh_color_exterior}', {$veh_color_interior}, '{$veh_detalles_motor}', {$veh_tipo_transmision},
+                {$veh_traccion}, {$veh_tipo_vidrios}, {$veh_tipo_combustible}, {$veh_tipo_direccion}, {$veh_sistema_climatizacion},
+                '{$veh_descripcion}', {$veh_detalles_extra_str}, '{$veh_fecha_publicacion}', {$usu_id_admin},
+                @p_update_resultado, @p_update_mensaje
+            )";
+
+            if (!$this->conn->query($sql_update_vehiculo)) {
+                throw new Exception("Error al ejecutar SP de actualización de vehículo: " . $this->conn->error . " SQL: " . preg_replace('/\s+/', ' ', $sql_update_vehiculo));
+            }
+            $res_update = $this->conn->query("SELECT @p_update_resultado AS resultado, @p_update_mensaje AS mensaje");
+            if (!$res_update) throw new Exception("Error obteniendo resultado de SP actualización: " . $this->conn->error);
+            $out_update_params = $res_update->fetch_assoc();
+            $res_update->free();
+            while($this->conn->more_results() && $this->conn->next_result()){ if($rs = $this->conn->store_result()){ $rs->free(); } }
+
+
+            if (!isset($out_update_params['resultado']) || $out_update_params['resultado'] != 1) {
+                throw new Exception($out_update_params['mensaje'] ?? 'Error desconocido al actualizar datos del vehículo.');
+            }
+
+            // 2. Manejar imágenes
+            $imagenes_model = new ImagenesVehiculo_M();
+            $upload_dir_base = __DIR__ . '/../PUBLIC/uploads/vehiculos/';
+            $upload_dir_vehiculo = $upload_dir_base . $veh_id . '/';
+
+            // 2a. Eliminar imágenes marcadas
+            if (!empty($ids_imagenes_a_eliminar)) {
+                foreach ($ids_imagenes_a_eliminar as $ima_id_str) {
+                    $ima_id = filter_var(trim($ima_id_str), FILTER_VALIDATE_INT);
+                    if ($ima_id) {
+                        // Obtener URL para borrar archivo físico
+                        $sql_get_url = "SELECT ima_url FROM ImagenesVehiculo WHERE ima_id = {$ima_id} AND veh_id = {$veh_id}";
+                        $res_url = $this->conn->query($sql_get_url);
+                        if ($res_url && $res_url->num_rows > 0) {
+                            $img_data = $res_url->fetch_assoc();
+                            $url_a_borrar_fisico = __DIR__ . '/../' . $img_data['ima_url']; // Asumiendo que ima_url es relativa desde el root del proyecto
+                             if (file_exists($url_a_borrar_fisico)) {
+                                unlink($url_a_borrar_fisico);
+                            }
+                        }
+                        if($res_url) $res_url->free();
+                        // Borrar de la BD
+                        $this->conn->query("DELETE FROM ImagenesVehiculo WHERE ima_id = {$ima_id} AND veh_id = {$veh_id}");
+                        // No se verifica el resultado de cada delete individualmente para no complicar, pero se podría.
+                    }
+                }
+            }
+            
+            // 2b. Subir nuevas imágenes y guardarlas en BD
+            $nombre_archivo_nueva_principal = null;
+            if (!empty($nuevas_imagenes_subidas) && !empty($nuevas_imagenes_subidas['name'][0])) {
+                if (!file_exists($upload_dir_vehiculo) && !is_dir($upload_dir_vehiculo)) {
+                    if (!mkdir($upload_dir_vehiculo, 0775, true)) {
+                        throw new Exception("No se pudo crear el directorio de imágenes: " . $upload_dir_vehiculo);
+                    }
+                }
+
+                foreach ($nuevas_imagenes_subidas['name'] as $key => $name) {
+                    if ($nuevas_imagenes_subidas['error'][$key] == UPLOAD_ERR_OK) {
+                        $tmp_name = $nuevas_imagenes_subidas['tmp_name'][$key];
+                        $original_name = basename(filter_var($name, FILTER_SANITIZE_STRING));
+                        $extension = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+                        $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
+
+                        if (!in_array($extension, $allowed_extensions)) continue; // Opcional: loguear error de tipo
+
+                        $safe_filename = uniqid('vehiculo_' . $veh_id . '_', true) . '.' . $extension;
+                        $destination = $upload_dir_vehiculo . $safe_filename;
+
+                        if (move_uploaded_file($tmp_name, $destination)) {
+                            $url_relativa_db = 'PUBLIC/uploads/vehiculos/' . $veh_id . '/' . $safe_filename;
+                            // Determinar si esta nueva imagen es la principal
+                            $es_nueva_principal = ($original_name === $nueva_imagen_principal_nombre_temporal);
+                            if ($es_nueva_principal) {
+                                $nombre_archivo_nueva_principal = $url_relativa_db; // Guardar la URL relativa para marcar como principal
+                            }
+                            // Insertar sin marcar como principal todavía, se hará después si aplica
+                            $resultado_sp_imagen = $imagenes_model->insertarImagen($veh_id, $url_relativa_db, false); 
+                            if (!isset($resultado_sp_imagen['resultado']) || $resultado_sp_imagen['resultado'] != 1) {
+                                // Loguear pero no necesariamente abortar toda la transacción por una imagen
+                                error_log("Error insertando nueva imagen {$original_name} a BD: " . ($resultado_sp_imagen['mensaje'] ?? ''));
+                            }
+                        } else { error_log("Error moviendo nueva imagen {$original_name}."); }
+                    }
+                }
+            }
+
+            // 2c. Establecer la imagen principal
+            // Si se eligió una nueva imagen como principal
+            if ($nombre_archivo_nueva_principal) {
+                $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = FALSE WHERE veh_id = {$veh_id}");
+                $sql_set_new_main = "UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE veh_id = {$veh_id} AND ima_url = '" . $this->conn->real_escape_string($nombre_archivo_nueva_principal) . "'";
+                if (!$this->conn->query($sql_set_new_main)) {
+                     error_log("Error al marcar nueva imagen {$nombre_archivo_nueva_principal} como principal: " . $this->conn->error);
+                }
+            } 
+            // Si se eligió una imagen existente como principal (y no una nueva)
+            elseif ($imagen_principal_actual_id && !$nueva_imagen_principal_nombre_temporal) {
+                // Verificar que la imagen principal actual no esté entre las eliminadas
+                $fue_eliminada = false;
+                if (!empty($ids_imagenes_a_eliminar)) {
+                    foreach ($ids_imagenes_a_eliminar as $id_eliminar_str) {
+                        if (filter_var(trim($id_eliminar_str), FILTER_VALIDATE_INT) == $imagen_principal_actual_id) {
+                            $fue_eliminada = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$fue_eliminada) {
+                    $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = FALSE WHERE veh_id = {$veh_id}");
+                    $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE veh_id = {$veh_id} AND ima_id = {$imagen_principal_actual_id}");
+                } else {
+                    // La principal actual fue eliminada, y no se seleccionó una nueva.
+                    // Se podría seleccionar la primera imagen restante como principal aquí.
+                    $res_first_img = $this->conn->query("SELECT ima_id FROM ImagenesVehiculo WHERE veh_id = {$veh_id} ORDER BY ima_id ASC LIMIT 1");
+                    if ($res_first_img && $res_first_img->num_rows > 0) {
+                        $first_img_id = $res_first_img->fetch_assoc()['ima_id'];
+                        $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE ima_id = {$first_img_id}");
+                    }
+                    $res_first_img->free();
+                }
+            }
+            // Si no hay principal seleccionada (ni actual ni nueva), y quedan imágenes, marcar la primera.
+            // Esta lógica es importante para asegurar que siempre haya una imagen principal si hay imágenes.
+            $res_check_main = $this->conn->query("SELECT COUNT(*) as count_main FROM ImagenesVehiculo WHERE veh_id = {$veh_id} AND ima_es_principal = TRUE");
+            $count_main = $res_check_main->fetch_assoc()['count_main'];
+            $res_check_main->free();
+
+            if ($count_main == 0) {
+                $res_any_img = $this->conn->query("SELECT ima_id FROM ImagenesVehiculo WHERE veh_id = {$veh_id} ORDER BY ima_id ASC LIMIT 1");
+                if ($res_any_img && $res_any_img->num_rows > 0) {
+                    $first_img_id = $res_any_img->fetch_assoc()['ima_id'];
+                    $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE ima_id = {$first_img_id}");
+                }
+                if($res_any_img) $res_any_img->free();
+            }
+
+            $this->conn->commit();
+            return ['resultado' => 1, 'mensaje' => 'Vehículo actualizado exitosamente.'];
+
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            error_log("Error en actualizarVehiculoDB para veh_id {$veh_id}: " . $e->getMessage());
+            return ['resultado' => 0, 'mensaje' => 'Error al actualizar el vehículo: ' . $e->getMessage()];
+        }
+    }
 }
 
 ?>

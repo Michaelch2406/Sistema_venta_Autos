@@ -140,8 +140,36 @@ try {
                     error_log("vehiculos_ajax.php: getTodosLosVehiculosAdmin - Error del modelo.");
                 }
             }
+        } elseif ($accion === 'getDetallesVehiculoParaEdicion' && isset($_GET['veh_id'])) {
+            $rol_admin_id = 3; // Asumiendo que solo admin puede editar cualquier vehículo. Ajustar si es necesario.
+            // O podría ser que el propio usuario gestor también pueda editar sus vehículos.
+            // En ese caso, la lógica de permisos sería más compleja aquí o en el modelo.
+            if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
+                // Si no es admin, verificar si es el gestor del vehículo (si se permite)
+                // Esta verificación es más compleja y podría requerir una consulta adicional.
+                // Por ahora, asumimos solo admin.
+                $response = ['status' => 'error', 'message' => 'Acceso denegado. Permiso de administrador requerido para editar.'];
+            } else {
+                $veh_id = filter_var($_GET['veh_id'], FILTER_VALIDATE_INT);
+                if (!$veh_id) {
+                    $response = ['status' => 'error', 'message' => 'ID de vehículo inválido.'];
+                } else {
+                    $vehiculo_model = new Vehiculo();
+                    // Este método en vehiculos_m.php debe obtener todos los detalles E imágenes.
+                    $detalles_vehiculo = $vehiculo_model->getDetallesVehiculoParaEdicionDB($veh_id); 
+
+                    if ($detalles_vehiculo && !isset($detalles_vehiculo['error'])) {
+                        // El modelo debería devolver un array que incluya los datos del vehículo y un array de sus imágenes.
+                        // Ejemplo: $detalles_vehiculo = ['vehiculo' => [...], 'imagenes' => [[...],[...]]];
+                        $response = ['status' => 'success', 'data' => $detalles_vehiculo];
+                    } else {
+                        $response['message'] = $detalles_vehiculo['error'] ?? 'Error al obtener los detalles del vehículo para edición.';
+                        error_log("vehiculos_ajax.php: getDetallesVehiculoParaEdicion - Error del modelo para veh_id $veh_id.");
+                    }
+                }
+            }
         } else {
-            $response['message'] = 'Acción GET desconocida o no implementada.';
+            $response['message'] = 'Acción GET desconocida o no implementada o falta veh_id.';
         }
 
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
@@ -279,6 +307,66 @@ try {
                 }
             } else {
                 $response['message'] = 'Falta el ID del vehículo para eliminar.';
+            }
+        } elseif ($accion === 'actualizarVehiculo') {
+            // Solo administradores pueden llegar aquí si la validación de rol general POST se aplica.
+            // Si no, se debe añadir aquí una validación de rol específica para esta acción.
+            $rol_admin_id = 3;
+            if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
+                 $response = ['status' => 'error', 'message' => 'Acceso denegado. Permiso de administrador requerido para actualizar.'];
+                 echo json_encode($response);
+                 exit();
+            }
+
+            $veh_id = isset($_POST['veh_id']) ? filter_var($_POST['veh_id'], FILTER_VALIDATE_INT) : null;
+            if (!$veh_id) {
+                $response = ['status' => 'error', 'message' => 'ID de vehículo no proporcionado o inválido.'];
+                echo json_encode($response);
+                exit();
+            }
+
+            // Recopilar datos del vehículo del POST (similar a 'publicarVehiculo')
+            // Es crucial validar y sanitizar todos los datos aquí.
+            $datos_vehiculo = $_POST; // Contiene todos los campos del formulario
+            unset($datos_vehiculo['accion']); // No necesitamos la acción dentro de los datos del vehículo
+
+            // Manejo de imágenes
+            $imagenes_a_eliminar_str = isset($_POST['imagenes_a_eliminar']) ? $_POST['imagenes_a_eliminar'] : '';
+            $ids_imagenes_a_eliminar = !empty($imagenes_a_eliminar_str) ? explode(',', $imagenes_a_eliminar_str) : [];
+            
+            $imagen_principal_actual_id = isset($_POST['imagen_principal_actual_id']) && !empty($_POST['imagen_principal_actual_id']) ? filter_var($_POST['imagen_principal_actual_id'], FILTER_VALIDATE_INT) : null;
+            $nueva_imagen_principal_nombre_temporal = isset($_POST['nueva_imagen_principal_nombre_temporal']) && !empty($_POST['nueva_imagen_principal_nombre_temporal']) ? basename($_POST['nueva_imagen_principal_nombre_temporal']) : null;
+
+            $nuevas_imagenes_subidas = isset($_FILES['veh_imagenes_nuevas']) ? $_FILES['veh_imagenes_nuevas'] : [];
+
+            // Validaciones básicas (similar a publicarVehiculo, adaptar campos si es necesario)
+            $required_fields = ['mar_id', 'mod_id', 'tiv_id', 'veh_condicion', 'veh_anio', 'veh_precio', 'veh_ubicacion_provincia', 'veh_ubicacion_ciudad', 'veh_fecha_publicacion', 'veh_color_exterior', 'veh_detalles_motor', 'veh_descripcion'];
+            $missing_fields = [];
+            // ... (realizar validaciones de campos requeridos y específicos como en publicarVehiculo) ...
+            // Esta parte es crucial y debe ser completa.
+
+            if (!empty($missing_fields)) {
+                $response = ['status' => 'error', 'message' => 'Faltan campos obligatorios: ' . implode(', ', $missing_fields)];
+            } else {
+                $vehiculo_model = new Vehiculo();
+                // El modelo necesitará un método para actualizar el vehículo y manejar las imágenes.
+                // Este método debe ser robusto.
+                $resultado_actualizacion = $vehiculo_model->actualizarVehiculoDB(
+                    $veh_id,
+                    $datos_vehiculo,
+                    $nuevas_imagenes_subidas,
+                    $ids_imagenes_a_eliminar,
+                    $imagen_principal_actual_id,
+                    $nueva_imagen_principal_nombre_temporal,
+                    $_SESSION['usu_id'] // ID del admin que realiza la acción
+                );
+
+                if (isset($resultado_actualizacion['resultado']) && $resultado_actualizacion['resultado'] == 1) {
+                    $response = ['status' => 'success', 'message' => $resultado_actualizacion['mensaje'] ?? 'Vehículo actualizado exitosamente.'];
+                } else {
+                    $response = ['status' => 'error', 'message' => $resultado_actualizacion['mensaje'] ?? 'Error al actualizar el vehículo.'];
+                    error_log("vehiculos_ajax.php: actualizarVehiculo - Error del modelo: " . ($resultado_actualizacion['mensaje'] ?? 'Desconocido') . " para veh_id: $veh_id");
+                }
             }
         } else {
             $response['message'] = 'Acción POST desconocida o no implementada.';

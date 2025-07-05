@@ -103,9 +103,8 @@ $(document).ready(function() {
                             btnDesactivar = `<button class="btn btn-sm btn-info btn-accion-vehiculo" data-id="${row.veh_id}" data-accion="reactivar" title="Reactivar Anuncio"><i class="bi bi-eye-fill"></i></button>`;
                         }
 
-                        // El botón de editar podría llevar a una página de edición completa o un modal.
-                        // Por ahora, lo enlazamos a la página de publicar_vehiculo.php con el ID para una futura edición.
-                        let btnEditar = `<a href="publicar_vehiculo.php?edit_id=${row.veh_id}" class="btn btn-sm btn-primary" title="Editar Vehículo"><i class="bi bi-pencil-square"></i></a>`;
+                        // El botón de editar ahora apunta a editar_auto.php
+                        let btnEditar = `<a href="editar_auto.php?veh_id=${row.veh_id}" class="btn btn-sm btn-primary" title="Editar Vehículo"><i class="bi bi-pencil-square"></i></a>`;
                         
                         let btnEliminar = `<button class="btn btn-sm btn-danger btn-accion-vehiculo" data-id="${row.veh_id}" data-accion="eliminar" title="Eliminar Vehículo (Permanente)"><i class="bi bi-trash-fill"></i></button>`;
 
