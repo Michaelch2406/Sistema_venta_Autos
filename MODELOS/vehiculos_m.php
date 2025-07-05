@@ -292,6 +292,92 @@ class Vehiculo
         return $vehiculo_detalle; // Puede ser null si no se encontró el vehículo
     }
 
+    public function getTodosLosVehiculosAdmin()
+    {
+        if (!$this->conn) {
+            error_log("getTodosLosVehiculosAdmin: No hay conexión a BD.");
+            return false;
+        }
+
+        // Este SP debe ser creado en la base de datos.
+        // Debe devolver todos los vehículos con la información necesaria para la tabla de administración.
+        // Ej: veh_id, imagen_principal_url, mar_nombre, mod_nombre, veh_anio, 
+        // usu_nombre_completo (del publicador), veh_precio, veh_condicion, 
+        // veh_estado_actual, veh_fecha_publicacion, veh_ubicacion_ciudad, veh_ubicacion_provincia.
+        $sql = "CALL sp_get_todos_vehiculos_admin()"; 
+        
+        $resultado = $this->conn_obj->ejecutarSP($sql);
+        $vehiculos_admin = [];
+
+        if ($resultado && $resultado instanceof mysqli_result) {
+            if ($resultado->num_rows > 0) {
+                while ($fila = $resultado->fetch_assoc()) {
+                    // Ajustar la URL de la imagen si es necesario, similar a otros métodos.
+                    if (!empty($fila['imagen_principal_url']) && strpos($fila['imagen_principal_url'], 'PUBLIC/') === 0) {
+                        // La URL ya está bien para el backend, el JS la prefija con '../' si es necesario
+                        // $fila['imagen_principal_url'] = '../' . $fila['imagen_principal_url']; 
+                    } else if (empty($fila['imagen_principal_url'])) {
+                        // Si no hay imagen, se podría establecer una placeholder aquí, pero es mejor que el SP la devuelva o el JS la maneje.
+                        // $fila['imagen_principal_url'] = 'PUBLIC/Img/auto_placeholder.png';
+                    }
+                    $vehiculos_admin[] = $fila;
+                }
+            }
+            $resultado->free();
+            // Limpiar resultados si el SP devuelve más de uno (no debería ser el caso aquí)
+            while($this->conn->more_results() && $this->conn->next_result()){
+                if($rs = $this->conn->store_result()){ $rs->free(); }
+            }
+        } elseif ($resultado === false) {
+            error_log("Error al ejecutar sp_get_todos_vehiculos_admin: " . ($this->conn->error ?? 'Error desconocido') . " (SQL: " . $sql . ")");
+            return false; 
+        }
+        // Devuelve un array vacío si no hay vehículos, lo cual es un resultado válido.
+        return $vehiculos_admin;
+    }
+
+    public function eliminarVehiculo($veh_id, $usu_id_admin_que_elimina)
+    {
+        if (!$this->conn) {
+            return ['resultado' => 0, 'mensaje' => 'Error de conexión a la base de datos.'];
+        }
+
+        $veh_id_esc = $this->conn->real_escape_string($veh_id);
+        $usu_id_admin_esc = $this->conn->real_escape_string($usu_id_admin_que_elimina);
+
+        // Se debe crear un SP `sp_eliminar_vehiculo_admin` que maneje la lógica de eliminación.
+        // Esto podría incluir:
+        // 1. Verificar si el vehículo existe.
+        // 2. Eliminar registros relacionados (imágenes, cotizaciones asociadas si la política es eliminarlas).
+        // 3. Eliminar el vehículo de la tabla principal.
+        // 4. Registrar la acción de eliminación (opcional, en una tabla de auditoría).
+        // El SP debe devolver un resultado y un mensaje.
+        $sql = "CALL sp_eliminar_vehiculo_admin(
+            $veh_id_esc, 
+            $usu_id_admin_esc, 
+            @p_resultado, 
+            @p_mensaje
+        )";
+
+        if (!$this->conn->query($sql)) {
+            error_log("Error al llamar a sp_eliminar_vehiculo_admin: " . $this->conn->error . " (SQL: $sql)");
+            return ['resultado' => 0, 'mensaje' => 'Error técnico al eliminar vehículo (llamada SP).'];
+        }
+
+        $res = $this->conn->query("SELECT @p_resultado AS resultado, @p_mensaje AS mensaje");
+        if (!$res) {
+            error_log("Error al obtener resultados de sp_eliminar_vehiculo_admin: " . $this->conn->error);
+            return ['resultado' => 0, 'mensaje' => 'Error técnico al obtener resultados del SP de eliminación.'];
+        }
+        $out_params = $res->fetch_assoc();
+        $res->free();
+        
+        while($this->conn->more_results() && $this->conn->next_result()){
+            if($rs = $this->conn->store_result()){ $rs->free(); }
+        }
+        return $out_params;
+    }
+
 }
 
 ?>

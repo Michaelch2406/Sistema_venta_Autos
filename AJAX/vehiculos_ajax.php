@@ -99,7 +99,7 @@ try {
             
             $filtros['pagina'] = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
             if ($filtros['pagina'] < 1) $filtros['pagina'] = 1;
-            $filtros['items_por_pagina'] = isset($_GET['items_por_pagina']) ? (int)$_GET['items_por_pagina'] : 9;
+            $filtros['items_por_pagina'] = isset($_GET['items_por_pagina']) ? (int)$_GET['items_por_pagina'] : 9; // Para listado público
              if ($filtros['items_por_pagina'] < 1) $filtros['items_por_pagina'] = 9;
 
 
@@ -119,16 +119,47 @@ try {
                     'total_paginas' => ($filtros['items_por_pagina'] > 0) ? ceil($data['total'] / $filtros['items_por_pagina']) : 0
                 ];
             }
+        } elseif ($accion === 'getTodosLosVehiculosAdmin') {
+            // Esta acción es para el panel de administración.
+            // Validar que el usuario sea administrador.
+            $rol_admin_id = 3; // Asegúrate que este ID sea el correcto para Administrador
+            if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
+                $response = ['status' => 'error', 'message' => 'Acceso denegado. Permiso de administrador requerido.'];
+            } else {
+                $vehiculo_model = new Vehiculo();
+                // Podríamos pasar filtros si DataTables los envía (para búsqueda, ordenación server-side)
+                // Por ahora, llamamos a un método que obtiene todos los vehículos para admin.
+                $vehiculos_admin = $vehiculo_model->getTodosLosVehiculosAdmin(); // Este método debe ser creado en vehiculos_m.php
+
+                if ($vehiculos_admin !== false) {
+                    // DataTables espera un array 'data' en la respuesta si no se usa dataSrc.
+                    // Si usamos dataSrc como en el JS, la estructura actual está bien.
+                    $response = ['status' => 'success', 'vehiculos' => $vehiculos_admin];
+                } else {
+                    $response['message'] = 'Error al obtener el listado completo de vehículos para administración.';
+                    error_log("vehiculos_ajax.php: getTodosLosVehiculosAdmin - Error del modelo.");
+                }
+            }
         } else {
             $response['message'] = 'Acción GET desconocida o no implementada.';
         }
 
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         $accion = $_POST['accion'];
-        $roles_permitidos_modificar = [1, 2, 3]; // Cliente/Vendedor (1), Asesor (2), Administrador (3)
         
-        if (!isset($_SESSION['usu_id']) || !in_array($_SESSION['rol_id'], $roles_permitidos_modificar)) {
-            $response = ['status' => 'error', 'message' => 'Acceso denegado para esta acción POST.'];
+        // Roles permitidos para publicar: todos los autenticados.
+        // Roles permitidos para cambiar estado o eliminar: solo admin (ID 3).
+        $es_admin = (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 3);
+
+        if (!isset($_SESSION['usu_id'])) {
+            $response = ['status' => 'error', 'message' => 'No autenticado.'];
+            echo json_encode($response);
+            exit();
+        }
+        
+        // Validaciones específicas de rol por acción
+        if (($accion === 'cambiarEstadoVehiculo' || $accion === 'eliminarVehiculo') && !$es_admin) {
+            $response = ['status' => 'error', 'message' => 'Acceso denegado. Permiso de administrador requerido para esta acción.'];
             echo json_encode($response);
             exit();
         }
@@ -227,6 +258,28 @@ try {
                     } else { $response['message'] = $resultado_actualizacion['mensaje'] ?? 'No se pudo actualizar el estado del vehículo.'; }
                 }
             } else { $response['message'] = 'Faltan datos necesarios (ID de vehículo o nuevo estado) para cambiar el estado.'; }
+        } elseif ($accion === 'eliminarVehiculo') {
+            // Solo administradores pueden llegar aquí debido a la validación de rol previa.
+            if (isset($_POST['veh_id'])) {
+                $veh_id = filter_var($_POST['veh_id'], FILTER_VALIDATE_INT);
+                if (!$veh_id) {
+                    $response['message'] = 'ID de vehículo inválido.';
+                } else {
+                    $vehiculo_model = new Vehiculo();
+                    // Asegúrate de que el modelo vehiculos_m.php tenga un método eliminarVehiculo($veh_id, $usu_id_admin)
+                    // El usu_id_admin es por si quieres registrar quién eliminó.
+                    $resultado_eliminacion = $vehiculo_model->eliminarVehiculo($veh_id, $_SESSION['usu_id']); 
+                    
+                    if (isset($resultado_eliminacion['resultado']) && $resultado_eliminacion['resultado'] == 1) {
+                        $response = ['status' => 'success', 'message' => $resultado_eliminacion['mensaje']];
+                    } else {
+                        $response['message'] = $resultado_eliminacion['mensaje'] ?? 'No se pudo eliminar el vehículo.';
+                        error_log("vehiculos_ajax.php: eliminarVehiculo - Error del modelo: " . ($resultado_eliminacion['mensaje'] ?? 'Desconocido'));
+                    }
+                }
+            } else {
+                $response['message'] = 'Falta el ID del vehículo para eliminar.';
+            }
         } else {
             $response['message'] = 'Acción POST desconocida o no implementada.';
         }

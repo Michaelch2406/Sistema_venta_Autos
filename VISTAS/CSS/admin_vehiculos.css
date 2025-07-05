@@ -1,0 +1,13 @@
+#tablaVehiculosAdmin th, #tablaVehiculosAdmin td { 
+            vertical-align: middle;
+            font-size: 0.85rem; /* Tamaño de fuente más pequeño para más información */
+        }
+        .modal-header { background-color: #198754; color: white; } /* Verde para vehículos */
+        .modal-header .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+        .badge-estado { font-size: 0.9em; padding: 0.5em 0.75em; }
+        .estado-disponible { background-color: #28a745; color: white; }
+        .estado-reservado { background-color: #ffc107; color: black; }
+        .estado-vendido { background-color: #dc3545; color: white; }
+        .estado-pendiente { background-color: #6c757d; color: white; }
+        .estado-desactivado { background-color: #343a40; color: white; }
+        .img-thumbnail-list { max-width: 100px; max-height: 70px; object-fit: cover; }
