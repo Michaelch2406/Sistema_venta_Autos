@@ -470,36 +470,3 @@ BEGIN
 END //
 
 DELIMITER ;
-
-
--- Stored Procedure para obtener imágenes de un vehículo
-DROP PROCEDURE IF EXISTS sp_get_imagenes_por_vehiculo;
-DELIMITER //
-CREATE PROCEDURE sp_get_imagenes_por_vehiculo(
-    IN p_veh_id INT
-)
-BEGIN
-    SELECT ima_id, veh_id, ima_url, ima_es_principal, ima_creado_en
-    FROM imagenesvehiculo
-    WHERE veh_id = p_veh_id
-    ORDER BY ima_es_principal DESC, ima_id ASC;
-END //
-DELIMITER ;
-
-
--- Stored Procedure para obtener solo el precio base de un vehículo
-DROP PROCEDURE IF EXISTS sp_get_vehiculo_precio_base;
-DELIMITER //
-CREATE PROCEDURE sp_get_vehiculo_precio_base(
-    IN p_veh_id INT
-)
-BEGIN
-    SELECT veh_precio 
-    FROM vehiculos
-    WHERE veh_id = p_veh_id;
-    -- Podríamos añadir AND veh_estado = 'disponible' si fuera un requisito estricto
-END //
-DELIMITER ;
-
-
-

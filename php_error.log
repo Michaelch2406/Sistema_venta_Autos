@@ -108,3 +108,181 @@ Stack trace:
             1, 'desactivado', 3,
             @p_resultado, @p_mensaje
         ))
+[04-Jul-2025 22:09:19 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:09:19 America/New_York] Request Method: GET
+[04-Jul-2025 22:09:19 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:09:19 America/New_York] GET Data: Array
+(
+    [accion] => getCatalogos
+    [tipo_vehiculo] => nuevo
+)
+
+[04-Jul-2025 22:09:19 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:09:19 America/New_York] Request Method: GET
+[04-Jul-2025 22:09:19 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:09:19 America/New_York] GET Data: Array
+(
+    [accion] => getVehiculosListado
+    [condicion] => nuevo
+    [pagina] => 1
+    [items_por_pagina] => 6
+)
+
+[04-Jul-2025 22:09:22 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:09:22 America/New_York] Request Method: GET
+[04-Jul-2025 22:09:22 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:09:22 America/New_York] GET Data: Array
+(
+    [accion] => getCatalogos
+    [tipo_vehiculo] => nuevo
+)
+
+[04-Jul-2025 22:09:22 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:09:22 America/New_York] Request Method: GET
+[04-Jul-2025 22:09:22 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:09:22 America/New_York] GET Data: Array
+(
+    [accion] => getVehiculosListado
+    [condicion] => nuevo
+    [pagina] => 1
+    [items_por_pagina] => 6
+)
+
+[04-Jul-2025 22:09:28 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:09:28 America/New_York] Request Method: POST
+[04-Jul-2025 22:09:28 America/New_York] POST Data: Array
+(
+    [action] => obtener_detalle_vehiculo_nuevo
+    [veh_id] => 2
+)
+
+[04-Jul-2025 22:09:28 America/New_York] GET Data: Array
+(
+)
+
+[04-Jul-2025 22:13:19 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:13:19 America/New_York] Request Method: GET
+[04-Jul-2025 22:13:19 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:13:19 America/New_York] GET Data: Array
+(
+    [accion] => getCatalogos
+    [tipo_vehiculo] => nuevo
+)
+
+[04-Jul-2025 22:13:19 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:13:19 America/New_York] Request Method: GET
+[04-Jul-2025 22:13:19 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:13:19 America/New_York] GET Data: Array
+(
+    [accion] => getVehiculosListado
+    [condicion] => nuevo
+    [pagina] => 1
+    [items_por_pagina] => 6
+)
+
+[04-Jul-2025 22:13:22 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:13:22 America/New_York] Request Method: GET
+[04-Jul-2025 22:13:22 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:13:22 America/New_York] GET Data: Array
+(
+    [accion] => getCatalogos
+    [tipo_vehiculo] => nuevo
+)
+
+[04-Jul-2025 22:13:22 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:13:22 America/New_York] Request Method: GET
+[04-Jul-2025 22:13:22 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:13:22 America/New_York] GET Data: Array
+(
+    [accion] => getVehiculosListado
+    [condicion] => nuevo
+    [pagina] => 1
+    [items_por_pagina] => 6
+)
+
+[04-Jul-2025 22:13:26 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:13:26 America/New_York] Request Method: POST
+[04-Jul-2025 22:13:26 America/New_York] POST Data: Array
+(
+    [action] => obtener_detalle_vehiculo_nuevo
+    [veh_id] => 2
+)
+
+[04-Jul-2025 22:13:26 America/New_York] GET Data: Array
+(
+)
+
+[04-Jul-2025 22:17:05 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:17:05 America/New_York] Request Method: POST
+[04-Jul-2025 22:17:05 America/New_York] POST Data: Array
+(
+    [action] => obtener_detalle_vehiculo_nuevo
+    [veh_id] => 2
+)
+
+[04-Jul-2025 22:17:05 America/New_York] GET Data: Array
+(
+)
+
+[04-Jul-2025 22:24:21 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:24:21 America/New_York] Request Method: POST
+[04-Jul-2025 22:24:21 America/New_York] POST Data: Array
+(
+    [action] => obtener_detalle_vehiculo_nuevo
+    [veh_id] => 2
+)
+
+[04-Jul-2025 22:24:21 America/New_York] GET Data: Array
+(
+)
+
+[04-Jul-2025 22:56:26 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:56:26 America/New_York] Request Method: GET
+[04-Jul-2025 22:56:26 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:56:26 America/New_York] GET Data: Array
+(
+    [accion] => getCatalogos
+    [tipo_vehiculo] => nuevo
+)
+
+[04-Jul-2025 22:56:26 America/New_York] Vehiculos AJAX Entry Point
+[04-Jul-2025 22:56:26 America/New_York] Request Method: GET
+[04-Jul-2025 22:56:26 America/New_York] POST Data: Array
+(
+)
+
+[04-Jul-2025 22:56:26 America/New_York] GET Data: Array
+(
+    [accion] => getVehiculosListado
+    [condicion] => nuevo
+    [pagina] => 1
+    [items_por_pagina] => 6
+)
+

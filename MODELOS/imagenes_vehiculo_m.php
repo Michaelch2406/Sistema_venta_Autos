@@ -92,37 +92,5 @@ class ImagenesVehiculo_M
         // No es necesario limpiar resultados múltiples aquí para un SELECT simple
         return $imagenes;
     }
-
-    // Nuevo método que utiliza el Stored Procedure sp_get_imagenes_por_vehiculo
-    public function getImagenesPorVehiculoId($veh_id) {
-        if (!$this->conn) {
-            error_log("getImagenesPorVehiculoId: No hay conexión a la BD.");
-            return []; // Devuelve array vacío en caso de error de conexión
-        }
-
-        $veh_id_esc = $this->conn->real_escape_string($veh_id);
-        $sql = "CALL sp_get_imagenes_por_vehiculo($veh_id_esc)";
-
-        // Limpiar resultados anteriores si los hay
-        while($this->conn->more_results() && $this->conn->next_result()){ if($res = $this->conn->store_result()){ $res->free(); } }
-        
-        $resultado = $this->conn->query($sql);
-        $imagenes = [];
-
-        if ($resultado && $resultado instanceof mysqli_result) {
-            while ($fila = $resultado->fetch_assoc()) {
-                // La URL ya debería estar correcta desde la BD (ej. PUBLIC/uploads/vehiculos/1/imagen.jpg)
-                // El JS se encarga de añadir '../' si es necesario para la ruta relativa desde VISTAS/JS/
-                $imagenes[] = $fila;
-            }
-            $resultado->free();
-            // Limpiar nuevamente por si el SP tiene múltiples result sets o un output
-            while($this->conn->more_results() && $this->conn->next_result()){ if($res = $this->conn->store_result()){ $res->free(); } }
-        } elseif ($resultado === false) {
-            error_log("Error al ejecutar sp_get_imagenes_por_vehiculo para veh_id $veh_id_esc: " . $this->conn->error . " (SQL: $sql)");
-            // Devuelve array vacío en caso de error de consulta
-        }
-        return $imagenes;
-    }
 }
 ?>

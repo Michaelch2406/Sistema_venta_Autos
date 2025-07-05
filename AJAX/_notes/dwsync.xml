@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="datos.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133932866005368981" remote="133936202300000000" Dst="0" />
+<file name="admin_catalogos_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133950433188903695" remote="133961408900000000" Dst="0" />
+<file name="admin_usuarios_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133953605783067832" remote="133961408900000000" Dst="0" />
+<file name="cotizaciones_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133961367665037189" remote="133961408900000000" Dst="0" />
+<file name="cuenta_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133953442922477563" remote="133961408900000000" Dst="0" />
+<file name="favoritos_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133952982136304230" remote="133961408900000000" Dst="0" />
+<file name="login_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133960458318265997" remote="133961408900000000" Dst="0" />
+<file name="registro_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133958993767008190" remote="133961408900000000" Dst="0" />
+<file name="vehiculos_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133961375892639844" remote="133961408900000000" Dst="0" />
 </dwsync>
