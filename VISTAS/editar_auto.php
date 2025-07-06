@@ -33,6 +33,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Vehículo - AutoMercado Total</title>
     <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="../PUBLIC/css/styles.css" rel="stylesheet">
     <link href="../VISTAS/CSS/editar_auto.css" rel="stylesheet"> <!-- CSS específico si es necesario -->

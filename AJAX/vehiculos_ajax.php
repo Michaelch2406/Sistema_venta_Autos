@@ -367,7 +367,7 @@ try {
                     $response = ['status' => 'error', 'message' => $resultado_actualizacion['mensaje'] ?? 'Error al actualizar el vehículo.'];
                     error_log("vehiculos_ajax.php: actualizarVehiculo - Error del modelo: " . ($resultado_actualizacion['mensaje'] ?? 'Desconocido') . " para veh_id: $veh_id");
                 }
-            }
+            } 
         } else {
             $response['message'] = 'Acción POST desconocida o no implementada.';
         }

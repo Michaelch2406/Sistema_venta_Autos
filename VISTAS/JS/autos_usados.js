@@ -196,15 +196,28 @@ $(document).ready(function() {
                         const $img = $card.find('.card-vehiculo-img-top');
                         
                         if (!$cardBody.find('.row').length) {
-                            const $row = $('<div class="row g-0"></div>');
+                            // Guardar el contenido original
+                            const originalContent = $cardBody.html();
+                            
+                            // Crear nueva estructura para vista de lista
+                            const $row = $('<div class="row g-0 h-100"></div>');
                             const $colImg = $('<div class="col-md-4"></div>');
                             const $colContent = $('<div class="col-md-8"></div>');
                             
-                            $colImg.append($img.clone());
-                            $colContent.append($cardBody.html());
-                            $row.append($colImg).append($colContent);
+                            // Clonar imagen y añadir a la columna de imagen
+                            const $imgClone = $img.clone();
+                            $colImg.append($imgClone);
                             
+                            // Crear el contenido de la columna de contenido
+                            const $contentDiv = $('<div class="card-body"></div>');
+                            $contentDiv.html(originalContent);
+                            $colContent.append($contentDiv);
+                            
+                            // Ensamblar la estructura
+                            $row.append($colImg).append($colContent);
                             $cardBody.html($row);
+                            
+                            // Ocultar la imagen original
                             $img.hide();
                         }
                     });
@@ -217,8 +230,14 @@ $(document).ready(function() {
                         const $row = $cardBody.find('.row');
                         
                         if ($row.length) {
-                            const originalContent = $row.find('.col-md-8').html();
+                            // Obtener el contenido original de la columna de contenido
+                            const $originalCardBody = $row.find('.col-md-8 .card-body');
+                            const originalContent = $originalCardBody.html();
+                            
+                            // Restaurar el contenido original
                             $cardBody.html(originalContent);
+                            
+                            // Mostrar la imagen original
                             $card.find('.card-vehiculo-img-top').show();
                         }
                     });

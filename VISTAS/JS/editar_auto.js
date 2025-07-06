@@ -28,15 +28,17 @@ $(document).ready(function () {
     }
 
     function mostrarOverlayCarga(mostrar) {
-        if (mostrar) {
-            if ($('#loadingOverlay').length === 0) {
-                $('body').append('<div id="loadingOverlay"><l-trefoil size="60" stroke="5" stroke-length="0.15" bg-opacity="0.1" speed="1.4" color="#0d6efd"></l-trefoil></div>');
-            }
-            $('#loadingOverlay').show();
-        } else {
-            $('#loadingOverlay').hide();
-        }
+    const loader = $('#page-loader'); // Apuntamos al loader que ya existe
+
+    if (mostrar) {
+        // Simplemente lo mostramos.
+        // Asumimos que su CSS ya lo posiciona en el centro como un overlay.
+        loader.show(); 
+    } else {
+        // Lo ocultamos.
+        loader.hide();
     }
+}
 
     async function cargarDatosVehiculoParaEdicion(vehId) {
         mostrarOverlayCarga(true);
@@ -444,6 +446,7 @@ $(document).ready(function () {
             }
         });
     });
+
 
     // Función de alerta (asumimos que está en global.js o se define aquí)
     // function mostrarAlerta(tipo, mensaje, callback) { ... }

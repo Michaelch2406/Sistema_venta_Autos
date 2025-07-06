@@ -589,10 +589,13 @@ CREATE PROCEDURE sp_get_vehiculo_detalle(
 )
 BEGIN
     SELECT
-        v.veh_id, 
-        -- === CAMPO AÑADIDO AQUÍ ===
+        v.veh_id,
+        -- === CAMPOS AÑADIDOS (LA SOLUCIÓN) ===
+        v.mar_id,
+        v.mod_id,
+        v.tiv_id,
+        -- =====================================
         v.usu_id_gestor,
-        -- ========================
         v.veh_subtipo_vehiculo, v.veh_condicion, v.veh_anio, v.veh_kilometraje,
         v.veh_precio, v.veh_vin, v.veh_placa, v.veh_ubicacion_provincia, v.veh_ubicacion_ciudad,
         v.veh_placa_provincia_origen, v.veh_ultimo_digito_placa,
@@ -612,6 +615,7 @@ BEGIN
     WHERE v.veh_id = p_veh_id;
 END //
 DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS sp_insertar_imagen_vehiculo;
 DELIMITER //

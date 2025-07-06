@@ -16,7 +16,7 @@
     <div id="page-loader" class="page-loader">
         <div class="loader-content">
             <div class="loader-spinner">
-                <l-trefoil size="50" stroke="5" stroke-length="0.15" bg-opacity="0.1" speed="1.4" color="#ff6b35"></l-trefoil>
+                <l-trefoil size="50" stroke="5" stroke-length="0.15" bg-opacity="0.1" speed="1.4" color="#dc2626"></l-trefoil>
             </div>
             <div class="loader-text">Cargando vehículos...</div>
             <div class="loader-progress">
