@@ -134,9 +134,8 @@ class Usuario
 
     public function crearUsuarioAdmin(
     $rol_id, $usuario, $nombre, $apellido, $email, $cedula, // Parámetro $cedula añadido
-    $password_plana, $telefono, $direccion, $fnacimiento, $verificado
+    $password_hash_recibido, $telefono, $direccion, $fnacimiento, $verificado
 ) {
-    $password_hash = password_hash($password_plana, PASSWORD_DEFAULT);
     $rol_id_esc = $this->conn->real_escape_string($rol_id);
     $usuario_esc = $this->conn->real_escape_string(trim($usuario));
     $nombre_esc = $this->conn->real_escape_string(trim($nombre));
@@ -151,7 +150,7 @@ class Usuario
     $sql = "CALL sp_crear_usuario_admin(
         $rol_id_esc, '$usuario_esc', '$nombre_esc', '$apellido_esc', '$email_esc', 
         '$cedula_esc', -- Añadido en la llamada al SP
-        '$password_hash', $telefono_esc, $direccion_esc, $fnacimiento_esc, $verificado_esc,
+        '$password_hash_recibido', $telefono_esc, $direccion_esc, $fnacimiento_esc, $verificado_esc,
         @p_usu_id_creado, @p_resultado, @p_mensaje
     )";
 

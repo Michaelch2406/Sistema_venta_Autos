@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['accion'])) {
                 trim($_POST['usu_apellido']),
                 trim($_POST['usu_email']),
                 trim($_POST['usu_cedula']), // Pasar usu_cedula al modelo
-                $_POST['usu_password'], 
+                password_hash($_POST['usu_password'], PASSWORD_DEFAULT), 
                 isset($_POST['usu_telefono']) ? trim($_POST['usu_telefono']) : null,
                 isset($_POST['usu_direccion']) ? trim($_POST['usu_direccion']) : null,
                 isset($_POST['usu_fnacimiento']) && !empty($_POST['usu_fnacimiento']) ? $_POST['usu_fnacimiento'] : null,

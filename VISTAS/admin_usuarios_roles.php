@@ -104,7 +104,7 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table id="tablaUsuariosAdmin" class="table table-custom" style="width:100%">
+                        <table id="tablaUsuariosAdmin" class="table table-custom" style="width:100%" >
                             <thead>
                                 <tr>
                                     <th>

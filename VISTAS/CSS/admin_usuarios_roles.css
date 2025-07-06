@@ -351,9 +351,15 @@
     border-collapse: separate;
     border-spacing: 0;
     border-radius: var(--border-radius);
-    overflow: hidden;
+    /* overflow: hidden; Ya no es necesario aquí, table-responsive se encarga */
     box-shadow: none;
     margin-bottom: 0;
+    width: 100%; /* Asegurar que la tabla intente ocupar todo el ancho disponible */
+}
+
+/* Ajustes para asegurar que DataTables y table-responsive funcionen bien juntos */
+.dataTables_wrapper .table-responsive {
+    overflow-x: auto; /* Asegurar que el scroll horizontal aparezca si es necesario */
 }
 
 .table-custom thead th {
@@ -396,7 +402,20 @@
     padding: 1rem 0.75rem;
     vertical-align: middle;
     border: none;
+    white-space: nowrap; /* Evitar que el contenido de las celdas se rompa en múltiples líneas innecesariamente */
 }
+
+.table-custom th, .table-custom td {
+    /* Considerar ajustar padding o font-size si el contenido sigue siendo muy ancho */
+    /* font-size: 0.85rem; */
+    /* padding: 0.75rem 0.5rem; */
+}
+
+/* Específicamente para la columna de acciones para que no se rompa */
+.table-custom td.columna-acciones {
+    white-space: nowrap;
+}
+
 
 /* Badges mejorados */
 .badge-custom {
