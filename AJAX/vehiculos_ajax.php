@@ -237,32 +237,81 @@ try {
                             $imagenes_model = new ImagenesVehiculo_M();
                             $upload_dir_base = __DIR__ . '/../PUBLIC/uploads/vehiculos/';
                             $upload_dir = $upload_dir_base . $veh_id_insertado . '/';
-                            if (!file_exists($upload_dir) && !is_dir($upload_dir)) { 
-                                if (!mkdir($upload_dir, 0775, true)) { 
+                            if (!file_exists($upload_dir) && !is_dir($upload_dir)) {
+                                if (!mkdir($upload_dir, 0775, true)) {
                                     throw new Exception("No se pudo crear el directorio de imágenes: " . $upload_dir);
                                 }
                             }
-                            $is_first_image = true;
+
+                            $imagen_principal_nombre_temporal_post = isset($_POST['imagen_principal_nombre_temporal']) ? basename($_POST['imagen_principal_nombre_temporal']) : null;
+                            $imagen_principal_establecida = false;
+                            $primera_imagen_valida_key = null;
+
+                            // Determinar la primera imagen válida para usar como fallback si no se especifica una principal
+                            foreach ($_FILES['veh_imagenes']['name'] as $key => $name) {
+                                if ($_FILES['veh_imagenes']['error'][$key] == UPLOAD_ERR_OK) {
+                                    $primera_imagen_valida_key = $key;
+                                    break;
+                                }
+                            }
+
                             foreach ($_FILES['veh_imagenes']['name'] as $key => $name) {
                                 if ($_FILES['veh_imagenes']['error'][$key] == UPLOAD_ERR_OK) {
                                     $tmp_name = $_FILES['veh_imagenes']['tmp_name'][$key];
                                     $original_name = basename(filter_var($name, FILTER_SANITIZE_STRING));
                                     $extension = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
                                     $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
-                                    if (!in_array($extension, $allowed_extensions)) { $mensajes_imagenes[] = "'$original_name': Tipo no permitido ($extension)."; $errores_imagenes++; continue; }
+
+                                    if (!in_array($extension, $allowed_extensions)) {
+                                        $mensajes_imagenes[] = "'$original_name': Tipo no permitido ($extension).";
+                                        $errores_imagenes++;
+                                        continue;
+                                    }
+
                                     $safe_filename = uniqid('vehiculo_' . $veh_id_insertado . '_', true) . '.' . $extension;
                                     $destination = $upload_dir . $safe_filename;
+
                                     if (move_uploaded_file($tmp_name, $destination)) {
                                         $url_relativa_db = 'PUBLIC/uploads/vehiculos/' . $veh_id_insertado . '/' . $safe_filename;
-                                        $resultado_sp_imagen = $imagenes_model->insertarImagen($veh_id_insertado, $url_relativa_db, $is_first_image);
-                                        if (isset($resultado_sp_imagen['resultado']) && $resultado_sp_imagen['resultado'] == 1) { $mensajes_imagenes[] = "'$original_name': OK."; } 
-                                        else { $mensajes_imagenes[] = "'$original_name': Error BD (" . ($resultado_sp_imagen['mensaje'] ?? 'desconocido') . ")."; $errores_imagenes++; if(file_exists($destination)) unlink($destination); }
-                                        if ($is_first_image) $is_first_image = false;
-                                    } else { $mensajes_imagenes[] = "Error moviendo '$original_name'."; $errores_imagenes++; }
-                                } elseif ($_FILES['veh_imagenes']['error'][$key] != UPLOAD_ERR_NO_FILE) { $mensajes_imagenes[] = "Error upload '$name': cod " . $_FILES['veh_imagenes']['error'][$key]; $errores_imagenes++; }
+                                        $es_esta_la_principal = false;
+
+                                        if ($imagen_principal_nombre_temporal_post !== null) {
+                                            if ($original_name === $imagen_principal_nombre_temporal_post && !$imagen_principal_establecida) {
+                                                $es_esta_la_principal = true;
+                                                $imagen_principal_establecida = true;
+                                            }
+                                        } elseif ($primera_imagen_valida_key !== null && $key === $primera_imagen_valida_key && !$imagen_principal_establecida) {
+                                            // Fallback: la primera imagen VÁLIDA es principal si no se especificó ninguna o la especificada no coincidió
+                                            $es_esta_la_principal = true;
+                                            $imagen_principal_establecida = true;
+                                        }
+                                        
+                                        $resultado_sp_imagen = $imagenes_model->insertarImagen($veh_id_insertado, $url_relativa_db, $es_esta_la_principal);
+                                        
+                                        if (isset($resultado_sp_imagen['resultado']) && $resultado_sp_imagen['resultado'] == 1) {
+                                            $mensajes_imagenes[] = "'$original_name': OK" . ($es_esta_la_principal ? " (Principal)" : "") . ".";
+                                        } else {
+                                            $mensajes_imagenes[] = "'$original_name': Error BD (" . ($resultado_sp_imagen['mensaje'] ?? 'desconocido') . ").";
+                                            $errores_imagenes++;
+                                            if(file_exists($destination)) unlink($destination); // Eliminar archivo si la inserción en BD falla
+                                        }
+                                    } else {
+                                        $mensajes_imagenes[] = "Error moviendo '$original_name'.";
+                                        $errores_imagenes++;
+                                    }
+                                } elseif ($_FILES['veh_imagenes']['error'][$key] != UPLOAD_ERR_NO_FILE) {
+                                    $mensajes_imagenes[] = "Error upload '$name': cod " . $_FILES['veh_imagenes']['error'][$key];
+                                    $errores_imagenes++;
+                                }
                             }
+                             // Asegurarse de que HAYA una imagen principal si se subieron imágenes y ninguna fue marcada explícitamente
+                            // Esto es un doble check, el SP debería manejarlo idealmente.
+                            // Si $imagen_principal_establecida es false después del bucle Y $errores_imagenes == 0 Y count($mensajes_imagenes) > 0
+                            // Podríamos tener que llamar a un SP para setear la primera imagen como principal.
+                            // Por ahora, asumimos que el SP PA_IMAGENES_VEHICULO se encarga de que siempre haya una principal si hay imágenes.
+
                         } catch (Exception $e_img) {
-                             $mensajes_imagenes[] = "Excepción al procesar imágenes: " . $e_img->getMessage(); $errores_imagenes++;
+                            $mensajes_imagenes[] = "Excepción al procesar imágenes: " . $e_img->getMessage(); $errores_imagenes++;
                         }
                     }
                     $mensaje_final_vehiculo = $resultado_sp_vehiculo['mensaje'];

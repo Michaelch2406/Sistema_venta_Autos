@@ -24,6 +24,8 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
     <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- MODIFICADO: Apuntando a la nueva hoja de estilos dedicada -->
+    <link href="../VISTAS/CSS/publicar_vehiculo.css" rel="stylesheet">
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 
@@ -71,8 +73,6 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                         class="text-muted">(Ej: Doble Cabina)</span></label><input type="text"
                                     class="form-control" id="veh_subtipo_vehiculo" name="veh_subtipo_vehiculo"
                                     placeholder="Opcional"></div>
-
-                            <!-- === CAMBIO REALIZADO AQUÍ: "Condición" AHORA ESTÁ ANTES DE "Año" === -->
                             <div class="col-md-6">
                                 <label for="veh_condicion" class="form-label">Condición <span
                                         class="text-danger">*</span></label>
@@ -84,7 +84,6 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 </select>
                                 <div class="invalid-feedback">Indica la condición del vehículo.</div>
                             </div>
-
                             <div class="col-md-6">
                                 <label for="veh_anio" class="form-label">Año Fabricación <span
                                         class="text-danger">*</span></label>
@@ -94,15 +93,12 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 </select>
                                 <div class="invalid-feedback">Selecciona el año de fabricación.</div>
                             </div>
-                            <!-- =================================================================== -->
-
                             <div class="col-md-6" id="kilometraje_div_container"><label for="veh_kilometraje"
                                     class="form-label" id="label_kilometraje">Recorrido (km)</label><input type="number"
                                     class="form-control form-control-lg" id="veh_kilometraje" name="veh_kilometraje"
                                     placeholder="Ej: 25000" min="0">
                                 <div class="invalid-feedback" id="kilometraje_feedback">Ingresa el recorrido.</div>
                             </div>
-
                             <div class="col-12">
                                 <div class="row g-3" id="campos_placa_group" style="display: none;">
                                     <div class="col-md-4">
@@ -140,7 +136,6 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-md-4"><label for="veh_precio" class="form-label">Precio (USD) <span
                                         class="text-danger">*</span></label><input type="number"
                                     class="form-control form-control-lg" id="veh_precio" name="veh_precio"
@@ -163,6 +158,9 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                         </div>
                     </div>
                 </div>
+
+                <!-- Otras secciones del formulario (Ubicación, Especificaciones, etc.) -->
+                <!-- ... (se mantienen sin cambios) ... -->
 
                 <div class="card-form-section">
                     <div class="card-header"><i class="bi bi-geo-alt-fill me-2"></i>Ubicación y Apariencia</div>
@@ -334,19 +332,17 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                     <div class="card-body p-4">
                         <div class="row g-3">
                             <div class="col-md-12">
-                                <label for="veh_imagenes" class="form-label">Imágenes del Vehículo (Principal +
-                                    Adicionales) <span class="text-danger">*</span></label>
+                                <label for="veh_imagenes" class="form-label">Imágenes del Vehículo <span class="text-danger">*</span></label>
                                 <input class="form-control form-control-lg" type="file" id="veh_imagenes"
                                     name="veh_imagenes[]" multiple accept="image/jpeg, image/png, image/webp" required>
-                                <small class="form-text text-muted">Selecciona al menos una imagen. Máximo 10. La
-                                    primera será la principal.</small>
+                                <small class="form-text text-muted">Selecciona al menos una imagen (máximo 10). Puedes elegir cuál será la principal haciendo clic en "Principal" sobre la imagen deseada.</small>
                                 <div class="invalid-feedback">Debes subir al menos una imagen.</div>
-                                <div id="imagePreviewContainer"
-                                    class="mt-3 d-flex flex-wrap gap-2 border p-2 rounded bg-light"
-                                    style="min-height: 120px;">
-                                    <small class="text-muted align-self-center mx-auto">La previsualización de imágenes
-                                        aparecerá aquí...</small>
+                                
+                                <!-- Contenedor para previsualización de imágenes -->
+                                <div id="imagePreviewContainerPublicar" class="mt-3">
+                                    <small class="text-muted align-self-center mx-auto default-text">La previsualización de imágenes aparecerá aquí...</small>
                                 </div>
+                                <input type="hidden" name="imagen_principal_nombre_temporal" id="imagen_principal_nombre_temporal_form_publicar" value="">
                             </div>
                         </div>
                     </div>

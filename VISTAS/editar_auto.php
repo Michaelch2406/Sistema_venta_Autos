@@ -236,6 +236,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                         <div class="row g-3">
                             <div class="col-12">
                                 <h5>Imágenes Actuales</h5>
+                                <small class="form-text text-muted mb-2 d-block">Haz clic en "Hacer Principal" sobre una imagen para seleccionarla como la portada. Puedes eliminar imágenes existentes.</small>
                                 <div id="currentImagesPreviewContainer" class="mb-3 d-flex flex-wrap gap-2 border p-2 rounded bg-light" style="min-height: 120px;">
                                     <small class="text-muted align-self-center mx-auto">Cargando imágenes actuales...</small>
                                     <!-- Las imágenes actuales se cargarán aquí por JS -->
@@ -244,15 +245,16 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                             <div class="col-md-12">
                                 <label for="veh_imagenes_nuevas" class="form-label">Añadir Nuevas Imágenes</label>
                                 <input class="form-control form-control-lg" type="file" id="veh_imagenes_nuevas" name="veh_imagenes_nuevas[]" multiple accept="image/jpeg, image/png, image/webp">
-                                <small class="form-text text-muted">Selecciona imágenes adicionales si deseas. Máximo 10 imágenes en total (actuales + nuevas). La imagen principal se gestiona abajo.</small>
+                                <small class="form-text text-muted">Selecciona imágenes adicionales si deseas. Máximo 10 imágenes en total (actuales + nuevas). Si eliges una nueva imagen como principal, esta reemplazará la selección anterior.</small>
                                 <div id="newImagePreviewContainer" class="mt-3 d-flex flex-wrap gap-2 border p-2 rounded bg-light" style="min-height: 120px;">
                                     <small class="text-muted align-self-center mx-auto">Previsualización de nuevas imágenes aparecerá aquí...</small>
                                 </div>
                             </div>
                             <input type="hidden" name="imagenes_a_eliminar" id="imagenes_a_eliminar_form" value="">
+                            <!-- ID de la imagen existente que es principal -->
                             <input type="hidden" name="imagen_principal_actual_id" id="imagen_principal_actual_id_form" value="">
+                            <!-- Nombre temporal del archivo NUEVO que se quiere como principal -->
                             <input type="hidden" name="nueva_imagen_principal_nombre_temporal" id="nueva_imagen_principal_nombre_temporal_form" value="">
-
                         </div>
                     </div>
                 </div>

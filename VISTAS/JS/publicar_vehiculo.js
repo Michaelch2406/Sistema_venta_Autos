@@ -26,72 +26,48 @@ $(document).ready(function() {
         "Zamora Chinchipe": ["Zamora", "Yantzaza", "El Pangui", "Centinela del Cóndor"]
     };
 
-    function poblarSelect($selectElement, data, valueField, textField, defaultOptionText, defaultSelectedValue = '') {
-        $selectElement.empty().append($('<option>', { value: '', text: defaultOptionText, disabled: true, selected: (defaultSelectedValue === '') }));
-        $.each(data, function(i, item) {
-            var $option = $('<option>', { value: item[valueField], text: item[textField] });
-            if (item[valueField] == defaultSelectedValue) { // Usar == para comparación flexible si los tipos no coinciden exactamente
-                $option.prop('selected', true);
-            }
-            $selectElement.append($option);
-        });
+    function poblarSelect($selectElement, data, valueField, textField, defaultOptionText) {
+        $selectElement.empty().append($('<option>', { value: '', text: defaultOptionText, disabled: true, selected: true }));
+        $.each(data, (i, item) => $selectElement.append($('<option>', { value: item[valueField], text: item[textField] })));
     }
-    
-    function poblarSelectSimple($selectElement, dataArray, defaultOptionText, defaultSelectedValue = '') {
-        $selectElement.empty().append($('<option>', { value: '', text: defaultOptionText, disabled: true, selected: (defaultSelectedValue === '') }));
-        $.each(dataArray, function(i, item) {
-            var $option = $('<option>', { value: item, text: item });
-            if (item == defaultSelectedValue) {
-                $option.prop('selected', true);
-            }
-            $selectElement.append($option);
-        });
+
+    function poblarSelectSimple($selectElement, dataArray, defaultOptionText) {
+        $selectElement.empty().append($('<option>', { value: '', text: defaultOptionText, disabled: true, selected: true }));
+        $.each(dataArray, (i, item) => $selectElement.append($('<option>', { value: item, text: item })));
     }
 
     function cargarCatalogosIniciales() {
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php',type: 'GET', data: { accion: 'getCatalogos' }, dataType: 'json',
+            url: '../AJAX/vehiculos_ajax.php', data: { accion: 'getCatalogos' }, dataType: 'json',
             success: function(response) {
                 if (response.status === 'success') {
                     poblarSelect($('#mar_id'), response.marcas, 'mar_id', 'mar_nombre', 'Selecciona marca...');
                     poblarSelect($('#tiv_id'), response.tipos_vehiculo, 'tiv_id', 'tiv_nombre', 'Selecciona tipo...');
-                    poblarSelectSimple($('#veh_ubicacion_provincia'), response.provincias, 'Selecciona provincia de ubicación...');
-                    poblarSelectSimple($('#veh_placa_provincia_origen'), response.provincias, 'Selecciona provincia de placa...');
-                } else { 
-                    $('#formSubmissionMessage').html('<div class="alert alert-danger">Error al cargar catálogos: ' + (response.message || 'Respuesta no exitosa.') + '</div>').show();
-                    console.error('Error en respuesta de getCatalogos:', response);
+                    poblarSelectSimple($('#veh_ubicacion_provincia'), response.provincias, 'Selecciona provincia...');
+                    poblarSelectSimple($('#veh_placa_provincia_origen'), response.provincias, 'Selecciona provincia...');
                 }
-            },
-            error: function(jqXHR, textStatus, errorThrown) { 
-                $('#formSubmissionMessage').html('<div class="alert alert-danger">Error de conexión al cargar datos iniciales. Por favor, revisa la consola.</div>').show();
-                console.error('AJAX error en getCatalogos:', textStatus, errorThrown, jqXHR.responseText);
             }
         });
     }
     cargarCatalogosIniciales();
 
     $('#mar_id').on('change', function() {
-        var marcaId = $(this).val(); var $selectModelos = $('#mod_id');
-        $selectModelos.empty().append('<option value="" selected disabled>Cargando modelos...</option>').prop('disabled', true);
+        const marcaId = $(this).val();
+        const $selectModelos = $('#mod_id');
+        $selectModelos.empty().append('<option value="" selected disabled>Cargando...</option>').prop('disabled', true);
         if (marcaId) {
             $.ajax({
-                url: '../AJAX/vehiculos_ajax.php', type: 'GET', data: { accion: 'getModelos', marca_id: marcaId }, dataType: 'json',
+                url: '../AJAX/vehiculos_ajax.php', data: { accion: 'getModelos', marca_id: marcaId }, dataType: 'json',
                 success: function(response) {
-                    $selectModelos.empty();
-                    if (response.status === 'success' && response.modelos && response.modelos.length > 0) {
+                    if (response.status === 'success' && response.modelos.length > 0) {
                         poblarSelect($selectModelos, response.modelos, 'mod_id', 'mod_nombre', 'Selecciona modelo...');
                         $selectModelos.prop('disabled', false);
-                    } else { 
-                        $selectModelos.append('<option value="" selected disabled>No hay modelos disponibles</option>').prop('disabled', true);
-                        if(response.message) console.warn('Advertencia en getModelos:', response.message);
+                    } else {
+                        $selectModelos.empty().append('<option value="" selected disabled>No hay modelos</option>');
                     }
-                },
-                error: function(jqXHR, textStatus, errorThrown) { 
-                    $selectModelos.empty().append('<option value="" selected disabled>Error de conexión</option>'); 
-                    console.error('AJAX error en getModelos:', textStatus, errorThrown, jqXHR.responseText);
                 }
             });
-        } else { $selectModelos.empty().append('<option value="" selected disabled>Selecciona una marca primero...</option>').prop('disabled', true); }
+        }
     });
 
     $('#veh_ubicacion_provincia').on('change', function() {
@@ -100,10 +76,9 @@ $(document).ready(function() {
         if (provincia && provinciasCiudades[provincia]) {
             poblarSelectSimple($selectCiudades, provinciasCiudades[provincia], 'Selecciona una ciudad...');
             $selectCiudades.prop('disabled', false);
-        } else if (provincia) { // Provincia seleccionada pero no encontrada en el objeto (debería ser raro si se carga desde el mismo fuente)
-            $selectCiudades.empty().append('<option value="" selected disabled>No hay ciudades para esta provincia</option>').prop('disabled', true);
+        } else {
+            $selectCiudades.empty().append('<option value="" selected disabled>Selecciona provincia...</option>').prop('disabled', true);
         }
-         else { $selectCiudades.empty().append('<option value="" selected disabled>Selecciona provincia primero...</option>').prop('disabled', true); }
     });
 
     var $kilometrajeContainer = $('#kilometraje_div_container');
@@ -180,69 +155,169 @@ $(document).ready(function() {
     });
     // --- FIN: Lógica para Año de Fabricación Dinámico ---
 
-    $('#veh_imagenes').on('change', function(event) {
-        var $previewContainer = $('#imagePreviewContainer'); $previewContainer.empty();
-        if (this.files) {
-            var files = Array.from(this.files);
-            if (files.length > 10) { alert("Máximo 10 imágenes."); $(this).val(''); $previewContainer.html('<small class="text-muted align-self-center mx-auto">Previsualización...</small>'); return; }
-            if (files.length === 0 && $(this).prop('required')) { $(this).addClass('is-invalid'); } 
-            else { $(this).removeClass('is-invalid'); }
-            if (files.length === 0) { $previewContainer.html('<small class="text-muted align-self-center mx-auto">Previsualización...</small>'); }
-            files.forEach(function(file) {
+    // --- NUEVA LÓGICA DE PREVISUALIZACIÓN DE IMÁGENES ---
+    const MAX_IMAGES = 10;
+    const imagePreviewContainer = $('#imagePreviewContainerPublicar');
+    const vehImagenesInput = $('#veh_imagenes');
+    const imagenPrincipalField = $('#imagen_principal_nombre_temporal_form_publicar');
+    const defaultPreviewText = '<small class="text-muted align-self-center mx-auto default-text">La previsualización de imágenes aparecerá aquí...</small>';
+
+    let uploadedFiles = [];
+    let principalImageTempName = null;
+
+    vehImagenesInput.on('change', function(event) {
+        const nuevosArchivos = Array.from(event.target.files);
+        nuevosArchivos.forEach(file => {
+            if (uploadedFiles.length < MAX_IMAGES && !uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
                 if (file.type.startsWith('image/')) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) { $('<img>').attr('src', e.target.result).addClass('img-thumbnail m-1').css({'height': '100px', 'width': 'auto', 'object-fit': 'cover'}).appendTo($previewContainer); }
-                    reader.readAsDataURL(file);
+                    uploadedFiles.push(file);
                 }
-            });
-        } else { $previewContainer.html('<small class="text-muted align-self-center mx-auto">Previsualización...</small>');}
+            }
+        });
+        if (uploadedFiles.length > MAX_IMAGES) {
+            alert(`Máximo ${MAX_IMAGES} imágenes permitidas.`);
+            uploadedFiles = uploadedFiles.slice(0, MAX_IMAGES);
+        }
+        $(this).val('');
+        if (!principalImageTempName && uploadedFiles.length > 0) {
+            principalImageTempName = uploadedFiles[0].name;
+        }
+        renderizarPreviews();
+        actualizarInputFileEnDOM();
     });
 
-    $('#publicarVehiculoForm').on('submit', function(event) {
-        var form = this; var $formMessage = $('#formSubmissionMessage'); $formMessage.html('').hide();
-        var $imagenesInput = $('#veh_imagenes');
-        if ($imagenesInput.prop('required') && ($imagenesInput[0].files.length === 0)) {
-            event.preventDefault(); event.stopPropagation(); $imagenesInput.addClass('is-invalid');
-            $imagenesInput[0].setCustomValidity("Debes subir al menos una imagen.");
-            $(form).addClass('was-validated'); 
-            $formMessage.html('<div class="alert alert-warning">Sube al menos una imagen.</div>').show();
+    function renderizarPreviews() {
+        imagePreviewContainer.empty();
+        if (uploadedFiles.length === 0) {
+            imagePreviewContainer.html(defaultPreviewText);
+            principalImageTempName = null;
+            updateHiddenPrincipalField();
+            actualizarEstadoInputFileRequired();
             return;
-        } else { $imagenesInput.removeClass('is-invalid'); $imagenesInput[0].setCustomValidity(""); }
+        }
+        uploadedFiles.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const isPrincipal = principalImageTempName === file.name;
+                const wrapper = $(`
+                    <div class="img-preview-wrapper ${isPrincipal ? 'is-principal' : ''}" data-filename="${file.name}">
+                        <div class="image-container">
+                             <img src="${e.target.result}" alt="${file.name}">
+                             <button type="button" class="btn btn-danger btn-sm btn-remove-new-img" title="Eliminar"><i class="bi bi-x-lg"></i></button>
+                             ${isPrincipal ? '<span class="badge bg-primary badge-principal-nueva">Principal</span>' : ''}
+                        </div>
+                    </div>`);
+                if (!isPrincipal) {
+                    wrapper.append(`<button type="button" class="btn btn-outline-primary btn-sm btn-set-nueva-principal" title="Hacer Principal">Principal</button>`);
+                }
+                imagePreviewContainer.append(wrapper);
+            }
+            reader.readAsDataURL(file);
+        });
+        updateHiddenPrincipalField();
+        actualizarEstadoInputFileRequired();
+    }
 
+    imagePreviewContainer.on('click', '.btn-remove-new-img', function(e) {
+        e.stopPropagation();
+        const fileNameToRemove = $(this).closest('.img-preview-wrapper').data('filename');
+        uploadedFiles = uploadedFiles.filter(file => file.name !== fileNameToRemove);
+        if (principalImageTempName === fileNameToRemove) {
+            principalImageTempName = (uploadedFiles.length > 0) ? uploadedFiles[0].name : null;
+        }
+        renderizarPreviews();
+        actualizarInputFileEnDOM();
+    });
+
+    imagePreviewContainer.on('click', '.btn-set-nueva-principal', function() {
+        principalImageTempName = $(this).closest('.img-preview-wrapper').data('filename');
+        renderizarPreviews();
+    });
+
+    function updateHiddenPrincipalField() {
+        imagenPrincipalField.val(principalImageTempName || '');
+    }
+
+    function actualizarInputFileEnDOM() {
+        const dataTransfer = new DataTransfer();
+        uploadedFiles.forEach(file => dataTransfer.items.add(file));
+        vehImagenesInput[0].files = dataTransfer.files;
+    }
+
+    function actualizarEstadoInputFileRequired() {
+        vehImagenesInput.prop('required', uploadedFiles.length === 0);
+        if (uploadedFiles.length > 0 && vehImagenesInput.hasClass('is-invalid')) {
+            vehImagenesInput.removeClass('is-invalid')[0].setCustomValidity("");
+        }
+    }
+    // --- FIN NUEVA LÓGICA DE PREVISUALIZACIÓN ---
+
+    // Modificar el submit handler para usar archivosParaSubir
+    $('#publicarVehiculoForm').on('submit', function(event) {
+        event.preventDefault();
+        var form = this;
+        var $formMessage = $('#formSubmissionMessage').html('').hide();
+
+        actualizarInputFileEnDOM(); // Sincronizar antes de validar
+
+        if (uploadedFiles.length === 0) {
+            $(form).addClass('was-validated');
+            $formMessage.html('<div class="alert alert-warning">Debes subir al menos una imagen.</div>').show();
+            vehImagenesInput.addClass('is-invalid')[0].setCustomValidity("Debes subir al menos una imagen.");
+            vehImagenesInput[0].reportValidity();
+            return;
+        }
+        if (!principalImageTempName) {
+            $formMessage.html('<div class="alert alert-warning">Debes designar una imagen como principal.</div>').show();
+            return;
+        }
         if (!form.checkValidity()) {
-            event.preventDefault(); event.stopPropagation(); $(form).addClass('was-validated');
+            event.stopPropagation();
+            $(form).addClass('was-validated');
             $formMessage.html('<div class="alert alert-warning">Corrige los errores resaltados.</div>').show();
             return;
         }
-        $(form).addClass('was-validated'); event.preventDefault();
-        var formData = new FormData(this); var $submitButton = $(this).find('button[type="submit"]');
+        $(form).addClass('was-validated');
+        var formData = new FormData(form);
+        var $submitButton = $(this).find('button[type="submit"]');
         var originalButtonText = $submitButton.html();
         $submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Publicando...');
-        $formMessage.html('<div class="alert alert-info">Enviando datos...</div>').show();
+        
         $.ajax({
             url: '../AJAX/vehiculos_ajax.php', type: 'POST', data: formData, dataType: 'json', contentType: false, processData: false,
             success: function(response) {
                 if (response.status === 'success') {
-                    $formMessage.html('<div class="alert alert-success">' + $('<div/>').text(response.message).html() + (response.veh_id ? ' ID: ' + $('<div/>').text(response.veh_id).html() : '') + '</div>');
-                    $('#publicarVehiculoForm')[0].reset(); $('#imagePreviewContainer').html('<small class="text-muted align-self-center mx-auto">Previsualización...</small>');
-                    $(form).removeClass('was-validated'); $('#veh_condicion').trigger('change');
-                } else { $formMessage.html('<div class="alert alert-danger">Error: ' + $('<div/>').text(response.message || 'Respuesta no exitosa del servidor.').html() + '</div>'); }
+                    $formMessage.html(`<div class="alert alert-success">${response.message}</div>`).show();
+                    form.reset();
+                } else {
+                    $formMessage.html(`<div class="alert alert-danger">Error: ${response.message}</div>`).show();
+                }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $formMessage.html('<div class="alert alert-danger">Error de conexión o del servidor (' + textStatus + '). Revisa la consola.</div>');
-                console.error("AJAX Error publicando vehículo:", jqXHR.responseText, textStatus, errorThrown);
+            error: function() {
+                $formMessage.html('<div class="alert alert-danger">Error de conexión.</div>').show();
             },
-            complete: function() { $submitButton.prop('disabled', false).html(originalButtonText); }
+            complete: function() {
+                $submitButton.prop('disabled', false).html(originalButtonText);
+            }
         });
     });
 
-    $('#publicarVehiculoForm').on('reset', function() {
+     $('#publicarVehiculoForm').on('reset', function() {
         $(this).removeClass('was-validated');
-        $('#imagePreviewContainer').html('<small class="text-muted align-self-center mx-auto">Previsualización...</small>');
+        uploadedFiles = [];
+        principalImageTempName = null;
+        renderizarPreviews();
+        actualizarInputFileEnDOM();
         $('#formSubmissionMessage').html('').hide();
-        actualizarCamposUsado(false);
-        $('#veh_condicion').val('');
         $('#mod_id').empty().append('<option value="" selected disabled>Selecciona marca...</option>').prop('disabled', true);
         $('#veh_ubicacion_ciudad').empty().append('<option value="" selected disabled>Selecciona provincia...</option>').prop('disabled', true);
     });
+
+    renderizarPreviews();
+    actualizarEstadoInputFile(); 
+    
+    if (!$('#veh_condicion').val()) {
+        $selectAnio.html(opcionesAnioOriginalesHTML);
+        $selectAnio.val('');
+    }
 });
