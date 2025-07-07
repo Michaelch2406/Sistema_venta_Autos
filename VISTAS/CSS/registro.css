@@ -1,0 +1,955 @@
+/* registro.css - Estilos modernos para página de registro */
+
+/* Variables CSS */
+:root {
+  --primary-color: #0d6efd;
+  --primary-dark: #0b5ed7;
+  --primary-light: #6ea8fe;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --warning-color: #fd7e14;
+  --info-color: #0dcaf0;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  
+  --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+  --shadow-xl: 0 2rem 4rem rgba(0, 0, 0, 0.2);
+  
+  --border-radius: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.3s ease-in-out;
+  --transition-slow: 0.5s ease-in-out;
+}
+
+/* Reset y base */
+* {
+  box-sizing: border-box;
+}
+
+/* Body mejorado */
+.registro-body {
+  background: #ffffff;
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Partículas de fondo */
+.particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(13, 110, 253, 0.2);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-100px) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+/* Loader mejorado */
+.enhanced-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.loader-content {
+  text-align: center;
+}
+
+.loader-text {
+  margin-top: 1rem;
+  color: var(--primary-color);
+  font-weight: 500;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Logo mejorado */
+.logo-container {
+  position: relative;
+  z-index: 10;
+}
+
+.logo-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-img {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  transition: transform var(--transition-normal);
+}
+
+.logo-wrapper:hover .logo-img {
+  transform: scale(1.05);
+}
+
+.logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(13, 110, 253, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+/* Título principal */
+.main-title {
+  color: var(--dark-color);
+  font-weight: 700;
+  font-size: 2.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.title-icon {
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 2rem;
+}
+
+.title-underline {
+  width: 80px;
+  height: 4px;
+  background: var(--gradient-success);
+  margin: 0.5rem auto;
+  border-radius: 2px;
+  animation: expand 1s ease-out;
+}
+
+@keyframes expand {
+  from {
+    width: 0;
+  }
+  to {
+    width: 80px;
+  }
+}
+
+/* Card principal mejorada */
+.registration-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+}
+
+.registration-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+.card-header-custom {
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  padding: 2rem 2rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-title-custom {
+  color: var(--primary-color);
+  font-weight: 700;
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-title-custom i {
+  margin-right: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.card-subtitle {
+  color: var(--secondary-color);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Indicador de progreso */
+.progress-indicator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.progress-indicator::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e9ecef;
+  z-index: 1;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  background: white;
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  transition: all var(--transition-normal);
+}
+
+.progress-step i {
+  font-size: 1.5rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+  transition: color var(--transition-normal);
+}
+
+.progress-step span {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+  transition: color var(--transition-normal);
+}
+
+.progress-step.active i,
+.progress-step.active span {
+  color: var(--primary-color);
+}
+
+.progress-step.completed i,
+.progress-step.completed span {
+  color: var(--success-color);
+}
+
+/* Secciones del formulario - Todas visibles */
+.form-section {
+  display: block;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.section-title i {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  margin-right: 0.5rem;
+}
+
+.section-title span {
+  font-weight: 600;
+  color: var(--dark-color);
+  font-size: 1.1rem;
+}
+
+.section-title small {
+  margin-left: auto;
+  color: var(--secondary-color);
+  font-weight: 400;
+}
+
+/* Floating labels mejorados */
+.floating-label-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.floating-input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  background: white;
+  transition: all var(--transition-normal);
+  position: relative;
+  z-index: 2;
+}
+
+/* Padding adicional para campos con toggle de contraseña */
+.floating-label-group:has(.password-toggle) .floating-input {
+  padding-right: 5.5rem;
+}
+
+.floating-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  transform: translateY(-2px);
+}
+
+.floating-input:not(:placeholder-shown),
+.floating-input:focus,
+.floating-label-group.has-content .floating-input {
+  padding-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.floating-label {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  color: var(--secondary-color);
+  font-size: 1rem;
+  transition: all var(--transition-normal);
+  pointer-events: none;
+  z-index: 3;
+  background: white;
+  padding: 0 0.25rem;
+}
+
+.floating-input:not(:placeholder-shown) + .floating-label,
+.floating-input:focus + .floating-label,
+.floating-label-group.has-content .floating-label {
+  top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.floating-label i {
+  margin-right: 0.25rem;
+}
+
+/* Iconos de input */
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--secondary-color);
+  font-size: 1.1rem;
+  z-index: 3;
+}
+
+/* Iconos de validación */
+.validation-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  opacity: 0;
+  transition: all var(--transition-normal);
+}
+
+/* Padding adicional para campos con toggle de contraseña */
+.password-field .floating-input {
+  padding-right: 5.5rem;
+}
+
+/* Para campos con toggle de contraseña, mover el icono de validación */
+.password-field .validation-icon {
+  right: 4.5rem;
+}
+
+.floating-label-group.has-success .validation-icon::before {
+  content: '\F26A';
+  font-family: 'bootstrap-icons';
+  color: var(--success-color);
+  font-size: 1.1rem;
+  opacity: 1;
+}
+
+.floating-label-group.has-error .validation-icon::before {
+  content: '\F62C';
+  font-family: 'bootstrap-icons';
+  color: var(--danger-color);
+  font-size: 1.1rem;
+  opacity: 1;
+}
+
+.floating-label-group.has-success .validation-icon,
+.floating-label-group.has-error .validation-icon {
+  opacity: 1;
+}
+
+/* Estados de validación */
+.floating-input.is-valid {
+  border-color: var(--success-color);
+  background-image: none;
+}
+
+.floating-input.is-invalid {
+  border-color: var(--danger-color);
+  background-image: none;
+}
+
+.floating-label-group.has-success .floating-input {
+  border-color: var(--success-color);
+}
+
+.floating-label-group.has-error .floating-input {
+  border-color: var(--danger-color);
+}
+
+/* Toggle de contraseña */
+.password-toggle {
+  position: absolute;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 5;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all var(--transition-fast);
+}
+
+.password-toggle:hover {
+  color: var(--primary-color);
+  background: rgba(13, 110, 253, 0.1);
+}
+
+.password-toggle.clicked {
+  transform: translateY(-50%) scale(0.9);
+}
+
+/* Indicador de fortaleza de contraseña */
+.password-strength {
+  margin-top: 0.5rem;
+}
+
+.strength-bar {
+  width: 100%;
+  height: 4px;
+  background: #e9ecef;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  transition: all var(--transition-normal);
+}
+
+.strength-fill.very-weak {
+  background: #dc3545;
+}
+
+.strength-fill.weak {
+  background: #fd7e14;
+}
+
+.strength-fill.fair {
+  background: #ffc107;
+}
+
+.strength-fill.good {
+  background: #20c997;
+}
+
+.strength-fill.strong {
+  background: #198754;
+}
+
+.strength-fill.very-strong {
+  background: var(--gradient-success);
+}
+
+.strength-text {
+  font-size: 0.75rem;
+  color: var(--secondary-color);
+  margin-top: 0.25rem;
+  transition: color var(--transition-normal);
+}
+
+/* Checkbox personalizado */
+.custom-checkbox-wrapper {
+  position: relative;
+}
+
+.custom-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e9ecef;
+  border-radius: 0.25rem;
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.checkmark i {
+  font-size: 0.75rem;
+  color: white;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.custom-checkbox:checked + .custom-checkbox-label .checkmark {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.custom-checkbox:checked + .custom-checkbox-label .checkmark i {
+  opacity: 1;
+}
+
+.custom-checkbox:focus + .custom-checkbox-label .checkmark {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.terms-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.terms-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Botón de envío mejorado */
+.btn-submit {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: var(--border-radius);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit .btn-text,
+.btn-submit .btn-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-normal);
+}
+
+.btn-submit .btn-text i {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.btn-submit .btn-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+}
+
+.btn-submit.loading .btn-text {
+  opacity: 0;
+}
+
+.btn-submit.loading .btn-loading {
+  opacity: 1;
+}
+
+.btn-success-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  font-size: 1.5rem;
+  color: white;
+  transition: all var(--transition-normal);
+}
+
+.btn-submit.success {
+  background: var(--success-color);
+}
+
+.btn-submit.success .btn-text,
+.btn-submit.success .btn-loading {
+  opacity: 0;
+}
+
+.btn-submit.success .btn-success-check {
+  opacity: 1;
+  animation: checkmark 0.5s ease-in-out;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Link de login */
+.login-link {
+  color: var(--secondary-color);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.login-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.login-link a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Notificaciones */
+.success-notification,
+.error-notification {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  z-index: 10000;
+  transform: translateX(100%);
+  transition: transform var(--transition-normal);
+  box-shadow: var(--shadow-lg);
+}
+
+.success-notification {
+  background: var(--success-color);
+}
+
+.error-notification {
+  background: var(--danger-color);
+}
+
+.success-notification.show,
+.error-notification.show {
+  transform: translateX(0);
+}
+
+.success-notification i,
+.error-notification i {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Animaciones de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Animación de error */
+.shake-error {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Estados del formulario */
+.enhanced-form.submitting {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2rem;
+  }
+  
+  .title-icon {
+    font-size: 1.5rem;
+  }
+  
+  .card-title-custom {
+    font-size: 1.5rem;
+  }
+  
+  .progress-indicator {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .progress-indicator::before {
+    display: none;
+  }
+  
+  .progress-step {
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .progress-step i {
+    margin-right: 0.5rem;
+    margin-bottom: 0;
+  }
+  
+  .floating-input {
+    padding: 0.875rem 2.5rem 0.875rem 0.875rem;
+  }
+  
+  .floating-input:not(:placeholder-shown),
+  .floating-input:focus,
+  .floating-label-group.has-content .floating-input {
+    padding-top: 1.25rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .floating-label {
+    top: 0.875rem;
+    left: 0.875rem;
+  }
+  
+  .floating-input:not(:placeholder-shown) + .floating-label,
+  .floating-input:focus + .floating-label,
+  .floating-label-group.has-content .floating-label {
+    top: 0.25rem;
+  }
+  
+  .success-notification,
+  .error-notification {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    transform: translateY(-100%);
+  }
+  
+  .success-notification.show,
+  .error-notification.show {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 576px) {
+  .logo-img {
+    width: 100px;
+  }
+  
+  .main-title {
+    font-size: 1.75rem;
+  }
+  
+  .card-header-custom {
+    padding: 1.5rem 1rem 1rem;
+  }
+  
+  .registration-card .card-body {
+    padding: 1.5rem 1rem;
+  }
+  
+  .section-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .section-title small {
+    margin-left: 0;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible para navegación por teclado */
+.floating-input:focus-visible,
+.btn-submit:focus-visible,
+.custom-checkbox:focus-visible + .custom-checkbox-label .checkmark {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Mejoras para pantallas de alta densidad */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .logo-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+

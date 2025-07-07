@@ -159,7 +159,7 @@ if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
 
             <div class="row mt-5">
                 <div class="col-12 text-center">
-                     <a href="../CONTROLADORES/logout.php" class="btn btn-lg btn-outline-danger"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
+                     <a href="logout.php" class="btn btn-lg btn-outline-danger"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a>
                  </div>
             </div>
 
