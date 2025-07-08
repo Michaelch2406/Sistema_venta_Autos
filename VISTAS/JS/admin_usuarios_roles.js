@@ -164,7 +164,8 @@ $(document).ready(function() {
                 "data": "usu_id",
                 "render": function(data, type, row) {
                     return `<span class="fw-bold text-primary">#${data}</span>`;
-                }
+                },
+                "responsivePriority": 1 // ID es importante, alta prioridad
             },
             { 
                 "data": "usu_usuario",
@@ -175,14 +176,16 @@ $(document).ready(function() {
                         </div>
                         <span class="fw-semibold">${data}</span>
                     </div>`;
-                }
+                },
+                "responsivePriority": 2 // Usuario también es importante
             },
             { 
                 "data": null, 
                 "render": function(data, type, row) {
                     const nombreCompleto = (row.usu_nombre || '') + ' ' + (row.usu_apellido || '');
                     return `<div class="fw-medium">${nombreCompleto.trim()}</div>`;
-                }
+                },
+                "responsivePriority": 3 // Nombre Completo
             },
             { 
                 "data": "usu_email",
@@ -191,7 +194,8 @@ $(document).ready(function() {
                         <i class="bi bi-envelope me-2 text-muted"></i>
                         <span>${data}</span>
                     </div>`;
-                }
+                },
+                "responsivePriority": 4 // Email
             },
             { 
                 "data": "usu_cedula", 
@@ -204,7 +208,8 @@ $(document).ready(function() {
                         </div>`;
                     }
                     return "<em class='text-muted'>N/A</em>";
-                }
+                },
+                "responsivePriority": 5 // Cédula
             },
             { 
                 "data": "usu_telefono", 
@@ -217,7 +222,8 @@ $(document).ready(function() {
                         </div>`;
                     }
                     return "<em class='text-muted'>N/A</em>";
-                }
+                },
+                "responsivePriority": 6 // Teléfono
             },
             { 
                 "data": "rol_nombre",
@@ -227,7 +233,8 @@ $(document).ready(function() {
                         <i class="bi bi-person-badge me-1"></i>
                         ${data}
                     </span>`;
-                }
+                },
+                "responsivePriority": 7 // Rol
             },
             { 
                 "data": "usu_verificado",
@@ -237,7 +244,8 @@ $(document).ready(function() {
                     } else {
                         return '<span class="badge badge-custom badge-unverified"><i class="bi bi-x-circle me-1"></i>No Verificado</span>';
                     }
-                }
+                },
+                "responsivePriority": 8 // Verificado
             },
             { 
                 "data": "usu_creado_en",
@@ -266,7 +274,8 @@ $(document).ready(function() {
                     } catch (e) { 
                         return data || '<em class="text-muted">N/A</em>';
                     }
-                }
+                },
+                "responsivePriority": 9 // Registrado
             },
             {
                 "data": null,
@@ -283,7 +292,8 @@ $(document).ready(function() {
                             </button>
                         </div>
                     `;
-                }
+                },
+                "responsivePriority": 1 // Acciones siempre visible
             }
         ],
         "responsive": true,
@@ -330,7 +340,7 @@ $(document).ready(function() {
                 extend: 'print', 
                 text: '<i class="bi bi-printer"></i> Imprimir',
                 titleAttr: 'Imprimir tabla',
-                title: 'Listado de Usuarios - AutoMercado Total',
+                // title: 'Listado de Usuarios - AutoMercado Total',
                 exportOptions: { columns: ':visible:not(:last-child)' },
                 className: 'dt-button',
                 customize: function ( win ) {
@@ -457,19 +467,20 @@ $(document).ready(function() {
 
     // Validación de email en tiempo real
     $('#usu_email_form').on('input', function() {
-        const email = $(this).val().trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        if (email.length > 0) {
-            if (emailRegex.test(email)) {
-                $(this).removeClass('is-invalid').addClass('is-valid');
-            } else {
-                $(this).removeClass('is-valid').addClass('is-invalid');
-            }
+    const email = $(this).val().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (email.length > 0) {
+        if (emailRegex.test(email)) {
+            $(this).removeClass('is-invalid').addClass('is-valid');
         } else {
-            $(this).removeClass('is-valid is-invalid');
+            $(this).removeClass('is-valid').addClass('is-invalid');
         }
-    });
+    } else {
+        $(this).removeClass('is-valid is-invalid');
+    }
+});
+
 
     // Validación de usuario en tiempo real
     $('#usu_usuario_form').on('input', function() {
@@ -674,4 +685,6 @@ $(document).ready(function() {
         }
     }, 120000);
 });
+
+
 

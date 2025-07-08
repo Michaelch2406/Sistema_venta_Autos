@@ -31,22 +31,19 @@ $(document).ready(function() {
         initializeLoader();
         initializeScrollEffects();
         initializeViewToggle();
-        initializeRippleEffects();
-        initializeParallaxEffects();
         initializeFilterEnhancements();
-        initializeLazyLoading();
         initializeKeyboardNavigation();
     }
 
-    // ===== LOADER MEJORADO Y FUNCIONAL =====
+    // ===== LOADER SIMPLIFICADO =====
     function initializeLoader() {
         // Mostrar el loader inmediatamente
         $pageLoader.removeClass('hidden');
         
-        // Simular progreso de carga realista
+        // Simular progreso de carga
         let progress = 0;
         const progressInterval = setInterval(() => {
-            progress += Math.random() * 10 + 5; // Incremento más realista
+            progress += Math.random() * 15 + 10;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(progressInterval);
@@ -62,23 +59,23 @@ $(document).ready(function() {
             $pageLoader.remove();
             $('main').removeClass('content-hidden');
             triggerEntranceAnimations();
-        }, 500);
+        }, 300);
     }
 
-    // ===== ANIMACIONES DE ENTRADA =====
+    // ===== ANIMACIONES DE ENTRADA SIMPLIFICADAS =====
     function triggerEntranceAnimations() {
-        // Animar elementos con retraso escalonado
+        // Animar elementos con retraso mínimo
         $('.listado-vehiculos-header').addClass('fade-in-up');
-        setTimeout(() => $('.filtros-sidebar').addClass('slide-in-left'), 200);
-        setTimeout(() => $('.content-header').addClass('slide-in-right'), 400);
-        setTimeout(() => animateVehicleCounter(), 600);
+        setTimeout(() => $('.filtros-sidebar').addClass('slide-in-left'), 100);
+        setTimeout(() => $('.content-header').addClass('slide-in-right'), 200);
+        setTimeout(() => animateVehicleCounter(), 300);
     }
 
     // ===== CONTADOR DINÁMICO DE VEHÍCULOS =====
     function animateVehicleCounter() {
         if (totalVehiculosUsados > 0) {
             const target = totalVehiculosUsados;
-            const duration = 2000;
+            const duration = 1000; // Reducido de 2000ms
             const increment = target / (duration / 16);
             let current = 0;
 
@@ -99,7 +96,7 @@ $(document).ready(function() {
         animateVehicleCounter();
     }
 
-    // ===== EFECTOS DE SCROLL =====
+    // ===== EFECTOS DE SCROLL SIMPLIFICADOS =====
     function initializeScrollEffects() {
         let ticking = false;
 
@@ -113,11 +110,7 @@ $(document).ready(function() {
                 $scrollToTopBtn.removeClass('visible');
             }
 
-            // Efecto parallax en header
-            const headerOffset = scrollTop * 0.5;
-            $('.header-glow').css('transform', `translateY(${headerOffset}px)`);
-
-            // Animaciones on scroll
+            // Animaciones on scroll simplificadas
             $('.animate-on-scroll').each(function() {
                 const $element = $(this);
                 const elementTop = $element.offset().top;
@@ -142,35 +135,11 @@ $(document).ready(function() {
 
         // Scroll to top functionality
         $scrollToTopBtn.on('click', function() {
-            $('html, body').animate({ scrollTop: 0 }, 800, 'easeInOutCubic');
+            $('html, body').animate({ scrollTop: 0 }, 600);
         });
     }
 
-    // ===== EFECTOS RIPPLE =====
-    function initializeRippleEffects() {
-        $('.btn-enhanced').on('click', function(e) {
-            const $button = $(this);
-            const $ripple = $button.find('.btn-ripple');
-            
-            if ($ripple.length === 0) return;
-
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-
-            $ripple.css({
-                width: size,
-                height: size,
-                left: x,
-                top: y
-            }).addClass('animate');
-
-            setTimeout(() => $ripple.removeClass('animate'), 600);
-        });
-    }
-
-    // ===== TOGGLE DE VISTA MEJORADO =====
+    // ===== TOGGLE DE VISTA SIMPLIFICADO =====
     function initializeViewToggle() {
         $('.view-toggle .btn').on('click', function() {
             const $this = $(this);
@@ -248,12 +217,12 @@ $(document).ready(function() {
         });
     }
 
-    // ===== MEJORAS DE FILTROS =====
+    // ===== MEJORAS DE FILTROS SIMPLIFICADAS =====
     function initializeFilterEnhancements() {
         // Contador de filtros activos
         $filtrosForm.on('change', 'select, input', updateActiveFiltersCount);
         
-        // Efectos hover en grupos de filtros
+        // Efectos hover simplificados en grupos de filtros
         $('.filter-group').hover(
             function() { $(this).addClass('hover-lift'); },
             function() { $(this).removeClass('hover-lift'); }
@@ -281,44 +250,11 @@ $(document).ready(function() {
         $filterBadge.text(count);
 
         if (count > 0) {
-            $activeFiltersCount.show().addClass('bounce-in');
-            $filterBadge.show().addClass('bounce-in');
+            $activeFiltersCount.show();
+            $filterBadge.show();
         } else {
             $activeFiltersCount.hide();
             $filterBadge.hide();
-        }
-    }
-
-    // ===== EFECTOS PARALLAX =====
-    function initializeParallaxEffects() {
-        $(window).on('scroll', function() {
-            const scrolled = $(this).scrollTop();
-            const parallax = scrolled * 0.3;
-            
-            $('.header-particles .particle').each(function(index) {
-                const speed = (index + 1) * 0.1;
-                $(this).css('transform', `translateY(${parallax * speed}px)`);
-            });
-        });
-    }
-
-    // ===== LAZY LOADING =====
-    function initializeLazyLoading() {
-        if ('IntersectionObserver' in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                });
-            });
-
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
         }
     }
 
@@ -336,13 +272,12 @@ $(document).ready(function() {
         });
     }
 
-    // ===== FUNCIONES ORIGINALES MEJORADAS =====
+    // ===== FUNCIONES ORIGINALES MANTENIDAS =====
     function poblarSelect($selectElement, data, valueField, textField, defaultOptionText, placeholderValue = "") {
         $selectElement.empty().append($('<option>', { value: placeholderValue, text: defaultOptionText }));
         $.each(data, function(i, item) {
             $selectElement.append($('<option>', { value: item[valueField], text: item[textField] }));
         });
-        $selectElement.addClass('fade-in-up');
     }
 
     function poblarSelectSimple($selectElement, dataArray, defaultOptionText, placeholderValue = "") {
@@ -350,7 +285,6 @@ $(document).ready(function() {
         $.each(dataArray, function(i, item) {
             $selectElement.append($('<option>', { value: item, text: item }));
         });
-        $selectElement.addClass('fade-in-up');
     }
 
     function cargarFiltrosIniciales() {
@@ -378,7 +312,7 @@ $(document).ready(function() {
                     
                     setTimeout(() => {
                         $filtrosForm.removeClass('loading').addClass('loaded');
-                    }, 300);
+                    }, 200);
                 } else { 
                     console.error('Error al cargar catálogos para filtros:', response.message);
                     showNotification('Error al cargar filtros', 'error');
@@ -392,7 +326,7 @@ $(document).ready(function() {
         });
     }
 
-    // ===== MANEJO DE CAMBIO DE MARCA MEJORADO =====
+    // ===== MANEJO DE CAMBIO DE MARCA MANTENIDO =====
     $filtroMarca.on('change', function() {
         var marcaId = $(this).val();
         $filtroModelo.empty().append('<option value="">Cualquier modelo</option>').prop('disabled', true);
@@ -408,7 +342,7 @@ $(document).ready(function() {
                     $filtroModelo.removeClass('loading');
                     if (response.status === 'success' && response.modelos && response.modelos.length > 0) {
                         poblarSelect($filtroModelo, response.modelos, 'mod_id', 'mod_nombre', 'Cualquier modelo');
-                        $filtroModelo.prop('disabled', false).addClass('bounce-in');
+                        $filtroModelo.prop('disabled', false);
                     } else { 
                         $filtroModelo.prop('disabled', true);
                     }
@@ -423,7 +357,7 @@ $(document).ready(function() {
         }
     });
 
-    // ===== RENDERIZADO DE VEHÍCULOS MEJORADO =====
+    // ===== RENDERIZADO DE VEHÍCULOS MANTENIDO =====
     function renderVehiculos(vehiculos) {
         $listaVehiculosContainer.empty();
         
@@ -447,7 +381,7 @@ $(document).ready(function() {
                 
                 const cardHtml = `
                     <div class="col-sm-6 col-md-6 col-lg-4 mb-4">
-                        <div class="card card-vehiculo h-100 shadow-sm animate-on-scroll" style="animation-delay: ${index * 0.1}s">
+                        <div class="card card-vehiculo h-100 animate-on-scroll" style="animation-delay: ${index * 0.1}s">
                             ${statusBadge}
                             <a href="detalle_vehiculo.php?id=${v.veh_id}" class="text-decoration-none">
                                 <img src="${imagenUrl}" class="card-img-top card-vehiculo-img-top" alt="${v.mar_nombre} ${v.mod_nombre}" loading="lazy">
@@ -475,7 +409,6 @@ $(document).ready(function() {
                                 </div>
                                 <a href="detalle_vehiculo.php?id=${v.veh_id}" class="btn btn-ver-detalles mt-auto w-100">
                                     <i class="bi bi-search me-2"></i>Ver Detalles
-                                    <span class="btn-ripple"></span>
                                 </a>
                             </div>
                         </div>
@@ -483,18 +416,18 @@ $(document).ready(function() {
                 $listaVehiculosContainer.append(cardHtml);
             });
             
-            // Activar animaciones de scroll
+            // Activar animaciones de scroll simplificadas
             setTimeout(() => {
                 $('.animate-on-scroll').each(function(index) {
                     setTimeout(() => {
                         $(this).addClass('animate-in');
-                    }, index * 100);
+                    }, index * 50); // Reducido de 100ms
                 });
             }, 100);
         }
     }
 
-    // ===== RENDERIZADO DE PAGINACIÓN MEJORADO =====
+    // ===== RENDERIZADO DE PAGINACIÓN MANTENIDO =====
     function renderPaginacion(paginaActual, totalPaginas) {
         $paginacionContainer.empty();
         if (totalPaginas <= 1) return;
@@ -535,15 +468,15 @@ $(document).ready(function() {
             </a>
         </li>`);
         
-        $paginacionContainer.append(ul).addClass('fade-in-up');
+        $paginacionContainer.append(ul);
     }
 
-    // ===== CARGA DE VEHÍCULOS MEJORADA =====
+    // ===== CARGA DE VEHÍCULOS MANTENIDA =====
     function cargarVehiculos(page = 1, filtrosData = {}) {
         if (isLoading) return;
         
         isLoading = true;
-        $loadingVehiculos.show().addClass('pulse');
+        $loadingVehiculos.show();
         $noVehiculosMessage.hide();
         $listaVehiculosContainer.html('');
         $paginacionContainer.empty();
@@ -573,7 +506,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 setTimeout(() => {
-                    $loadingVehiculos.hide().removeClass('pulse');
+                    $loadingVehiculos.hide();
                     $pageTransitionOverlay.removeClass('active');
                     isLoading = false;
                     
@@ -586,20 +519,20 @@ $(document).ready(function() {
                             $conteoResultados.html(`
                                 <i class="bi bi-car-front me-2"></i>
                                 Mostrando ${offset + 1} - ${offset + response.vehiculos.length} de ${response.total_vehiculos} vehículos usados.
-                            `).addClass('bounce-in');
+                            `);
                             
                             // Actualizar contador dinámico en header
                             updateVehicleCounter(response.total_vehiculos);
                             
                             showNotification(`Se encontraron ${response.total_vehiculos} vehículos`, 'success');
                         } else {
-                            $noVehiculosMessage.show().addClass('bounce-in');
+                            $noVehiculosMessage.show();
                             $conteoResultados.html('<i class="bi bi-car-front me-2"></i>Mostrando 0 de 0 vehículos usados.');
                             updateVehicleCounter(0);
                         }
                     } else {
                         $listaVehiculosContainer.html(`
-                            <div class="col-12 alert alert-danger glass-effect">
+                            <div class="col-12 alert alert-danger">
                                 <i class="bi bi-exclamation-triangle me-2"></i>
                                 Error: ${response.message || 'No se pudieron cargar los vehículos.'}
                             </div>
@@ -607,16 +540,16 @@ $(document).ready(function() {
                         $conteoResultados.html('<i class="bi bi-exclamation-triangle me-2"></i>Error al cargar.');
                         showNotification('Error al cargar vehículos', 'error');
                     }
-                }, 300);
+                }, 200); // Reducido de 300ms
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 setTimeout(() => {
-                    $loadingVehiculos.hide().removeClass('pulse');
+                    $loadingVehiculos.hide();
                     $pageTransitionOverlay.removeClass('active');
                     isLoading = false;
                     
                     $listaVehiculosContainer.html(`
-                        <div class="col-12 alert alert-danger glass-effect">
+                        <div class="col-12 alert alert-danger">
                             <i class="bi bi-wifi-off me-2"></i>
                             Error de conexión. Intenta de nuevo.
                         </div>
@@ -624,15 +557,15 @@ $(document).ready(function() {
                     console.error("AJAX Error en cargarVehiculos:", jqXHR.responseText, textStatus, errorThrown);
                     $conteoResultados.html('<i class="bi bi-wifi-off me-2"></i>Error de conexión.');
                     showNotification('Error de conexión', 'error');
-                }, 300);
+                }, 200);
             }
         });
     }
 
-    // ===== SISTEMA DE NOTIFICACIONES =====
+    // ===== SISTEMA DE NOTIFICACIONES SIMPLIFICADO =====
     function showNotification(message, type = 'info') {
         const notificationHtml = `
-            <div class="notification notification-${type} glass-effect">
+            <div class="notification notification-${type}">
                 <i class="bi bi-${getNotificationIcon(type)} me-2"></i>
                 ${message}
             </div>
@@ -657,7 +590,7 @@ $(document).ready(function() {
         }
     }
 
-    // ===== HELPER FUNCTIONS =====
+    // ===== HELPER FUNCTIONS MANTENIDAS =====
     $.fn.serializeObject = function() {
         var o = {};
         var a = this.serializeArray();
@@ -674,7 +607,7 @@ $(document).ready(function() {
         return o;
     };
 
-    // ===== EVENT HANDLERS =====
+    // ===== EVENT HANDLERS MANTENIDOS =====
     
     // Carga inicial
     cargarVehiculos(currentPage);
@@ -718,7 +651,7 @@ $(document).ready(function() {
             // Scroll suave al inicio de la lista
             $('html, body').animate({
                 scrollTop: $listaVehiculosContainer.offset().top - 100
-            }, 500);
+            }, 400); // Reducido de 500ms
         }
     });
 

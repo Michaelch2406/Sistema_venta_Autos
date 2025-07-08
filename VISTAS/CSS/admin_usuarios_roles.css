@@ -402,7 +402,7 @@
     padding: 1rem 0.75rem;
     vertical-align: middle;
     border: none;
-    white-space: nowrap; /* Evitar que el contenido de las celdas se rompa en múltiples líneas innecesariamente */
+    overflow: hidden; /* Evitar que el contenido se desborde */ 
 }
 
 .table-custom th, .table-custom td {
@@ -412,9 +412,9 @@
 }
 
 /* Específicamente para la columna de acciones para que no se rompa */
-.table-custom td.columna-acciones {
+/* .table-custom td.columna-acciones {
     white-space: nowrap;
-}
+} */
 
 
 /* Badges mejorados */

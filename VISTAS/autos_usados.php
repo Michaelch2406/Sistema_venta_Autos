@@ -8,15 +8,15 @@
     <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="../PUBLIC/css/styles.css" rel="stylesheet"> <!-- Estilos Globales -->
-    <link href="../VISTAS/css/autos_usados.css" rel="stylesheet"> <!-- NUEVO: Estilos Específicos -->
+    <link href="../VISTAS/css/autos_usados.css" rel="stylesheet"> <!-- NUEVO: Estilos Minimalistas -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
-    <!-- Loader mejorado y funcional -->
+    <!-- Loader minimalista -->
     <div id="page-loader" class="page-loader">
         <div class="loader-content">
             <div class="loader-spinner">
-                <l-trefoil size="50" stroke="5" stroke-length="0.15" bg-opacity="0.1" speed="1.4" color="#dc2626"></l-trefoil>
+                <l-trefoil size="40" stroke="4" stroke-length="0.15" bg-opacity="0.1" speed="1.2" color="#2563eb"></l-trefoil>
             </div>
             <div class="loader-text">Cargando vehículos...</div>
             <div class="loader-progress">
@@ -25,24 +25,18 @@
         </div>
     </div>
 
-    <!-- Overlay de transición -->
+    <!-- Overlay de transición minimalista -->
     <div id="page-transition-overlay" class="page-transition-overlay"></div>
 
     <header id="navbar-placeholder"></header>
 
     <main class="flex-grow-1 content-hidden">
         <div class="container-fluid py-4">
-            <!-- Header mejorado con solo contador dinámico -->
+            <!-- Header minimalista con contador dinámico -->
             <div class="listado-vehiculos-header text-center">
-                <div class="header-particles">
-                    <div class="particle"></div> <div class="particle"></div> <div class="particle"></div>
-                    <div class="particle"></div> <div class="particle"></div> <div class="particle"></div>
-                    <div class="particle"></div> <div class="particle"></div>
-                </div>
-                <div class="header-glow"></div>
                 <div class="header-content">
                     <h1 class="display-4 fw-bold">
-                        <span class="text-gradient">Vehículos</span> 
+                        <span>Vehículos</span> 
                         <span class="text-highlight">Usados</span>
                     </h1>
                     <p class="lead col-lg-7 mx-auto">Encuentra el auto usado perfecto para ti entre nuestra amplia selección de vehículos certificados.</p>
@@ -58,11 +52,11 @@
             
             <div class="container">
                 <div class="row">
-                    <!-- Sidebar de filtros mejorado y adaptativo -->
+                    <!-- Sidebar de filtros minimalista -->
                     <div class="col-lg-3 mb-4 d-none d-lg-block" id="filtrosSidebarContainer">
                         <div class="filtros-sidebar">
                             <div class="sidebar-header">
-                                <h5><i class="bi bi-filter-circle-fill me-2"></i>Filtrar Vehículos</h5>
+                                <h5><i class="bi bi-funnel me-2"></i>Filtrar Vehículos</h5>
                                 <div class="filter-indicator">
                                     <span class="active-filters-count">0</span>
                                 </div>
@@ -145,18 +139,16 @@
                                 <div class="filter-actions">
                                     <button type="submit" class="btn btn-primary btn-enhanced w-100 mb-2">
                                         <i class="bi bi-funnel-fill me-2"></i>Aplicar Filtros
-                                        <span class="btn-ripple"></span>
                                     </button>
                                     <button type="reset" class="btn btn-outline-secondary btn-enhanced w-100" id="resetFiltrosBtn">
                                         <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Filtros
-                                        <span class="btn-ripple"></span>
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Contenido principal mejorado -->
+                    <!-- Contenido principal minimalista -->
                     <div class="col-lg-9">                        
                         <div class="content-header d-flex justify-content-between align-items-center mb-4">
                             <div id="conteoResultados" class="results-counter">
@@ -171,14 +163,14 @@
                                         <i class="bi bi-list"></i>
                                     </button>
                                 </div>
-                                <button class="btn btn-outline-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtrosOffcanvas" aria-controls="filtrosOffcanvas">
+                                <button class="btn btn-outline-primary d-lg-none position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtrosOffcanvas" aria-controls="filtrosOffcanvas">
                                     <i class="bi bi-funnel me-2"></i>Filtros
                                     <span class="filter-badge">0</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Contenedor de vehículos con animaciones mejoradas -->
+                        <!-- Contenedor de vehículos minimalista -->
                         <div id="listaVehiculosUsados" class="vehicles-grid row g-4">
                             <div class="col-12 text-center" id="loadingVehiculosListado">
                                 <div class="loading-container">
@@ -197,7 +189,7 @@
                             </div>
                         </div>
 
-                        <!-- Mensaje de no resultados mejorado -->
+                        <!-- Mensaje de no resultados minimalista -->
                         <div id="noVehiculosListadoMessage" class="col-12 text-center mt-5 py-5" style="display: none;">
                             <div class="no-results-container">
                                 <div class="no-results-icon">
@@ -216,7 +208,7 @@
                             </div>
                         </div>
 
-                        <!-- Paginación mejorada -->
+                        <!-- Paginación minimalista -->
                         <nav id="paginacionVehiculosUsados" aria-label="Paginación de vehículos" class="mt-5 d-flex justify-content-center">
                             <!-- La paginación se genera dinámicamente -->
                         </nav>
@@ -225,11 +217,11 @@
             </div>
         </div>
 
-        <!-- Offcanvas para filtros móviles mejorado -->
+        <!-- Offcanvas para filtros móviles minimalista -->
         <div class="offcanvas offcanvas-start enhanced-offcanvas" tabindex="-1" id="filtrosOffcanvas" aria-labelledby="filtrosOffcanvasLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="filtrosOffcanvasLabel">
-                    <i class="bi bi-filter-circle-fill me-2"></i>Filtrar Vehículos
+                    <i class="bi bi-funnel me-2"></i>Filtrar Vehículos
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
@@ -238,7 +230,7 @@
             </div>
         </div>
 
-        <!-- Botón de scroll to top -->
+        <!-- Botón de scroll to top minimalista -->
         <button id="scrollToTop" class="scroll-to-top" title="Volver arriba">
             <i class="bi bi-arrow-up"></i>
         </button>
