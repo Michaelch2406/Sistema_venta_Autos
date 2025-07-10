@@ -11,10 +11,14 @@ if (isset($_SESSION['usu_id'])) {
   <meta charset="utf-8">
   <title>Registro - AutoMercado Total</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-  <link href="../VISTAS/CSS/registro.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- Estilos Específicos para el Registro -->
+    <link href="./CSS/registro.css" rel="stylesheet">
   <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 registro-body">
@@ -262,7 +266,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="col-12 text-center mt-3">
                   <p class="login-link">
                     ¿Ya tienes una cuenta? 
-                    <a href="login.php" class="link-primary">Inicia sesión aquí</a>
+                    <a href="./login.php" class="link-primary">Inicia sesión aquí</a>
                   </p>
                 </div>
               </form>
@@ -273,12 +277,12 @@ if (isset($_SESSION['usu_id'])) {
     </div>
   </main>
 
-  <?php include __DIR__ . '/partials/footer.php'; ?>
+  <?php include __DIR__ . './partials/footer.php'; ?>
   
-  <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-  <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../VISTAS/JS/global.js"></script>
-  <script src="../VISTAS/JS/registro.js"></script>
+  <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+  <script src="./JS/registro.js"></script>
 </body>
 </html>
 

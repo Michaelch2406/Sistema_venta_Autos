@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehículos Usados - AutoMercado Total</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet"> <!-- Estilos Globales -->
-    <link href="../VISTAS/css/autos_usados.css" rel="stylesheet"> <!-- NUEVO: Estilos Minimalistas -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet"> <!-- Estilos Globales -->
+    <link href="./CSS/autos_usados.css" rel="stylesheet"> <!-- NUEVO: Estilos Minimalistas -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -236,12 +236,12 @@
         </button>
     </main>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/autos_usados.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/autos_usados.js"></script>
 </body>
 </html>
 

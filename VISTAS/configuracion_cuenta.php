@@ -11,7 +11,7 @@ if (!isset($_SESSION['usu_id'])) {
     exit();
 }
 
-require_once __DIR__ . '/../MODELOS/usuarios_m.php';
+require_once __DIR__ . './../MODELOS/usuarios_m.php';
 $usuarios_model = new Usuario(); // Corregido: Usar el nombre de clase Usuario (singular)
 $usuario_actual = $usuarios_model->getUsuarioParaConfiguracion($_SESSION['usu_id']);
 
@@ -33,10 +33,15 @@ $page_title = "Configuración de la Cuenta";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title); ?> - AutoMercado Total</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link href="CSS/configuracion_cuenta.css" rel="stylesheet">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- Estilos Específicos para la Configuración de Cuenta -->
+    <link href="./CSS/configuracion_cuenta.css" rel="stylesheet">
+    <!-- LDRS Trefoil Loader -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -176,11 +181,11 @@ $page_title = "Configuración de la Cuenta";
         </div>
     </main>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/configuracion_cuenta.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/configuracion_cuenta.js"></script>
 </body>
 </html>

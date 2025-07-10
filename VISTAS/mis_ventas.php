@@ -7,9 +7,13 @@ if (!isset($_SESSION['usu_id'])) { header("Location: login.php"); exit(); }
 <head>
     <meta charset="UTF-8">
     <title>Historial de Ventas - AutoMercado Total</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -20,10 +24,10 @@ if (!isset($_SESSION['usu_id'])) { header("Location: login.php"); exit(); }
         <a href="escritorio.php" class="btn btn-primary">Volver al Tablero</a>
     </main>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script> <!-- Para cargar el navbar -->
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script> <!-- Para cargar el navbar -->
 </body>
 </html>

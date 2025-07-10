@@ -12,12 +12,16 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionar Usuarios y Roles - Admin</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- Estilos Específicos para la Gestión de Usuarios y Roles -->
+    <link href="./CSS/admin_usuarios_roles.css" rel="stylesheet">
     <!-- DataTables CSS (local) -->
-    <link rel="stylesheet" type="text/css" href="../DataTables/datatables.min.css"/>
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link href="../VISTAS/CSS/admin_usuarios_roles.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./../DataTables/datatables.min.css"/>
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -366,14 +370,14 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
         </div>
     </div>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
     <!-- DataTables JS (local) -->
-    <script type="text/javascript" src="../DataTables/datatables.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/admin_usuarios_roles.js"></script>
+    <script type="text/javascript" src="./../DataTables/datatables.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/admin_usuarios_roles.js"></script>
     
     <script>
         // Función para mostrar/ocultar contraseña

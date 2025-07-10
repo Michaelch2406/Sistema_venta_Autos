@@ -8,13 +8,13 @@
     <title>Iniciar Sesión - AutoMercado Total</title>
 
     <!-- Bootstrap CSS Local -->
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Tus Estilos Personalizados -->
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    
-    <link href="../VISTAS" rel="stylesheet">
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- Estilos Específicos para el Login -->
+    <link href="./CSS/login.css" rel="stylesheet">
 
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
@@ -81,13 +81,13 @@
     </main>
 
     <!-- Pie de Página -->
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
     <!-- Scripts -->
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/login.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/login.js"></script>
 </body>
 
 </html>

@@ -21,11 +21,14 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publicar Vehículo - AutoMercado Total</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
     <!-- MODIFICADO: Apuntando a la nueva hoja de estilos dedicada -->
-    <link href="../VISTAS/CSS/publicar_vehiculo.css" rel="stylesheet">
+    <link href="./CSS/publicar_vehiculo.css" rel="stylesheet">
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 
@@ -358,11 +361,11 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
             </form>
         </div>
     </main>
-    <?php include __DIR__ . '/partials/footer.php'; ?>
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/publicar_vehiculo.js"></script>
+    <?php include __DIR__ . './partials/footer.php'; ?>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/publicar_vehiculo.js"></script>
 </body>
 
 </html>

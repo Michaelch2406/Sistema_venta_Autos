@@ -532,9 +532,3 @@
     background: rgba(25, 135, 84, 0.05);
 }
 
-/* Estilos para el loader de página */
-#page-loader {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
-}
-

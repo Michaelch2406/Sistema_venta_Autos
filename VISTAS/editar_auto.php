@@ -4,14 +4,14 @@ session_start();
 // Si se permite a los gestores editar sus propios vehículos, esta lógica necesitará ser más compleja.
 $rol_admin_id = 3; 
 if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
-    echo "<!DOCTYPE html><html><head><title>Acceso Denegado</title><link href='../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-danger'><h1>Acceso Denegado</h1><p>No tienes permisos para editar vehículos.</p><a href='escritorio.php' class='btn btn-primary'>Volver al Escritorio</a></div></body></html>";
+    echo "<!DOCTYPE html><html><head><title>Acceso Denegado</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-danger'><h1>Acceso Denegado</h1><p>No tienes permisos para editar vehículos.</p><a href='escritorio.php' class='btn btn-primary'>Volver al Escritorio</a></div></body></html>";
     exit();
 }
 
 $veh_id_para_editar = isset($_GET['veh_id']) ? filter_var($_GET['veh_id'], FILTER_VALIDATE_INT) : null;
 
 if (!$veh_id_para_editar) {
-    echo "<!DOCTYPE html><html><head><title>Error</title><link href='../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Error</h1><p>No se especificó un ID de vehículo válido para editar.</p><a href='admin_vehiculos.php' class='btn btn-primary'>Volver al Listado</a></div></body></html>";
+    echo "<!DOCTYPE html><html><head><title>Error</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Error</h1><p>No se especificó un ID de vehículo válido para editar.</p><a href='admin_vehiculos.php' class='btn btn-primary'>Volver al Listado</a></div></body></html>";
     exit();
 }
 
@@ -32,11 +32,11 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Vehículo - AutoMercado Total</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link href="../VISTAS/CSS/editar_auto.css" rel="stylesheet"> <!-- CSS específico si es necesario -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <link href="./CSS/editar_auto.css" rel="stylesheet"> <!-- CSS específico si es necesario -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
@@ -269,10 +269,11 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
             </form>
         </div>
     </main>
-    <?php include __DIR__ . '/partials/footer.php'; ?>
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/editar_auto.js"></script> <!-- JS específico para editar -->
+    <?php include __DIR__ . './partials/footer.php'; ?>
+
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/editar_auto.js"></script> <!-- JS específico para editar -->
 </body>
 </html>

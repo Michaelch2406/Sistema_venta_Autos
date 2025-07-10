@@ -12,11 +12,11 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionar Vehículos - Admin</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" type="text/css" href="../DataTables/datatables.min.css"/>
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="../VISTAS/CSS/admin_vehiculos.css">
+    <link rel="stylesheet" type="text/css" href="./../DataTables/datatables.min.css"/>
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="./CSS/admin_vehiculos.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
     
 </head>
@@ -92,12 +92,13 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
         </div>
     </div>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="../DataTables/datatables.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/admin_vehiculos.js"></script> 
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS (local) -->
+    <script type="text/javascript" src="./../DataTables/datatables.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/admin_vehiculos.js"></script> 
 </body>
 </html>

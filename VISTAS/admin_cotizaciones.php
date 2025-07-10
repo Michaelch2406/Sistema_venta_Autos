@@ -4,8 +4,8 @@
 // =========== INICIO DE LA SECCIÓN ADAPTADA ===========
 
 // TODO: Ajusta la ruta a tu archivo de configuración principal y de Conexion.
-$config_global_path = __DIR__ . '/../CONFIG/global.php'; // Asumo que aquí están tus constantes DB_HOST, etc.
-$conexion_class_path = __DIR__ . '/../CONFIG/Conexion.php'; // Ruta a tu clase Conexion
+$config_global_path = __DIR__ . './../CONFIG/global.php'; // Asumo que aquí están tus constantes DB_HOST, etc.
+$conexion_class_path = __DIR__ . './../CONFIG/Conexion.php'; // Ruta a tu clase Conexion
 
 if (file_exists($config_global_path)) {
     require_once $config_global_path;
@@ -24,7 +24,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../MODELOS/cotizaciones_m.php';
+require_once __DIR__ . './../MODELOS/cotizaciones_m.php';
 
 $db_conn_mysqli = null;
 try {
@@ -93,11 +93,13 @@ $estados_disponibles = ['pendiente', 'aprobada_admin', 'contactado', 'cerrado', 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Estilos -->
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="../VISTAS/css/admin_cotizaciones.css">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="./CSS/admin_cotizaciones.css">
     
     <!-- Loader animado -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
@@ -389,13 +391,13 @@ $estados_disponibles = ['pendiente', 'aprobada_admin', 'contactado', 'cerrado', 
     </main>
 
     <!-- Footer -->
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
     <!-- Scripts -->
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/admin_cotizaciones.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/admin_cotizaciones.js"></script>
     
     <!-- Script para ocultar el loader cuando la página esté lista -->
     <script>

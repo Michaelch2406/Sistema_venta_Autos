@@ -3,13 +3,13 @@
 ini_set('display_errors', 0); 
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../php_error.log'); 
+ini_set('error_log', __DIR__ . './../php_error.log'); 
 
 // =========== INICIO DE LA SECCIÓN ADAPTADA ===========
 
 // TODO: Ajusta la ruta a tu archivo de configuración principal y de Conexion.
-$config_global_path = __DIR__ . '/../CONFIG/global.php'; // Asumo que aquí están tus constantes DB_HOST, etc.
-$conexion_class_path = __DIR__ . '/../CONFIG/Conexion.php'; // Ruta a tu clase Conexion
+$config_global_path = __DIR__ . './../CONFIG/global.php'; // Asumo que aquí están tus constantes DB_HOST, etc.
+$conexion_class_path = __DIR__ . './../CONFIG/Conexion.php'; // Ruta a tu clase Conexion
 
 if (file_exists($config_global_path)) {
     require_once $config_global_path;
@@ -28,7 +28,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../MODELOS/cotizaciones_m.php';
+require_once __DIR__ . './../MODELOS/cotizaciones_m.php';
 
 $db_conn_mysqli = null;
 try {
@@ -88,10 +88,14 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Cotizaciones - <?php echo $nombre_usuario_display; ?></title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS Local -->
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link href="../VISTAS/css/mis_cotizaciones.css" rel="stylesheet">
+    <!-- Tus Estilos Personalizados -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <!-- CSS Específico para esta página -->
+    <link href="./CSS/mis_cotizaciones.css" rel="stylesheet">
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 
 </head>
@@ -174,11 +178,11 @@ try {
         </div>
     </main>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/js/mis_cotizaciones.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/mis_cotizaciones.js"></script>
 </body>
 </html>

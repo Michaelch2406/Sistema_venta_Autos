@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Colección Exclusiva: Vehículos Nuevos - AutoMercado Total</title>
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet"> <!-- Estilos Globales -->
-    <link href="../VISTAS/CSS/autos_nuevos.css" rel="stylesheet"> <!-- Estilos Específicos NUEVOS -->
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet"> <!-- Estilos Globales -->
+    <link href="./CSS/autos_nuevos.css" rel="stylesheet"> <!-- Estilos Específicos NUEVOS -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="luxury-theme d-flex flex-column min-vh-100">
@@ -85,12 +86,12 @@
         </div>
     </main>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/autos_nuevos.js"></script> <!-- JS Específico para Autos Nuevos -->
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/autos_nuevos.js"></script> <!-- JS Específico para Autos Nuevos -->
     
 </body>
 </html>

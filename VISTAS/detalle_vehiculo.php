@@ -15,8 +15,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 // session_start(); // Now handled above with params
-require_once __DIR__ . "/../MODELOS/vehiculos_m.php";
-require_once __DIR__ . "/../MODELOS/imagenes_vehiculo_m.php";
+require_once __DIR__ . "./../MODELOS/vehiculos_m.php";
+require_once __DIR__ . "./../MODELOS/imagenes_vehiculo_m.php";
 
 $veh_id = null;
 if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
@@ -35,7 +35,7 @@ $imagenes_model = new ImagenesVehiculo_M();
 $imagenes = $imagenes_model->getImagenesPorVehiculo($veh_id);
 
 if (!$vehiculo) {
-    echo "<!DOCTYPE html><html><head><title>Vehículo no Encontrado</title><link href='../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Vehículo no Encontrado</h1><p>El vehículo que buscas no está disponible o no existe.</p><a href='inicio.php' class='btn btn-primary'>Volver al Inicio</a></div></body></html>";
+    echo "<!DOCTYPE html><html><head><title>Vehículo no Encontrado</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Vehículo no Encontrado</h1><p>El vehículo que buscas no está disponible o no existe.</p><a href='inicio.php' class='btn btn-primary'>Volver al Inicio</a></div></body></html>";
     exit();
 }
 
@@ -95,11 +95,11 @@ $especificaciones = getSpecifications($vehiculo);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link href="../VISTAS/css/detalle_vehiculo.css" rel="stylesheet">
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+    <link href="./CSS/detalle_vehiculo.css" rel="stylesheet">
     
     <meta name="description" content="<?php echo htmlspecialchars($nombre_vehiculo_completo . ' - ' . $precio_formateado . ' USD. ' . ($vehiculo['veh_descripcion'] ? substr($vehiculo['veh_descripcion'], 0, 150) . '...' : 'Vehículo en venta en AutoMercado Total.')); ?>">
     <meta name="keywords" content="<?php echo htmlspecialchars($vehiculo['mar_nombre'] . ', ' . $vehiculo['mod_nombre'] . ', ' . $vehiculo['veh_anio'] . ', ' . $vehiculo['veh_condicion'] . ', auto, venta'); ?>">
@@ -316,12 +316,13 @@ $especificaciones = getSpecifications($vehiculo);
     </div>
     <?php endif; ?>
 
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
     
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.js"></script>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/js/detalle_vehiculo.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/detalle_vehiculo.js"></script>
 </body>
 </html>

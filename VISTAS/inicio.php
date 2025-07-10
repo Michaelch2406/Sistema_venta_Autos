@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../MODELOS/vehiculos_m.php';
+require_once __DIR__ . './../MODELOS/vehiculos_m.php';
 
 $vehiculo_model = new Vehiculo();
 $vehiculos_nuevos_destacados = $vehiculo_model->getVehiculosDestacados('nuevo', 3);
@@ -59,12 +59,13 @@ function render_vehicle_card($vehiculo) {
     <title>AutoMercado Total - Inicio</title>
 
     <!-- Bootstrap CSS Local -->
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Tus Estilos Personalizados -->
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
-    <link href="../VISTAS/css/inicio.css" rel="stylesheet">
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
+
+    <link href="./CSS/inicio.css" rel="stylesheet">
     
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
@@ -242,13 +243,13 @@ function render_vehicle_card($vehiculo) {
     </main>
 
     <!-- Pie de Página -->
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
     <!-- Scripts: jQuery, Bootstrap JS, Tu JS Personalizado -->
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/inicio.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/inicio.js"></script>
     
     <!-- El script en línea ha sido eliminado y su lógica movida a inicio.js -->
 

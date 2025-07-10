@@ -7,15 +7,15 @@
     <title>Contacto - AutoMercado Total</title>
 
     <!-- Bootstrap CSS Local -->
-    <link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tus Estilos Personalizados -->
-    <link href="../PUBLIC/css/styles.css" rel="stylesheet">
+    <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
     <!-- Estilos específicos para contacto -->
-    <link href="../VISTAS/css/contacto.css" rel="stylesheet">
+    <link href="./CSS/contacto.css" rel="stylesheet">
 
     <!-- LDRS Loader Script -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
@@ -380,7 +380,7 @@
     </main>
 
     <!-- Pie de Página -->
-    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <?php include __DIR__ . './partials/footer.php'; ?>
 
     <!-- Botón de scroll to top -->
     <button class="scroll-to-top" id="scrollToTop">
@@ -388,10 +388,10 @@
     </button>
 
     <!-- Scripts -->
-    <script src="../PUBLIC/jquery-3.7.1.min.js"></script>
-    <script src="../Bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../VISTAS/JS/global.js"></script>
-    <script src="../VISTAS/JS/contacto.js"></script>
+    <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
+    <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="./JS/global.js"></script>
+    <script src="./JS/contacto.js"></script>
 
 </body>
 </html>
