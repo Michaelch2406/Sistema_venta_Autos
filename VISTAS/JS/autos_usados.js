@@ -35,7 +35,7 @@ $(document).ready(function() {
         initializeKeyboardNavigation();
     }
 
-    // ===== LOADER SIMPLIFICADO =====
+    // ===== LOADER SIMPLIFICADO CON COLORES ADAPTADOS =====
     function initializeLoader() {
         // Mostrar el loader inmediatamente
         $pageLoader.removeClass('hidden');
@@ -357,7 +357,7 @@ $(document).ready(function() {
         }
     });
 
-    // ===== RENDERIZADO DE VEHÍCULOS MANTENIDO =====
+    // ===== RENDERIZADO DE VEHÍCULOS MANTENIDO CON COLORES ADAPTADOS =====
     function renderVehiculos(vehiculos) {
         $listaVehiculosContainer.empty();
         
@@ -371,12 +371,12 @@ $(document).ready(function() {
                 const precioFormateado = v.veh_precio ? parseFloat(v.veh_precio).toLocaleString('es-EC', { style: 'currency', currency: 'USD' }) : 'Consultar';
                 const kmFormateado = v.veh_kilometraje ? parseInt(v.veh_kilometraje).toLocaleString('es-EC') : '0';
                 
-                // Determinar badge de estado
+                // Determinar badge de estado con colores adaptados
                 let statusBadge = '';
                 if (v.veh_estado === 'nuevo') {
-                    statusBadge = '<span class="badge bg-success vehicle-status-badge">Nuevo</span>';
+                    statusBadge = '<span class="badge vehicle-status-badge" style="background-color: var(--color-accent); color: var(--color-white);">Nuevo</span>';
                 } else if (v.veh_destacado) {
-                    statusBadge = '<span class="badge bg-warning vehicle-status-badge">Destacado</span>';
+                    statusBadge = '<span class="badge vehicle-status-badge" style="background-color: var(--color-primary); color: var(--color-white);">Destacado</span>';
                 }
                 
                 const cardHtml = `
@@ -562,7 +562,7 @@ $(document).ready(function() {
         });
     }
 
-    // ===== SISTEMA DE NOTIFICACIONES SIMPLIFICADO =====
+    // ===== SISTEMA DE NOTIFICACIONES SIMPLIFICADO CON COLORES ADAPTADOS =====
     function showNotification(message, type = 'info') {
         const notificationHtml = `
             <div class="notification notification-${type}">

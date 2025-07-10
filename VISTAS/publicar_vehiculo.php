@@ -112,16 +112,29 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                         <div class="invalid-feedback">Placa no válida. Formato: ABC-123 o ABC-1234.
                                         </div>
                                     </div>
-                                    <div class="col-md-4"><label for="veh_placa_provincia_origen"
-                                            class="form-label">Provincia de Placa</label><select class="form-select"
-                                            id="veh_placa_provincia_origen" name="veh_placa_provincia_origen">
+                                    <div class="col-md-4">
+                                        <label for="veh_placa_provincia_origen" class="form-label">
+                                            Provincia de Placa 
+                                            <span class="badge bg-info ms-1" id="badge_auto_provincia" style="display: none;">
+                                                <i class="bi bi-magic"></i> Auto
+                                            </span>
+                                        </label>
+                                        <select class="form-select" id="veh_placa_provincia_origen" name="veh_placa_provincia_origen">
                                             <option value="" selected disabled>Selecciona...</option>
                                         </select>
                                         <div class="invalid-feedback">Selecciona la provincia.</div>
+                                        <small class="form-text text-muted" id="help_provincia_auto" style="display: none;">
+                                            <i class="bi bi-lightbulb"></i> Se detecta automáticamente según la placa
+                                        </small>
                                     </div>
-                                    <div class="col-md-4"><label for="veh_ultimo_digito_placa" class="form-label">Último
-                                            Dígito Placa</label><select class="form-select" id="veh_ultimo_digito_placa"
-                                            name="veh_ultimo_digito_placa">
+                                    <div class="col-md-4">
+                                        <label for="veh_ultimo_digito_placa" class="form-label">
+                                            Último Dígito Placa
+                                            <span class="badge bg-info ms-1" id="badge_auto_digito" style="display: none;">
+                                                <i class="bi bi-magic"></i> Auto
+                                            </span>
+                                        </label>
+                                        <select class="form-select" id="veh_ultimo_digito_placa" name="veh_ultimo_digito_placa">
                                             <option value="" selected disabled>Selecciona...</option>
                                             <option value="0">0</option>
                                             <option value="1">1</option>
@@ -136,6 +149,9 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                             <option value="Sin Placa">Sin Placa</option>
                                         </select>
                                         <div class="invalid-feedback">Selecciona el último dígito.</div>
+                                        <small class="form-text text-muted" id="help_digito_auto" style="display: none;">
+                                            <i class="bi bi-lightbulb"></i> Se detecta automáticamente según la placa
+                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -319,12 +335,21 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 </div>
                             </div>
                             <div class="col-12">
-                                <label for="veh_descripcion" class="form-label">Descripción Adicional <span
-                                        class="text-danger">*</span></label>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label for="veh_descripcion" class="form-label mb-0">Descripción Adicional <span
+                                            class="text-danger">*</span></label>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="btnGenerarDescripcion">
+                                        <i class="bi bi-magic me-1"></i>Generar Descripción Automática
+                                    </button>
+                                </div>
                                 <textarea class="form-control" id="veh_descripcion" name="veh_descripcion" rows="5"
                                     placeholder="Cuenta más sobre tu vehículo: historial de mantenimiento, por qué lo vendes, etc."
                                     required></textarea>
                                 <div class="invalid-feedback">Ingresa una descripción para el vehículo.</div>
+                                <small class="form-text text-muted">
+                                    <i class="bi bi-lightbulb me-1"></i>
+                                    Usa el botón "Generar Descripción Automática" para crear una descripción atractiva basada en los datos ingresados.
+                                </small>
                             </div>
                         </div>
                     </div>

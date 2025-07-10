@@ -321,3 +321,511 @@ $(document).ready(function() {
         $selectAnio.val('');
     }
 });
+
+    // ===== ALGORITMO DE GENERACIÓN DE DESCRIPCIÓN AUTOMÁTICA =====
+    
+    // Función principal para generar descripción automática
+    function generarDescripcionVehiculo() {
+        // Obtener todos los valores del formulario
+        const datos = obtenerDatosFormulario();
+        
+        // Validar que tenemos los datos mínimos necesarios
+        if (!validarDatosMinimos(datos)) {
+            return null;
+        }
+        
+        // Generar la descripción usando plantillas inteligentes
+        const descripcion = construirDescripcion(datos);
+        
+        return descripcion;
+    }
+
+    function obtenerDatosFormulario() {
+        return {
+            // Información principal
+            marca: $('#mar_id option:selected').text() || '',
+            modelo: $('#mod_id option:selected').text() || '',
+            tipoVehiculo: $('#tiv_id option:selected').text() || '',
+            subtipo: $('#veh_subtipo_vehiculo').val() || '',
+            condicion: $('#veh_condicion').val() || '',
+            anio: $('#veh_anio').val() || '',
+            kilometraje: $('#veh_kilometraje').val() || '',
+            precio: $('#veh_precio').val() || '',
+            
+            // Ubicación y apariencia
+            provincia: $('#veh_ubicacion_provincia').val() || '',
+            ciudad: $('#veh_ubicacion_ciudad').val() || '',
+            colorExterior: $('#veh_color_exterior').val() || '',
+            colorInterior: $('#veh_color_interior').val() || '',
+            
+            // Especificaciones técnicas
+            detallesMotor: $('#veh_detalles_motor').val() || '',
+            transmision: $('#veh_tipo_transmision').val() || '',
+            traccion: $('#veh_traccion').val() || '',
+            combustible: $('#veh_tipo_combustible').val() || '',
+            direccion: $('#veh_tipo_direccion').val() || '',
+            vidrios: $('#veh_tipo_vidrios').val() || '',
+            climatizacion: $('#veh_sistema_climatizacion').val() || '',
+            
+            // Extras seleccionados
+            extras: obtenerExtrasSeleccionados(),
+            
+            // Datos de placa (si aplica)
+            placa: $('#veh_placa').val() || '',
+            placaProvincia: $('#veh_placa_provincia_origen').val() || '',
+            ultimoDigito: $('#veh_ultimo_digito_placa').val() || ''
+        };
+    }
+
+    function obtenerExtrasSeleccionados() {
+        const extras = [];
+        $('input[name="veh_detalles_extra[]"]:checked').each(function() {
+            extras.push($(this).val());
+        });
+        return extras;
+    }
+
+    function validarDatosMinimos(datos) {
+        // Verificar que tenemos al menos marca, modelo, año y precio
+        return datos.marca && datos.marca !== 'Selecciona marca...' &&
+               datos.modelo && datos.modelo !== 'Selecciona modelo...' &&
+               datos.anio && 
+               datos.precio;
+    }
+
+    function construirDescripcion(datos) {
+        let descripcion = '';
+        
+        // 1. Introducción atractiva
+        descripcion += generarIntroduccion(datos);
+        
+        // 2. Características principales
+        descripcion += generarCaracteristicasPrincipales(datos);
+        
+        // 3. Especificaciones técnicas
+        descripcion += generarEspecificacionesTecnicas(datos);
+        
+        // 4. Extras y beneficios
+        descripcion += generarExtrasYBeneficios(datos);
+        
+        // 5. Llamada a la acción
+        descripcion += generarLlamadaAccion(datos);
+        
+        return descripcion.trim();
+    }
+
+    function generarIntroduccion(datos) {
+        const frases = [
+            `¡Descubre este increíble ${datos.marca} ${datos.modelo} ${datos.anio}!`,
+            `Te presentamos este espectacular ${datos.marca} ${datos.modelo} ${datos.anio}.`,
+            `¡Oportunidad única! ${datos.marca} ${datos.modelo} ${datos.anio} en excelente estado.`,
+            `No te pierdas este magnífico ${datos.marca} ${datos.modelo} ${datos.anio}.`
+        ];
+        
+        let intro = frases[Math.floor(Math.random() * frases.length)];
+        
+        // Agregar información sobre la condición
+        if (datos.condicion === 'nuevo') {
+            intro += ' Este vehículo completamente nuevo te ofrece la última tecnología y garantía de fábrica.';
+        } else if (datos.condicion === 'usado' && datos.kilometraje) {
+            const km = parseInt(datos.kilometraje);
+            if (km < 20000) {
+                intro += ' Con muy poco recorrido, prácticamente como nuevo.';
+            } else if (km < 50000) {
+                intro += ' Con un recorrido moderado y excelente mantenimiento.';
+            } else if (km < 100000) {
+                intro += ' Con un historial de uso responsable y cuidadoso.';
+            } else {
+                intro += ' Un vehículo con experiencia que aún tiene mucho que ofrecer.';
+            }
+        }
+        
+        return intro + '\n\n';
+    }
+
+    function generarCaracteristicasPrincipales(datos) {
+        let caracteristicas = '🚗 **Características Destacadas:**\n';
+        
+        // Tipo de vehículo y subtipo
+        if (datos.tipoVehiculo) {
+            caracteristicas += `• Tipo: ${datos.tipoVehiculo}`;
+            if (datos.subtipo) {
+                caracteristicas += ` (${datos.subtipo})`;
+            }
+            caracteristicas += '\n';
+        }
+        
+        // Año y kilometraje
+        if (datos.anio) {
+            caracteristicas += `• Año de fabricación: ${datos.anio}\n`;
+        }
+        
+        if (datos.kilometraje && datos.condicion === 'usado') {
+            const km = parseInt(datos.kilometraje);
+            caracteristicas += `• Recorrido: ${km.toLocaleString()} km\n`;
+        }
+        
+        // Colores
+        if (datos.colorExterior) {
+            caracteristicas += `• Color exterior: ${datos.colorExterior}`;
+            if (datos.colorInterior) {
+                caracteristicas += ` / Interior: ${datos.colorInterior}`;
+            }
+            caracteristicas += '\n';
+        }
+        
+        // Ubicación
+        if (datos.ciudad && datos.provincia) {
+            caracteristicas += `• Ubicación: ${datos.ciudad}, ${datos.provincia}\n`;
+        }
+        
+        return caracteristicas + '\n';
+    }
+
+    function generarEspecificacionesTecnicas(datos) {
+        let especificaciones = '⚙️ **Especificaciones Técnicas:**\n';
+        let tieneEspecificaciones = false;
+        
+        // Motor
+        if (datos.detallesMotor) {
+            especificaciones += `• Motor: ${datos.detallesMotor}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        // Transmisión
+        if (datos.transmision) {
+            especificaciones += `• Transmisión: ${datos.transmision}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        // Tracción
+        if (datos.traccion) {
+            especificaciones += `• Tracción: ${datos.traccion}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        // Combustible
+        if (datos.combustible) {
+            especificaciones += `• Combustible: ${datos.combustible}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        // Dirección
+        if (datos.direccion) {
+            especificaciones += `• Dirección: ${datos.direccion}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        // Vidrios
+        if (datos.vidrios) {
+            especificaciones += `• Vidrios: ${datos.vidrios}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        // Climatización
+        if (datos.climatizacion && datos.climatizacion !== 'Ninguno') {
+            especificaciones += `• Climatización: ${datos.climatizacion}\n`;
+            tieneEspecificaciones = true;
+        }
+        
+        return tieneEspecificaciones ? especificaciones + '\n' : '';
+    }
+
+    function generarExtrasYBeneficios(datos) {
+        if (datos.extras.length === 0) {
+            return '';
+        }
+        
+        let extras = '✨ **Extras y Beneficios:**\n';
+        
+        datos.extras.forEach(extra => {
+            extras += `• ${extra}\n`;
+        });
+        
+        return extras + '\n';
+    }
+
+    function generarLlamadaAccion(datos) {
+        const llamadas = [
+            '📞 ¡No dejes pasar esta oportunidad! Contáctanos ahora para más información y agenda tu cita para verlo.',
+            '🤝 ¡Este vehículo no durará mucho en el mercado! Llámanos hoy mismo para más detalles.',
+            '💬 ¿Interesado? Escríbenos o llámanos para coordinar una visita y prueba de manejo.',
+            '⭐ ¡Tu próximo vehículo te está esperando! Contáctanos para más información y financiamiento.'
+        ];
+        
+        let llamada = llamadas[Math.floor(Math.random() * llamadas.length)];
+        
+        // Agregar información sobre precio si es negociable
+        if (datos.extras.includes('Negociable')) {
+            llamada += ' ¡Precio negociable!';
+        }
+        
+        // Agregar información sobre parte de pago
+        if (datos.extras.includes('Acepto Vehiculo Como Parte de Pago')) {
+            llamada += ' Aceptamos tu vehículo como parte de pago.';
+        }
+        
+        return llamada;
+    }
+
+    // Event handler para el botón de generar descripción
+    $('#btnGenerarDescripcion').on('click', function() {
+        const $boton = $(this);
+        const $textarea = $('#veh_descripcion');
+        
+        // Cambiar estado del botón a cargando
+        const textoOriginal = $boton.html();
+        $boton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Generando...');
+        
+        // Simular un pequeño delay para mejor UX
+        setTimeout(function() {
+            try {
+                // Generar la descripción
+                const descripcionGenerada = generarDescripcionVehiculo();
+                
+                if (descripcionGenerada) {
+                    // Si ya hay contenido, preguntar si quiere reemplazarlo
+                    const contenidoActual = $textarea.val().trim();
+                    if (contenidoActual && contenidoActual.length > 0) {
+                        if (confirm('Ya hay contenido en la descripción. ¿Deseas reemplazarlo con la descripción generada automáticamente?')) {
+                            $textarea.val(descripcionGenerada);
+                            // Remover clases de validación si las hay
+                            $textarea.removeClass('is-invalid is-valid');
+                            // Mostrar mensaje de éxito
+                            mostrarMensajeExito('Descripción generada exitosamente');
+                        }
+                    } else {
+                        $textarea.val(descripcionGenerada);
+                        $textarea.removeClass('is-invalid is-valid');
+                        mostrarMensajeExito('Descripción generada exitosamente');
+                    }
+                } else {
+                    // Mostrar mensaje de error si no se pudo generar
+                    mostrarMensajeError('Para generar la descripción automática, completa al menos: Marca, Modelo, Año y Precio.');
+                }
+            } catch (error) {
+                console.error('Error al generar descripción:', error);
+                mostrarMensajeError('Ocurrió un error al generar la descripción. Inténtalo de nuevo.');
+            }
+            
+            // Restaurar estado del botón
+            $boton.prop('disabled', false).html(textoOriginal);
+        }, 800); // Delay de 800ms para simular procesamiento
+    });
+
+    // Funciones auxiliares para mostrar mensajes
+    function mostrarMensajeExito(mensaje) {
+        const $alert = $(`
+            <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+        
+        // Insertar después del textarea
+        $('#veh_descripcion').after($alert);
+        
+        // Auto-remover después de 3 segundos
+        setTimeout(function() {
+            $alert.fadeOut(function() {
+                $(this).remove();
+            });
+        }, 3000);
+    }
+
+    function mostrarMensajeError(mensaje) {
+        const $alert = $(`
+            <div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+        
+        // Insertar después del textarea
+        $('#veh_descripcion').after($alert);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(function() {
+            $alert.fadeOut(function() {
+                $(this).remove();
+            });
+        }, 5000);
+    }
+
+    // ===== FIN DEL ALGORITMO DE GENERACIÓN DE DESCRIPCIÓN =====
+
+
+
+    // ===== DATOS DE PLACAS DE ECUADOR Y LÓGICA DE AUTO-LLENADO =====
+
+    const placasEcuadorMap = {
+        'A': 'Azuay',
+        'B': 'Bolívar',
+        'C': 'Carchi',
+        'E': 'Esmeraldas',
+        'G': 'Guayas',
+        'H': 'Chimborazo',
+        'I': 'Imbabura',
+        'J': 'Santo Domingo de los Tsáchilas',
+        'K': 'Sucumbíos',
+        'L': 'Loja',
+        'M': 'Manabí',
+        'N': 'Napo',
+        'O': 'El Oro',
+        'P': 'Pichincha',
+        'Q': 'Orellana',
+        'R': 'Los Ríos',
+        'S': 'Pastaza',
+        'T': 'Tungurahua',
+        'U': 'Cañar',
+        'V': 'Morona Santiago',
+        'W': 'Galápagos',
+        'X': 'Cotopaxi',
+        'Y': 'Santa Elena',
+        'Z': 'Zamora Chinchipe'
+    };
+
+    function obtenerProvinciaPorPlaca(placa) {
+        if (typeof placa !== 'string' || placa.length === 0) {
+            return null;
+        }
+        const primeraLetra = placa.toUpperCase()[0];
+        return placasEcuadorMap[primeraLetra] || null;
+    }
+
+    function obtenerUltimoDigitoPlaca(placa) {
+        if (typeof placa !== 'string' || placa.length < 1) {
+            return null;
+        }
+        const digitos = placa.match(/\d+/g);
+        if (digitos && digitos.length > 0) {
+            const ultimoDigito = digitos[digitos.length - 1].slice(-1);
+            return ultimoDigito;
+        }
+        return null;
+    }
+
+    function validarFormatoPlacaEcuador(placa) {
+        // Formato: ABC-1234 o ABC-123
+        const regex = /^[A-Z]{3}-\d{3,4}$/;
+        return regex.test(placa.toUpperCase());
+    }
+
+    function mostrarIndicadoresAutoLlenado(mostrar) {
+        const $badgeProvincia = $('#badge_auto_provincia');
+        const $badgeDigito = $('#badge_auto_digito');
+        const $helpProvincia = $('#help_provincia_auto');
+        const $helpDigito = $('#help_digito_auto');
+
+        if (mostrar) {
+            $badgeProvincia.fadeIn(300);
+            $badgeDigito.fadeIn(300);
+            $helpProvincia.fadeIn(300);
+            $helpDigito.fadeIn(300);
+        } else {
+            $badgeProvincia.fadeOut(300);
+            $badgeDigito.fadeOut(300);
+            $helpProvincia.fadeOut(300);
+            $helpDigito.fadeOut(300);
+        }
+    }
+
+    function aplicarEfectoAutoLlenado($elemento) {
+        $elemento.addClass('auto-filled');
+        setTimeout(() => {
+            $elemento.removeClass('auto-filled');
+        }, 2000);
+    }
+
+    // Event listener mejorado para el campo de placa
+    $('#veh_placa').on('input blur', function() {
+        const placaInput = $(this).val().trim().toUpperCase();
+        const condicion = $('#veh_condicion').val();
+
+        // Solo aplicar la lógica si la condición es 'usado'
+        if (condicion === 'usado') {
+            const $provinciaSelect = $('#veh_placa_provincia_origen');
+            const $ultimoDigitoSelect = $('#veh_ultimo_digito_placa');
+            const $placaField = $(this);
+
+            if (placaInput.length >= 1) {
+                // Agregar clase visual para indicar que está activa la detección
+                $placaField.addClass('auto-detection-active');
+
+                // Detectar provincia
+                const provinciaDetectada = obtenerProvinciaPorPlaca(placaInput);
+                if (provinciaDetectada) {
+                    $provinciaSelect.val(provinciaDetectada);
+                    aplicarEfectoAutoLlenado($provinciaSelect);
+                    
+                    // Remover clases de validación si las hay
+                    $provinciaSelect.removeClass('is-invalid');
+                } else {
+                    $provinciaSelect.val('');
+                }
+
+                // Detectar último dígito
+                const ultimoDigitoDetectado = obtenerUltimoDigitoPlaca(placaInput);
+                if (ultimoDigitoDetectado !== null) {
+                    $ultimoDigitoSelect.val(ultimoDigitoDetectado);
+                    aplicarEfectoAutoLlenado($ultimoDigitoSelect);
+                    
+                    // Remover clases de validación si las hay
+                    $ultimoDigitoSelect.removeClass('is-invalid');
+                } else {
+                    $ultimoDigitoSelect.val('');
+                }
+
+                // Mostrar indicadores visuales
+                mostrarIndicadoresAutoLlenado(true);
+
+            } else {
+                // Limpiar campos si la placa está vacía
+                $provinciaSelect.val('');
+                $ultimoDigitoSelect.val('');
+                $placaField.removeClass('auto-detection-active');
+                mostrarIndicadoresAutoLlenado(false);
+            }
+        } else {
+            // Si no es usado, ocultar indicadores
+            mostrarIndicadoresAutoLlenado(false);
+            $(this).removeClass('auto-detection-active');
+        }
+    });
+
+    // Formateo automático de placa mientras se escribe
+    $('#veh_placa').on('input', function() {
+        let valor = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        
+        // Agregar guión automáticamente después de 3 letras
+        if (valor.length > 3) {
+            valor = valor.substring(0, 3) + '-' + valor.substring(3, 7);
+        }
+        
+        $(this).val(valor);
+    });
+
+    // Mejorar el event listener para cambio de condición
+    $('#veh_condicion').on('change', function() {
+        const $placaField = $('#veh_placa');
+        const $provinciaSelect = $('#veh_placa_provincia_origen');
+        const $ultimoDigitoSelect = $('#veh_ultimo_digito_placa');
+
+        if ($(this).val() === 'nuevo') {
+            // Limpiar campos y ocultar indicadores
+            $provinciaSelect.val('');
+            $ultimoDigitoSelect.val('');
+            $placaField.removeClass('auto-detection-active');
+            mostrarIndicadoresAutoLlenado(false);
+        } else if ($(this).val() === 'usado') {
+            // Si ya hay una placa ingresada, procesarla
+            const placaActual = $placaField.val().trim();
+            if (placaActual) {
+                $placaField.trigger('input');
+            }
+        }
+    });
+
+    // ===== FIN DE DATOS DE PLACAS DE ECUADOR Y LÓGICA DE AUTO-LLENADO =====
+
+

@@ -8,15 +8,15 @@
     <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="./../PUBLIC/css/styles.css" rel="stylesheet"> <!-- Estilos Globales -->
-    <link href="./CSS/autos_usados.css" rel="stylesheet"> <!-- NUEVO: Estilos Minimalistas -->
+    <link href="./CSS/autos_usados.css" rel="stylesheet"> <!-- NUEVO: Estilos Adaptados con Paleta de Colores -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/trefoil.js"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
-    <!-- Loader minimalista -->
+    <!-- Loader minimalista con colores adaptados -->
     <div id="page-loader" class="page-loader">
         <div class="loader-content">
             <div class="loader-spinner">
-                <l-trefoil size="40" stroke="4" stroke-length="0.15" bg-opacity="0.1" speed="1.2" color="#2563eb"></l-trefoil>
+                <l-trefoil size="40" stroke="4" stroke-length="0.15" bg-opacity="0.1" speed="1.2" color="#D32727"></l-trefoil>
             </div>
             <div class="loader-text">Cargando vehículos...</div>
             <div class="loader-progress">
@@ -49,199 +49,197 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="container">
-                <div class="row">
-                    <!-- Sidebar de filtros minimalista -->
-                    <div class="col-lg-3 mb-4 d-none d-lg-block" id="filtrosSidebarContainer">
-                        <div class="filtros-sidebar">
-                            <div class="sidebar-header">
-                                <h5><i class="bi bi-funnel me-2"></i>Filtrar Vehículos</h5>
-                                <div class="filter-indicator">
-                                    <span class="active-filters-count">0</span>
+
+            <div class="row">
+                <!-- Sidebar de filtros minimalista -->
+                <div class="col-lg-3 mb-4">
+                    <div class="filtros-sidebar">
+                        <div class="sidebar-header">
+                            <h5><i class="bi bi-funnel me-2"></i>Filtros de Búsqueda</h5>
+                            <span class="active-filters-count" style="display: none;">0</span>
+                        </div>
+                        
+                        <form id="filtrosForm" class="needs-validation" novalidate>
+                            <!-- Filtro por Marca -->
+                            <div class="filter-group">
+                                <label class="filter-group-title" for="filtro_mar_id">Marca</label>
+                                <select class="form-select enhanced-select" id="filtro_mar_id" name="marca_id">
+                                    <option value="">Selecciona una marca</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Modelo -->
+                            <div class="filter-group">
+                                <label class="filter-group-title" for="filtro_mod_id">Modelo</label>
+                                <select class="form-select enhanced-select" id="filtro_mod_id" name="modelo_id" disabled>
+                                    <option value="">Selecciona marca primero</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Tipo de Vehículo -->
+                            <div class="filter-group">
+                                <label class="filter-group-title" for="filtro_tiv_id">Tipo de Vehículo</label>
+                                <select class="form-select enhanced-select" id="filtro_tiv_id" name="tipo_vehiculo_id">
+                                    <option value="">Todos los tipos</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Provincia -->
+                            <div class="filter-group">
+                                <label class="filter-group-title" for="filtro_provincia">Provincia</label>
+                                <select class="form-select enhanced-select" id="filtro_provincia" name="provincia">
+                                    <option value="">Todas las provincias</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtro por Rango de Años -->
+                            <div class="filter-group">
+                                <label class="filter-group-title">Año del Vehículo</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <select class="form-select enhanced-select" id="filtro_anio_min" name="anio_min">
+                                            <option value="">Desde</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <select class="form-select enhanced-select" id="filtro_anio_max" name="anio_max">
+                                            <option value="">Hasta</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <form id="filtrosForm">
-                                <div class="filter-group">
-                                    <div class="mb-3">
-                                        <label for="filtro_mar_id" class="form-label">
-                                            <i class="bi bi-tag me-1"></i>Marca
-                                        </label>
-                                        <select class="form-select enhanced-select" id="filtro_mar_id" name="mar_id">
-                                            <option value="">Todas</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="filtro_mod_id" class="form-label">
-                                            <i class="bi bi-gear me-1"></i>Modelo
-                                        </label>
-                                        <select class="form-select enhanced-select" id="filtro_mod_id" name="mod_id" disabled>
-                                            <option value="">Selecciona marca</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="filtro_tiv_id" class="form-label">
-                                            <i class="bi bi-list-ul me-1"></i>Tipo
-                                        </label>
-                                        <select class="form-select enhanced-select" id="filtro_tiv_id" name="tiv_id">
-                                            <option value="">Todos</option>
-                                        </select>
-                                    </div>
-                                </div>
 
-                                <div class="filter-group">
-                                    <div class="filter-group-title">
-                                        <i class="bi bi-currency-dollar me-2"></i>Rango de Precio
+                            <!-- Filtro por Rango de Precios -->
+                            <div class="filter-group">
+                                <label class="filter-group-title">Rango de Precio (USD)</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" class="form-control enhanced-input" id="filtro_precio_min" name="precio_min" placeholder="Mínimo" min="0">
                                     </div>
-                                    <div class="price-range-container">
-                                        <div class="mb-3">
-                                            <label for="filtro_precio_min" class="form-label">Precio Mínimo</label>
-                                            <input type="number" class="form-control enhanced-input" id="filtro_precio_min" name="precio_min" placeholder="Ej: 5000">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="filtro_precio_max" class="form-label">Precio Máximo</label>
-                                            <input type="number" class="form-control enhanced-input" id="filtro_precio_max" name="precio_max" placeholder="Ej: 20000">
-                                        </div>
+                                    <div class="col-6">
+                                        <input type="number" class="form-control enhanced-input" id="filtro_precio_max" name="precio_max" placeholder="Máximo" min="0">
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="filter-group">
-                                    <div class="filter-group-title">
-                                        <i class="bi bi-calendar3 me-2"></i>Año del Vehículo
-                                    </div>
-                                    <div class="year-range-container">
-                                        <div class="mb-3">
-                                            <label for="filtro_anio_min" class="form-label">Desde</label>
-                                            <select class="form-select enhanced-select" id="filtro_anio_min" name="anio_min">
-                                                <option value="">Cualquiera</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="filtro_anio_max" class="form-label">Hasta</label>
-                                            <select class="form-select enhanced-select" id="filtro_anio_max" name="anio_max">
-                                                <option value="">Cualquiera</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Filtro por Kilometraje -->
+                            <div class="filter-group">
+                                <label class="filter-group-title">Kilometraje Máximo</label>
+                                <input type="number" class="form-control enhanced-input" id="filtro_kilometraje_max" name="kilometraje_max" placeholder="Ej: 100000" min="0">
+                            </div>
 
-                                <div class="filter-group">
-                                    <div class="mb-3">
-                                        <label for="filtro_provincia" class="form-label">
-                                            <i class="bi bi-geo-alt me-1"></i>Provincia
-                                        </label>
-                                        <select class="form-select enhanced-select" id="filtro_provincia" name="provincia">
-                                            <option value="">Todas</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <!-- Botones de acción -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-enhanced btn-primary">
+                                    <i class="bi bi-search me-2"></i>Buscar Vehículos
+                                </button>
+                                <button type="button" class="btn btn-enhanced btn-outline-secondary" id="resetFiltrosBtn">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Filtros
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
-                                <div class="filter-actions">
-                                    <button type="submit" class="btn btn-primary btn-enhanced w-100 mb-2">
-                                        <i class="bi bi-funnel-fill me-2"></i>Aplicar Filtros
-                                    </button>
-                                    <button type="reset" class="btn btn-outline-secondary btn-enhanced w-100" id="resetFiltrosBtn">
-                                        <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Filtros
-                                    </button>
-                                </div>
-                            </form>
+                <!-- Contenido principal -->
+                <div class="col-lg-9">
+                    <!-- Header de contenido -->
+                    <div class="content-header d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="results-counter" id="conteoResultados">
+                            <i class="bi bi-car-front me-2"></i>Cargando vehículos...
+                        </div>
+                        
+                        <div class="header-controls">
+                            <!-- Toggle de vista -->
+                            <div class="view-toggle">
+                                <button type="button" class="btn active" data-view="grid" title="Vista en cuadrícula">
+                                    <i class="bi bi-grid-3x3-gap"></i>
+                                </button>
+                                <button type="button" class="btn" data-view="list" title="Vista en lista">
+                                    <i class="bi bi-list"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Botón de filtros para móvil -->
+                            <button class="btn btn-enhanced btn-outline-secondary d-lg-none position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtrosOffcanvas">
+                                <i class="bi bi-funnel me-2"></i>Filtros
+                                <span class="filter-badge" style="display: none;">0</span>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Contenido principal minimalista -->
-                    <div class="col-lg-9">                        
-                        <div class="content-header d-flex justify-content-between align-items-center mb-4">
-                            <div id="conteoResultados" class="results-counter">
-                                <i class="bi bi-car-front me-2"></i>Cargando...
-                            </div>
-                            <div class="header-controls">
-                                <div class="view-toggle d-none d-md-flex me-3">
-                                    <button class="btn btn-sm btn-outline-primary active" data-view="grid" title="Vista en cuadrícula">
-                                        <i class="bi bi-grid-3x3-gap"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-primary" data-view="list" title="Vista en lista">
-                                        <i class="bi bi-list"></i>
-                                    </button>
-                                </div>
-                                <button class="btn btn-outline-primary d-lg-none position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtrosOffcanvas" aria-controls="filtrosOffcanvas">
-                                    <i class="bi bi-funnel me-2"></i>Filtros
-                                    <span class="filter-badge">0</span>
-                                </button>
-                            </div>
+                    <!-- Loading skeleton -->
+                    <div id="loadingVehiculosListado" class="loading-container" style="display: none;">
+                        <div class="loading-skeleton">
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
                         </div>
+                    </div>
 
-                        <!-- Contenedor de vehículos minimalista -->
-                        <div id="listaVehiculosUsados" class="vehicles-grid row g-4">
-                            <div class="col-12 text-center" id="loadingVehiculosListado">
-                                <div class="loading-container">
-                                    <div class="loading-spinner">
-                                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                                            <span class="visually-hidden">Cargando...</span>
-                                        </div>
-                                    </div>
-                                    <div class="loading-skeleton">
-                                        <div class="skeleton-card"></div>
-                                        <div class="skeleton-card"></div>
-                                        <div class="skeleton-card"></div>
-                                    </div>
-                                    <p class="mt-3 text-muted">Cargando vehículos...</p>
-                                </div>
-                            </div>
+                    <!-- Lista de vehículos -->
+                    <div class="vehicles-grid">
+                        <div class="row" id="listaVehiculosUsados">
+                            <!-- Los vehículos se cargarán aquí dinámicamente -->
                         </div>
+                    </div>
 
-                        <!-- Mensaje de no resultados minimalista -->
-                        <div id="noVehiculosListadoMessage" class="col-12 text-center mt-5 py-5" style="display: none;">
-                            <div class="no-results-container">
-                                <div class="no-results-icon">
-                                    <i class="bi bi-search display-1 text-muted mb-3"></i>
-                                </div>
-                                <h4 class="mt-3">No se encontraron vehículos</h4>
-                                <p class="text-muted">Intenta ajustar tus filtros o <a href="#" id="verTodosLink" class="text-decoration-none">ver todos los vehículos</a>.</p>
-                                <div class="suggested-actions mt-4">
-                                    <button class="btn btn-outline-primary me-2" id="clearFiltersBtn">
-                                        <i class="bi bi-funnel-fill me-1"></i>Limpiar Filtros
-                                    </button>
-                                    <button class="btn btn-outline-secondary" id="expandSearchBtn">
-                                        <i class="bi bi-search me-1"></i>Ampliar Búsqueda
-                                    </button>
-                                </div>
-                            </div>
+                    <!-- Mensaje cuando no hay vehículos -->
+                    <div id="noVehiculosListadoMessage" class="no-results-container" style="display: none;">
+                        <div class="no-results-icon mb-3">
+                            <i class="bi bi-car-front display-1"></i>
                         </div>
+                        <h4 class="mb-3">No se encontraron vehículos</h4>
+                        <p class="text-muted mb-4">No hay vehículos que coincidan con los filtros seleccionados. Intenta ajustar tus criterios de búsqueda.</p>
+                        <div class="suggested-actions">
+                            <button class="btn btn-enhanced btn-primary" id="clearFiltersBtn">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Limpiar Filtros
+                            </button>
+                            <a href="#" class="btn btn-enhanced btn-outline-secondary" id="expandSearchBtn">
+                                <i class="bi bi-search me-2"></i>Ver Todos
+                            </a>
+                        </div>
+                    </div>
 
-                        <!-- Paginación minimalista -->
-                        <nav id="paginacionVehiculosUsados" aria-label="Paginación de vehículos" class="mt-5 d-flex justify-content-center">
-                            <!-- La paginación se genera dinámicamente -->
+                    <!-- Paginación -->
+                    <div class="mt-4">
+                        <nav aria-label="Paginación de vehículos" id="paginacionVehiculosUsados">
+                            <!-- La paginación se generará dinámicamente -->
                         </nav>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Offcanvas para filtros móviles minimalista -->
-        <div class="offcanvas offcanvas-start enhanced-offcanvas" tabindex="-1" id="filtrosOffcanvas" aria-labelledby="filtrosOffcanvasLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="filtrosOffcanvasLabel">
-                    <i class="bi bi-funnel me-2"></i>Filtrar Vehículos
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body" id="filtrosMobileBody">
-                <!-- El formulario de filtros se clonará aquí por JS -->
-            </div>
-        </div>
-
-        <!-- Botón de scroll to top minimalista -->
-        <button id="scrollToTop" class="scroll-to-top" title="Volver arriba">
-            <i class="bi bi-arrow-up"></i>
-        </button>
     </main>
+
+    <!-- Offcanvas para filtros en móvil -->
+    <div class="offcanvas offcanvas-start enhanced-offcanvas" tabindex="-1" id="filtrosOffcanvas">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">
+                <i class="bi bi-funnel me-2"></i>Filtros de Búsqueda
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body" id="filtrosMobileBody">
+            <!-- Los filtros se clonarán aquí para móvil -->
+        </div>
+    </div>
+
+    <!-- Botón scroll to top -->
+    <button id="scrollToTop" class="scroll-to-top" title="Volver arriba">
+        <i class="bi bi-arrow-up"></i>
+    </button>
 
     <?php include __DIR__ . './partials/footer.php'; ?>
 
+    <!-- Scripts -->
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="./JS/global.js"></script>
-    <script src="./JS/autos_usados.js"></script>
+    <script src="./JS/autos_usados.js"></script> <!-- NUEVO: JavaScript Adaptado -->
 </body>
 </html>
 

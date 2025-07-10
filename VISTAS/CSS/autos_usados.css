@@ -1,24 +1,25 @@
-/* ===== PALETA DE COLORES MINIMALISTA ===== */
+/* ===== PALETA DE COLORES ADAPTADA DESDE IMAGEN ===== */
 :root {
-  /* Colores principales - paleta minimalista */
-  --color-primary: #2563eb;
-  --color-primary-light: #3b82f6;
-  --color-accent: #f59e0b;
-  --color-success: #10b981;
-  --color-danger: #ef4444;
+  /* Colores principales - basados en la imagen proporcionada */
+  --color-primary: #D32727;        /* Rojo principal de la imagen */
+  --color-primary-light: #E53E3E;  /* Rojo más claro */
+  --color-accent: #25D366;         /* Verde de la imagen */
+  --color-success: #25D366;        /* Verde para éxito */
+  --color-danger: #D32727;         /* Rojo para peligro */
+  --color-secondary: #0F1527;      /* Azul oscuro de la imagen */
   
-  /* Escala de grises */
-  --color-white: #ffffff;
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
+  /* Escala de grises - manteniendo neutrales */
+  --color-white: #FFFFFF;          /* Blanco de la imagen */
+  --color-gray-50: #F2F3F7;       /* Gris muy claro basado en la imagen */
+  --color-gray-100: #E8E9ED;
+  --color-gray-200: #D1D5DB;
+  --color-gray-300: #9CA3AF;
+  --color-gray-400: #6B7280;
+  --color-gray-500: #4B5563;
+  --color-gray-600: #374151;
+  --color-gray-700: #1F2937;
+  --color-gray-800: #111827;
+  --color-gray-900: #0F1527;      /* Azul oscuro como negro */
   
   /* Tipografía */
   --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -34,9 +35,9 @@
   --spacing-3xl: 64px;
   
   /* Sombras sutiles */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(15, 21, 39, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 21, 39, 0.1), 0 2px 4px -1px rgba(15, 21, 39, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 21, 39, 0.1), 0 4px 6px -2px rgba(15, 21, 39, 0.05);
   
   /* Border radius */
   --radius-sm: 4px;
@@ -140,13 +141,14 @@
 
 /* ===== HEADER MINIMALISTA ===== */
 .listado-vehiculos-header {
-    background: var(--color-white);
+    background: linear-gradient(135deg, var(--color-white) 0%, var(--color-gray-50) 100%);
     color: var(--color-gray-900);
     padding: var(--spacing-3xl) var(--spacing-lg);
     border-radius: var(--radius-lg);
     margin-bottom: var(--spacing-2xl);
     border: 1px solid var(--color-gray-200);
     animation: slideUp 0.6s ease-out;
+    box-shadow: var(--shadow-sm);
 }
 
 .header-content h1 {
@@ -171,22 +173,24 @@
     display: flex;
     justify-content: center;
     margin-top: var(--spacing-xl);
+    gap: var(--spacing-lg);
 }
 
 .stat-item {
     text-align: center;
     padding: var(--spacing-lg);
-    background: var(--color-gray-50);
+    background: var(--color-white);
     border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-lg);
     transition: var(--transition);
     min-width: 200px;
+    box-shadow: var(--shadow-sm);
 }
 
 .stat-item:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    background: var(--color-white);
+    border-color: var(--color-primary);
 }
 
 .stat-item i {
@@ -220,6 +224,7 @@
     border: 1px solid var(--color-gray-200);
     animation: slideUp 0.6s ease-out;
     margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
 }
 
 .sidebar-header {
@@ -263,6 +268,7 @@
 .filter-group:hover {
     background: var(--color-white);
     box-shadow: var(--shadow-sm);
+    border-color: var(--color-gray-300);
 }
 
 .filter-group-title {
@@ -289,7 +295,7 @@
 .enhanced-select:focus,
 .enhanced-input:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(211, 39, 39, 0.1);
     outline: none;
 }
 
@@ -341,6 +347,7 @@
     border: 1px solid var(--color-gray-200);
     margin-bottom: var(--spacing-xl);
     animation: slideDown 0.6s ease-out;
+    box-shadow: var(--shadow-sm);
 }
 
 .results-counter {
@@ -407,12 +414,13 @@
     overflow: hidden;
     background: var(--color-white);
     animation: slideUp 0.6s ease-out;
+    box-shadow: var(--shadow-sm);
 }
 
 .card-vehiculo:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--color-gray-300);
+    border-color: var(--color-primary);
 }
 
 .card-vehiculo-img-top {
@@ -529,7 +537,7 @@
 .card-vehiculo .precio {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-gray-900);
+    color: var(--color-primary);
     margin-bottom: var(--spacing-md);
     font-family: var(--font-primary);
 }
@@ -561,7 +569,7 @@
     margin-right: var(--spacing-md);
     width: 16px;
     text-align: center;
-    color: var(--color-gray-400);
+    color: var(--color-primary);
 }
 
 .btn-ver-detalles {
@@ -664,6 +672,7 @@
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-gray-200);
+    box-shadow: var(--shadow-sm);
 }
 
 .pagination .page-link {
@@ -1030,5 +1039,74 @@
     font-size: 0.75rem;
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* ===== BOTONES DE ACCIÓN ESPECIALES ===== */
+.btn-whatsapp {
+    background: var(--color-accent);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-weight: 500;
+    transition: var(--transition);
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+}
+
+.btn-whatsapp:hover {
+    background: #22C55E;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-solicitar-info {
+    background: var(--color-secondary);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-weight: 500;
+    transition: var(--transition);
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+}
+
+.btn-solicitar-info:hover {
+    background: #1E293B;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ===== ELEMENTOS DE PRECIO DESTACADOS ===== */
+.precio-destacado {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.precio-original {
+    text-decoration: line-through;
+    color: var(--color-gray-500);
+    font-size: 0.875rem;
+    margin-right: var(--spacing-sm);
+}
+
+.descuento-badge {
+    background: var(--color-accent);
+    color: var(--color-white);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: var(--spacing-sm);
 }
 
