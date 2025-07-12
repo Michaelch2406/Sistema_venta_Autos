@@ -29,7 +29,7 @@ $(document).ready(function() {
     function cargarEstadisticas() {
         // Cargar estadísticas desde el servidor
         $.ajax({
-            url: '../AJAX/admin_usuarios_ajax.php',
+            url: './../AJAX/admin_usuarios_ajax.php',
             type: 'GET',
             data: { accion: 'getEstadisticas' },
             dataType: 'json',
@@ -75,7 +75,7 @@ $(document).ready(function() {
 
     function cargarRolesSelect() {
         $.ajax({
-            url: '../AJAX/admin_usuarios_ajax.php',
+            url: './../AJAX/admin_usuarios_ajax.php',
             type: 'GET',
             data: { accion: 'getRoles' },
             dataType: 'json',
@@ -109,7 +109,7 @@ $(document).ready(function() {
     // Inicializar DataTable con mejoras
     tablaUsuarios = $('#tablaUsuariosAdmin').DataTable({
         "ajax": {
-            "url": "../AJAX/admin_usuarios_ajax.php?accion=listarUsuarios",
+            "url": "./../AJAX/admin_usuarios_ajax.php?accion=listarUsuarios",
             "type": "GET",
             "dataType": "json",
             "dataSrc": function(json) {
@@ -529,7 +529,7 @@ $(document).ready(function() {
         $('#usu_password_form').prop('required', false).attr('placeholder', 'Dejar en blanco para no cambiar');
 
         $.ajax({
-            url: '../AJAX/admin_usuarios_ajax.php',
+            url: './../AJAX/admin_usuarios_ajax.php',
             type: 'GET',
             data: { accion: 'getUsuario', usu_id: usu_id },
             dataType: 'json',
@@ -593,7 +593,7 @@ $(document).ready(function() {
         $btnGuardarUsuario.prop('disabled', true).html('<span class="loading-spinner me-2"></span>Guardando...');
 
         $.ajax({
-            url: '../AJAX/admin_usuarios_ajax.php',
+            url: './../AJAX/admin_usuarios_ajax.php',
             type: 'POST',
             data: formData,
             dataType: 'json',

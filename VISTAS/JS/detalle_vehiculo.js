@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dataVerificar.append('accion', 'verificar');
         dataVerificar.append('veh_id', vehId);
 
-        fetch('../AJAX/favoritos_ajax.php', {
+        fetch('./../AJAX/favoritos_ajax.php', {
             method: 'POST',
             body: dataVerificar
         })
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dataAccion.append('accion', accionParaEnviar);
             dataAccion.append('veh_id', vehId);
 
-            fetch('../AJAX/favoritos_ajax.php', {
+            fetch('./../AJAX/favoritos_ajax.php', {
                 method: 'POST',
                 body: dataAccion
             })
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const formData = new FormData(formContacto);
 
-            fetch('../AJAX/cotizaciones_ajax.php', {
+            fetch('./../AJAX/cotizaciones_ajax.php', {
                 method: 'POST',
                 body: formData
             })

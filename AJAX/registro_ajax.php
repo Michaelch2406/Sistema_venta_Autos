@@ -2,10 +2,10 @@
 ini_set('display_errors', 0); 
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../php_error.log'); 
+ini_set('error_log', './../php_error.log'); 
 
-require_once __DIR__ . "/../MODELOS/usuarios_m.php";
-require_once __DIR__ . "/../CONFIG/global.php";
+require_once "./../MODELOS/usuarios_m.php";
+require_once "./../CONFIG/global.php";
 header('Content-Type: application/json');
 
 $response = ['status' => 'error', 'message' => 'Solicitud inválida.'];

@@ -6,7 +6,7 @@ error_reporting(E_ALL); // Reportar todos los errores
 // ini_set('error_log', __DIR__ . '/../php_error.log'); // Asegúrate que esta ruta sea escribible
 
 session_start();
-require_once __DIR__ . "/../MODELOS/catalogos_m.php"; // Único modelo necesario aquí
+require_once "./../MODELOS/catalogos_m.php"; // Único modelo necesario aquí
 
 header('Content-Type: application/json');
 $response = ['status' => 'error', 'message' => 'Acción no válida o faltan datos.'];

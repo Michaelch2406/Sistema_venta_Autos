@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {string} cotizacionId ID de la cotización
      */
     async function fetchDetalleCotizacionAdminModal(cotizacionId) {
-        const apiUrl = `../AJAX/cotizaciones_ajax.php?action=obtener_detalle_cotizacion_admin&id_cotizacion=${encodeURIComponent(cotizacionId)}`;
+        const apiUrl = `./../AJAX/cotizaciones_ajax.php?action=obtener_detalle_cotizacion_admin&id_cotizacion=${encodeURIComponent(cotizacionId)}`;
         
         try {
             const response = await fetch(apiUrl);
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('id_cotizacion', cotizacionId);
         formData.append('nuevo_estado', nuevoEstado);
 
-        const apiUrl = '../AJAX/cotizaciones_ajax.php';
+        const apiUrl = './../AJAX/cotizaciones_ajax.php';
         
         try {
             const response = await fetch(apiUrl, {
@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('id_cotizacion', cotizacionId);
         formData.append('notas_internas', notas);
 
-        const apiUrl = '../AJAX/cotizaciones_ajax.php';
+        const apiUrl = './../AJAX/cotizaciones_ajax.php';
         
         try {
             const response = await fetch(apiUrl, {

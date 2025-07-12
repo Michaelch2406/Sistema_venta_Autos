@@ -169,7 +169,7 @@ $(document).ready(function() {
         $tarjetaVehiculo.addClass('removing');
         
         $.ajax({
-            url: '../AJAX/favoritos_ajax.php',
+            url: './../AJAX/favoritos_ajax.php',
             type: 'POST',
             data: {
                 accion: 'quitar',

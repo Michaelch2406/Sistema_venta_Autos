@@ -11,10 +11,10 @@ $(document).ready(function () {
 
     // Selects y sus URLs para carga inicial (similar a publicar_vehiculo.js)
     const selectsConfig = [
-        { id: '#mar_id', url: '../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'marcas', },
-        { id: '#tiv_id', url: '../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'tipos_vehiculo' },
-        { id: '#veh_ubicacion_provincia', url: '../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'provincias' },
-        { id: '#veh_placa_provincia_origen', url: '../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'provincias', optional: true }
+        { id: '#mar_id', url: './../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'marcas', },
+        { id: '#tiv_id', url: './../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'tipos_vehiculo' },
+        { id: '#veh_ubicacion_provincia', url: './../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'provincias' },
+        { id: '#veh_placa_provincia_origen', url: './../AJAX/vehiculos_ajax.php?accion=getCatalogos', tipo: 'provincias', optional: true }
     ];
 
     // --- INICIALIZACIÓN Y CARGA DE DATOS DEL VEHÍCULO ---
@@ -44,7 +44,7 @@ $(document).ready(function () {
         mostrarOverlayCarga(true);
         try {
             const response = await $.ajax({
-                url: `../AJAX/vehiculos_ajax.php?accion=getDetallesVehiculoParaEdicion&veh_id=${vehId}`,
+                url: `./../AJAX/vehiculos_ajax.php?accion=getDetallesVehiculoParaEdicion&veh_id=${vehId}`,
                 type: 'GET',
                 dataType: 'json'
             });
@@ -74,13 +74,13 @@ $(document).ready(function () {
         
         // Una vez cargada la marca, cargar modelos y seleccionar el modelo del vehículo
         if (vehiculoData.mar_id) {
-            await cargarOpcionesSelect('#mod_id', `../AJAX/vehiculos_ajax.php?accion=getModelos&marca_id=${vehiculoData.mar_id}`, 'modelos', vehiculoData.mod_id);
+            await cargarOpcionesSelect('#mod_id', `./../AJAX/vehiculos_ajax.php?accion=getModelos&marca_id=${vehiculoData.mar_id}`, 'modelos', vehiculoData.mod_id);
             $('#mod_id').prop('disabled', false);
         }
 
         // Una vez cargada la provincia de ubicación, cargar ciudades y seleccionar
         if (vehiculoData.veh_ubicacion_provincia) {
-            await cargarOpcionesSelect('#veh_ubicacion_ciudad', `../AJAX/vehiculos_ajax.php?accion=getCiudades&provincia=${encodeURIComponent(vehiculoData.veh_ubicacion_provincia)}`, 'ciudades', vehiculoData.veh_ubicacion_ciudad);
+            await cargarOpcionesSelect('#veh_ubicacion_ciudad', `./../AJAX/vehiculos_ajax.php?accion=getCiudades&provincia=${encodeURIComponent(vehiculoData.veh_ubicacion_provincia)}`, 'ciudades', vehiculoData.veh_ubicacion_ciudad);
             $('#veh_ubicacion_ciudad').prop('disabled', false);
         }
         
@@ -166,7 +166,7 @@ $(document).ready(function () {
     $('#mar_id').change(function () {
         const marcaId = $(this).val();
         if (marcaId) {
-            cargarOpcionesSelect('#mod_id', `../AJAX/vehiculos_ajax.php?accion=getModelos&marca_id=${marcaId}`, 'modelos');
+            cargarOpcionesSelect('#mod_id', `./../AJAX/vehiculos_ajax.php?accion=getModelos&marca_id=${marcaId}`, 'modelos');
             $('#mod_id').prop('disabled', false);
         } else {
             $('#mod_id').empty().append($('<option>', { value: '', text: 'Selecciona marca...' })).prop('disabled', true);
@@ -176,7 +176,7 @@ $(document).ready(function () {
     $('#veh_ubicacion_provincia').change(function () {
         const provincia = $(this).val();
         if (provincia) {
-            cargarOpcionesSelect('#veh_ubicacion_ciudad', `../AJAX/vehiculos_ajax.php?accion=getCiudades&provincia=${encodeURIComponent(provincia)}`, 'ciudades');
+            cargarOpcionesSelect('#veh_ubicacion_ciudad', `./../AJAX/vehiculos_ajax.php?accion=getCiudades&provincia=${encodeURIComponent(provincia)}`, 'ciudades');
             $('#veh_ubicacion_ciudad').prop('disabled', false);
         } else {
             $('#veh_ubicacion_ciudad').empty().append($('<option>', { value: '', text: 'Selecciona provincia...' })).prop('disabled', true);
@@ -421,7 +421,7 @@ $(document).ready(function () {
         mostrarOverlayCarga(true);
 
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php', // Acción 'actualizarVehiculo' está en el FormData
+            url: './../AJAX/vehiculos_ajax.php', // Acción 'actualizarVehiculo' está en el FormData
             type: 'POST',
             data: formData,
             dataType: 'json',

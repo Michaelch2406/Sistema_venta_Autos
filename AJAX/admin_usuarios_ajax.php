@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . "/../MODELOS/usuarios_m.php";
+require_once  "./../MODELOS/usuarios_m.php";
 
 header('Content-Type: application/json');
 $response = ['status' => 'error', 'message' => 'Acción no válida o faltan datos.'];

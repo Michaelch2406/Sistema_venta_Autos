@@ -1,27 +1,18 @@
 <?php
-// It's good practice to set cookie params before session_start()
-// if not done globally in php.ini or a central bootstrap file.
-// Assuming the application is at the root of the domain.
-// And session cookies should be valid for the entire domain (not just subdomains).
+
 if (session_status() == PHP_SESSION_NONE) {
-    // Set cookie parameters:
-    // lifetime: 0 means until browser closes
-    // path: '/' means entire domain
-    // domain: current domain (empty string usually works, or explicitly set if needed for subdomains)
-    // secure: true if site is HTTPS, false if HTTP (important for cookie delivery)
-    // httponly: true to prevent JS access to cookie
+
     $cookieParams = session_get_cookie_params();
     session_set_cookie_params(
         $cookieParams["lifetime"],
         '/', // Path
         $cookieParams["domain"], // Domain - adjust if using subdomains
-        isset($_SERVER['HTTPS']), // Secure - true if HTTPS
         true // HttpOnly
     );
     session_start();
 }
 
-require_once __DIR__ . "/../MODELOS/usuarios_m.php";
+require_once "./../MODELOS/usuarios_m.php";
 
 header('Content-Type: application/json');
 $response = ['status' => 'error', 'message' => 'Solicitud inválida.'];

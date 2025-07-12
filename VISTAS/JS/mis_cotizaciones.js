@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function fetchDetalleCotizacionUsuario(cotizacionId) {
         // --- RUTA CORREGIDA ---
-        const apiUrl = `../AJAX/cotizaciones_ajax.php?action=obtener_detalle_cotizacion_usuario&id_cotizacion=${encodeURIComponent(cotizacionId)}`;
+        const apiUrl = `./../AJAX/cotizaciones_ajax.php?action=obtener_detalle_cotizacion_usuario&id_cotizacion=${encodeURIComponent(cotizacionId)}`;
         
         try {
             const response = await fetch(apiUrl);

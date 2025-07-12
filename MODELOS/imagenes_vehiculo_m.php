@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../CONFIG/Conexion.php";
+require_once "./../CONFIG/Conexion.php";
 
 class ImagenesVehiculo_M
 {

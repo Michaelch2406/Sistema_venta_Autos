@@ -194,7 +194,7 @@ $(document).ready(function() {
     $btn.addClass('loading');
     
     $.ajax({
-      url: '../AJAX/registro_ajax.php',
+      url: './../AJAX/registro_ajax.php',
       method: 'POST',
       data: formData,
       dataType: 'json'

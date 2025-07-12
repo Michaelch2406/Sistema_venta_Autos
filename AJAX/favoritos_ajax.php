@@ -7,7 +7,7 @@ session_start();
 
 header('Content-Type: application/json'); // Asegurar que la respuesta sea JSON
 
-require_once __DIR__ . '/../MODELOS/favoritos_m.php';
+require_once './../MODELOS/favoritos_m.php';
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usu_id'])) {

@@ -4,14 +4,14 @@
 ini_set('display_errors', 0); 
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../php_error.log'); 
+ini_set('error_log', './../php_error.log'); 
 
 // =========== INICIO DE LA SECCIÓN ADAPTADA ===========
 
 header('Content-Type: application/json');
 
-$config_global_path = __DIR__ . '/../CONFIG/global.php';
-$conexion_class_path = __DIR__ . '/../CONFIG/Conexion.php';
+$config_global_path = './../CONFIG/global.php';
+$conexion_class_path = './../CONFIG/Conexion.php';
 
 if (file_exists($config_global_path)) {
     require_once $config_global_path;
@@ -30,7 +30,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/../MODELOS/cotizaciones_m.php';
+require_once './../MODELOS/cotizaciones_m.php';
 
 $db_conn_mysqli = null;
 try {

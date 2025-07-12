@@ -2,12 +2,12 @@
 ini_set('display_errors', 0); 
 error_reporting(E_ALL);
  ini_set('log_errors', 1);
- ini_set('error_log', __DIR__ . '/../php_error.log'); 
+ ini_set('error_log', './../php_error.log'); 
 
 session_start();
-require_once __DIR__ . "/../MODELOS/catalogos_m.php";
-require_once __DIR__ . "/../MODELOS/vehiculos_m.php";
-require_once __DIR__ . "/../MODELOS/imagenes_vehiculo_m.php";
+require_once "./../MODELOS/catalogos_m.php";
+require_once "./../MODELOS/vehiculos_m.php";
+require_once "./../MODELOS/imagenes_vehiculo_m.php";
 
 header('Content-Type: application/json');
 $response = ['status' => 'error', 'message' => 'Petición no válida o acción no especificada.'];
@@ -235,7 +235,7 @@ try {
                     if (isset($_FILES['veh_imagenes']) && $veh_id_insertado) {
                         try {
                             $imagenes_model = new ImagenesVehiculo_M();
-                            $upload_dir_base = __DIR__ . '/../PUBLIC/uploads/vehiculos/';
+                            $upload_dir_base = './../PUBLIC/uploads/vehiculos/';
                             $upload_dir = $upload_dir_base . $veh_id_insertado . '/';
                             if (!file_exists($upload_dir) && !is_dir($upload_dir)) {
                                 if (!mkdir($upload_dir, 0775, true)) {

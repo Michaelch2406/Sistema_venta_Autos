@@ -38,7 +38,7 @@ $(document).ready(function() {
 
     function cargarCatalogosIniciales() {
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php', data: { accion: 'getCatalogos' }, dataType: 'json',
+            url: './../AJAX/vehiculos_ajax.php', data: { accion: 'getCatalogos' }, dataType: 'json',
             success: function(response) {
                 if (response.status === 'success') {
                     poblarSelect($('#mar_id'), response.marcas, 'mar_id', 'mar_nombre', 'Selecciona marca...');
@@ -57,7 +57,7 @@ $(document).ready(function() {
         $selectModelos.empty().append('<option value="" selected disabled>Cargando...</option>').prop('disabled', true);
         if (marcaId) {
             $.ajax({
-                url: '../AJAX/vehiculos_ajax.php', data: { accion: 'getModelos', marca_id: marcaId }, dataType: 'json',
+                url: './../AJAX/vehiculos_ajax.php', data: { accion: 'getModelos', marca_id: marcaId }, dataType: 'json',
                 success: function(response) {
                     if (response.status === 'success' && response.modelos.length > 0) {
                         poblarSelect($selectModelos, response.modelos, 'mod_id', 'mod_nombre', 'Selecciona modelo...');
@@ -284,7 +284,7 @@ $(document).ready(function() {
         $submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Publicando...');
         
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php', type: 'POST', data: formData, dataType: 'json', contentType: false, processData: false,
+            url: './../AJAX/vehiculos_ajax.php', type: 'POST', data: formData, dataType: 'json', contentType: false, processData: false,
             success: function(response) {
                 if (response.status === 'success') {
                     $formMessage.html(`<div class="alert alert-success">${response.message}</div>`).show();
@@ -444,7 +444,7 @@ $(document).ready(function() {
     }
 
     function generarCaracteristicasPrincipales(datos) {
-        let caracteristicas = '🚗 **Características Destacadas:**\n';
+        let caracteristicas = 'Características Destacadas:\n';
         
         // Tipo de vehículo y subtipo
         if (datos.tipoVehiculo) {
@@ -483,7 +483,7 @@ $(document).ready(function() {
     }
 
     function generarEspecificacionesTecnicas(datos) {
-        let especificaciones = '⚙️ **Especificaciones Técnicas:**\n';
+        let especificaciones = 'Especificaciones Técnicas:\n';
         let tieneEspecificaciones = false;
         
         // Motor
@@ -536,7 +536,7 @@ $(document).ready(function() {
             return '';
         }
         
-        let extras = '✨ **Extras y Beneficios:**\n';
+        let extras = 'Extras y Beneficios:\n';
         
         datos.extras.forEach(extra => {
             extras += `• ${extra}\n`;
@@ -547,10 +547,10 @@ $(document).ready(function() {
 
     function generarLlamadaAccion(datos) {
         const llamadas = [
-            '📞 ¡No dejes pasar esta oportunidad! Contáctanos ahora para más información y agenda tu cita para verlo.',
-            '🤝 ¡Este vehículo no durará mucho en el mercado! Llámanos hoy mismo para más detalles.',
-            '💬 ¿Interesado? Escríbenos o llámanos para coordinar una visita y prueba de manejo.',
-            '⭐ ¡Tu próximo vehículo te está esperando! Contáctanos para más información y financiamiento.'
+            '¡No dejes pasar esta oportunidad! Contáctanos ahora para más información y agenda tu cita para verlo.',
+            '¡Este vehículo no durará mucho en el mercado! Llámanos hoy mismo para más detalles.',
+            '¿Interesado? Escríbenos o llámanos para coordinar una visita y prueba de manejo.',
+            '¡Tu próximo vehículo te está esperando! Contáctanos para más información y financiamiento.'
         ];
         
         let llamada = llamadas[Math.floor(Math.random() * llamadas.length)];

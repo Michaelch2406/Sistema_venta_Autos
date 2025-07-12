@@ -18,7 +18,7 @@ $(document).ready(function () {
         $submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Ingresando...');
 
         $.ajax({
-            url: '../AJAX/login_ajax.php',
+            url: './../AJAX/login_ajax.php',
             type: 'POST',
             data: formData,
             dataType: 'json',

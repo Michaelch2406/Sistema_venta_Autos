@@ -12,7 +12,7 @@ $(document).ready(function() {
             processing: true,
             serverSide: false, // Se cambiará a true si se implementa server-side processing completo
             ajax: {
-                url: '../AJAX/vehiculos_ajax.php?accion=getTodosLosVehiculosAdmin', // Esta acción necesita ser creada
+                url: './../AJAX/vehiculos_ajax.php?accion=getTodosLosVehiculosAdmin', // Esta acción necesita ser creada
                 type: 'GET',
                 dataType: 'json',
                 dataSrc: function(json) {
@@ -178,7 +178,7 @@ $(document).ready(function() {
         const accionOriginal = $('#accionConfirmar').val(); // 'aprobar', 'desactivar', 'reactivar', 'eliminar'
         const nuevoEstado = $('#nuevoEstadoConfirmar').val(); // 'disponible', 'desactivado', etc.
 
-        let urlAjax = '../AJAX/vehiculos_ajax.php';
+        let urlAjax = './../AJAX/vehiculos_ajax.php';
         let datosAjax = {
             accion: '', // Se determinará a continuación
             veh_id: vehId,

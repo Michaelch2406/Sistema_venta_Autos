@@ -7,7 +7,7 @@ session_start();
 
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../MODELOS/usuarios_m.php'; // Ajusta la ruta si es necesario
+require_once './../MODELOS/usuarios_m.php'; // Ajusta la ruta si es necesario
 
 $response = ['status' => 'error', 'message' => 'Solicitud no válida.'];
 

@@ -291,7 +291,7 @@ $(document).ready(function() {
         $filtrosForm.addClass('loading');
         
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php', 
+            url: './../AJAX/vehiculos_ajax.php', 
             type: 'GET', 
             data: { accion: 'getCatalogos' }, 
             dataType: 'json',
@@ -334,7 +334,7 @@ $(document).ready(function() {
         
         if (marcaId) {
             $.ajax({
-                url: '../AJAX/vehiculos_ajax.php', 
+                url: './../AJAX/vehiculos_ajax.php', 
                 type: 'GET', 
                 data: { accion: 'getModelos', marca_id: marcaId }, 
                 dataType: 'json',
@@ -500,7 +500,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php',
+            url: './../AJAX/vehiculos_ajax.php',
             type: 'GET',
             data: dataToSend,
             dataType: 'json',

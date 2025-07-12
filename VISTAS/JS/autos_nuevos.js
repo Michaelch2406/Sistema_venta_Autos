@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     function cargarFiltrosIniciales() {
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php',
+            url: './../AJAX/vehiculos_ajax.php',
             type: 'GET',
             data: { accion: 'getCatalogos', tipo_vehiculo: 'nuevo' },
             dataType: 'json',
@@ -63,7 +63,7 @@ $(document).ready(function() {
         if (!marcaId) return;
 
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php',
+            url: './../AJAX/vehiculos_ajax.php',
             type: 'GET',
             data: { accion: 'getModelos', marca_id: marcaId, tipo_vehiculo: 'nuevo' },
             dataType: 'json',
@@ -151,7 +151,7 @@ $(document).ready(function() {
         Object.keys(data).forEach(k => { if (data[k]===""||data[k]==null) delete data[k]; });
 
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php',
+            url: './../AJAX/vehiculos_ajax.php',
             type: 'GET', data, dataType: 'json',
             success: res => {
                 $loadingVehiculos.hide();

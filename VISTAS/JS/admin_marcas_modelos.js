@@ -198,7 +198,7 @@ $(document).ready(function() {
         }
         
         $.ajax({
-            url: '../AJAX/admin_catalogos_ajax.php', 
+            url: './../AJAX/admin_catalogos_ajax.php', 
             type: 'GET', 
             data: { accion: 'listarMarcas' }, 
             dataType: 'json',
@@ -318,7 +318,7 @@ $(document).ready(function() {
         $marcaFormFeedback.html('');
 
         $.ajax({
-            url: '../AJAX/admin_catalogos_ajax.php', 
+            url: './../AJAX/admin_catalogos_ajax.php', 
             type: 'POST', 
             data: $(this).serialize(), 
             dataType: 'json',
@@ -373,7 +373,7 @@ $(document).ready(function() {
         
         if (confirm(`¿Estás seguro de que quieres eliminar la marca "${marNombre}"? Esta acción no se puede deshacer y podría afectar a vehículos asociados si no se maneja la FK con ON DELETE CASCADE para modelos.`)) {
             $.ajax({
-                url: '../AJAX/admin_catalogos_ajax.php', 
+                url: './../AJAX/admin_catalogos_ajax.php', 
                 type: 'POST', 
                 data: { accion: 'eliminarMarca', mar_id: marId }, 
                 dataType: 'json',
@@ -404,7 +404,7 @@ $(document).ready(function() {
         $modelosTableBody.html('<tr><td colspan="3" class="text-center"><div class="spinner-border spinner-border-sm"></div> Cargando modelos...</td></tr>');
 
         $.ajax({
-            url: '../AJAX/admin_catalogos_ajax.php', 
+            url: './../AJAX/admin_catalogos_ajax.php', 
             type: 'GET', 
             data: { accion: 'listarModelos', marca_id: marcaId }, 
             dataType: 'json',
@@ -468,7 +468,7 @@ $(document).ready(function() {
         $modeloFormFeedback.html('');
 
         $.ajax({
-            url: '../AJAX/admin_catalogos_ajax.php', 
+            url: './../AJAX/admin_catalogos_ajax.php', 
             type: 'POST', 
             data: $(this).serialize(), 
             dataType: 'json',
@@ -509,7 +509,7 @@ $(document).ready(function() {
         
         if (confirm(`¿Estás seguro de que quieres eliminar el modelo "${modNombre}" de la marca "${marcaActualmenteSeleccionadaNombre}"?`)) {
             $.ajax({
-                url: '../AJAX/admin_catalogos_ajax.php', 
+                url: './../AJAX/admin_catalogos_ajax.php', 
                 type: 'POST', 
                 data: { accion: 'eliminarModelo', mod_id: modId }, 
                 dataType: 'json',

@@ -218,7 +218,7 @@ $(document).ready(function() {
         $refreshBtn.find('i').addClass('fa-spin');
 
         $.ajax({
-            url: '../AJAX/vehiculos_ajax.php',
+            url: './../AJAX/vehiculos_ajax.php',
             type: 'GET',
             data: { accion: 'getMisVehiculos' },
             dataType: 'json',
@@ -312,7 +312,7 @@ $(document).ready(function() {
             $confirmBtn.prop('disabled', true);
 
             $.ajax({
-                url: '../AJAX/vehiculos_ajax.php',
+                url: './../AJAX/vehiculos_ajax.php',
                 type: 'POST',
                 data: {
                     accion: 'cambiarEstadoVehiculo',

@@ -43,7 +43,7 @@ $(document).ready(function() {
         `);
         
         $.ajax({
-            url: '../AJAX/admin_catalogos_ajax.php',
+            url: './../AJAX/admin_catalogos_ajax.php',
             type: 'GET',
             data: { accion: 'listarTiposVehiculo' },
             dataType: 'json',
@@ -218,7 +218,7 @@ $(document).ready(function() {
         formData.set('tiv_activo', $tivActivoCheckbox.is(':checked') ? '1' : '0');
 
         $.ajax({
-            url: '../AJAX/admin_catalogos_ajax.php',
+            url: './../AJAX/admin_catalogos_ajax.php',
             type: 'POST',
             data: formData,
             processData: false, // Necesario para FormData
@@ -353,7 +353,7 @@ $(document).ready(function() {
             $btn.prop('disabled', true).html('<span class="loading-spinner me-2"></span>Eliminando...');
 
             $.ajax({
-                url: '../AJAX/admin_catalogos_ajax.php',
+                url: './../AJAX/admin_catalogos_ajax.php',
                 type: 'POST',
                 data: { accion: 'eliminarTipoVehiculo', tiv_id: tivId },
                 dataType: 'json',
