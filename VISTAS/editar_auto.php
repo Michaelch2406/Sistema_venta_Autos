@@ -1,27 +1,68 @@
 <?php
 session_start();
-// Solo administradores pueden editar cualquier vehículo por ahora.
-// Si se permite a los gestores editar sus propios vehículos, esta lógica necesitará ser más compleja.
-$rol_admin_id = 3; 
-if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
-    echo "<!DOCTYPE html><html><head><title>Acceso Denegado</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-danger'><h1>Acceso Denegado</h1><p>No tienes permisos para editar vehículos.</p><a href='escritorio.php' class='btn btn-primary'>Volver al Escritorio</a></div></body></html>";
+
+// --- 1. VALIDACIÓN DE ACCESO INICIAL ---
+if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id'])) {
+    header('Location: login.php');
     exit();
 }
 
+// --- 2. VALIDAR EL ID DEL VEHÍCULO ---
+// =========== ESTA ES LA VERSIÓN CORRECTA Y FINAL ===========
+// Se busca 'veh_id' en la URL, que es nuestro estándar.
 $veh_id_para_editar = isset($_GET['veh_id']) ? filter_var($_GET['veh_id'], FILTER_VALIDATE_INT) : null;
 
 if (!$veh_id_para_editar) {
-    echo "<!DOCTYPE html><html><head><title>Error</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Error</h1><p>No se especificó un ID de vehículo válido para editar.</p><a href='admin_vehiculos.php' class='btn btn-primary'>Volver al Listado</a></div></body></html>";
+    $volver_a = ($_SESSION['rol_id'] == 3) ? 'admin_vehiculos.php' : 'mis_vehiculos.php';
+    echo "<!DOCTYPE html><html><head><title>Error</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-warning'><h1>Error</h1><p>No se especificó un ID de vehículo válido.</p><a href='$volver_a' class='btn btn-primary'>Volver al Listado</a></div></body></html>";
     exit();
 }
 
+// --- 3. LÓGICA DE PERMISOS (Esta parte ya es correcta) ---
+$usuario_logueado_id = $_SESSION['usu_id'];
+$rol_usuario_logueado = $_SESSION['rol_id'];
+$es_admin = ($rol_usuario_logueado == 3);
+$tiene_permiso = false;
+
+if ($es_admin) {
+    $tiene_permiso = true;
+} else {
+    require_once __DIR__ . '/../CONFIG/Conexion.php';
+    try {
+        $conexion_obj = new Conexion();
+        $mysqli = $conexion_obj->conecta();
+        if ($mysqli) {
+            $stmt = $mysqli->prepare("SELECT usu_id_gestor FROM vehiculos WHERE veh_id = ?");
+            $stmt->bind_param("i", $veh_id_para_editar);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            if ($resultado->num_rows > 0) {
+                $vehiculo = $resultado->fetch_assoc();
+                if ($vehiculo['usu_id_gestor'] == $usuario_logueado_id) {
+                    $tiene_permiso = true;
+                }
+            }
+            $stmt->close();
+            $conexion_obj->cerrarConexion();
+        }
+    } catch (Exception $e) {
+        error_log("Error de conexión al verificar permisos en editar_auto.php: " . $e->getMessage());
+    }
+}
+
+// --- 4. ACCIÓN FINAL: PERMITIR O DENEGAR ACCESO ---
+if (!$tiene_permiso) {
+    $volver_a = ($_SESSION['rol_id'] == 3) ? 'admin_vehiculos.php' : 'mis_vehiculos.php';
+    echo "<!DOCTYPE html><html><head><title>Acceso Denegado</title><link href='./../Bootstrap/css/bootstrap.min.css' rel='stylesheet'></head><body class='container mt-5'><div class='alert alert-danger'><h1>Acceso Denegado</h1><p>No tienes los permisos necesarios para editar este vehículo.</p><a href='$volver_a' class='btn btn-primary'>Volver</a></div></body></html>";
+    exit();
+}
+
+$redirect_url_exito = $es_admin ? 'admin_vehiculos.php' : 'mis_vehiculos.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 $current_year = date('Y');
 $years_options = '';
-// El año seleccionado se establecerá con JS después de cargar los datos del vehículo
 for ($year = $current_year + 1; $year >= 1950; $year--) {
     $years_options .= "<option value=\"$year\">$year</option>";
 }
@@ -111,7 +152,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 <div class="row g-3" id="campos_placa_group" style="display: none;">
                                     <div class="col-md-4">
                                         <label for="veh_placa" class="form-label">Placa</label>
-                                        <input type="text" class="form-control" id="veh_placa" name="veh_placa" placeholder="ABC-1234" pattern="[A-Z]{3}-\d{3,4}" title="Formato: 3 letras, guion, 3 o 4 números (ej. PBY-1234)">
+                                        <input type="text" class="form-control" id="veh_placa" name="veh_placa" placeholder="ABC-1234" title="Formato: 3 letras, guion, 3 o 4 números (ej. PBY-1234)">
                                         <div class="invalid-feedback">Placa no válida. Formato: ABC-123 o ABC-1234.</div>
                                     </div>
                                     <div class="col-md-4">
@@ -224,6 +265,11 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                                 <label for="veh_descripcion" class="form-label">Descripción Adicional <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="veh_descripcion" name="veh_descripcion" rows="5" placeholder="Cuenta más sobre tu vehículo..." required></textarea>
                                 <div class="invalid-feedback">Ingresa una descripción para el vehículo.</div>
+                                <div class="text-end mt-2">
+        <button type="button" class="btn btn-outline-info btn-sm" id="btnGenerarDescripcion">
+            <i class="bi bi-robot me-1"></i>Generar descripción automática
+        </button>
+    </div>
                             </div>
                         </div>
                     </div>
@@ -260,7 +306,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
                 </div>
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5 mb-4">
-                    <a href="admin_vehiculos.php" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+                    <a href="<?php echo $redirect_url_exito; ?>" class="btn btn-outline-secondary btn-lg">Cancelar</a>
                     <button type="submit" class="btn btn-success btn-lg px-5">
                         <i class="bi bi-save-fill me-2"></i>Guardar Cambios
                     </button>
@@ -271,6 +317,11 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
     </main>
     <?php include __DIR__ . './partials/footer.php'; ?>
 
+
+    <script>
+        // Variable global para que el JS sepa a dónde redirigir
+        const REDIRECT_URL_ON_SUCCESS = "<?php echo $redirect_url_exito; ?>";
+    </script>
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="./JS/global.js"></script>

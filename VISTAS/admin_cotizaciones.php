@@ -49,8 +49,8 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id'])) {
     die("Error: Sesión de administrador no iniciada. Por favor, inicie sesión. (admin_cotizaciones.php)");
 }
 
-if ($_SESSION['rol_id'] != 3) {
-    die("Acceso denegado. Esta sección es solo para administradores (Rol: " . htmlspecialchars($_SESSION['rol_id']) . "). (admin_cotizaciones.php)");
+if ($_SESSION['rol_id'] != 3 && $_SESSION['rol_id'] != 2) {
+    die("Acceso denegado. Esta sección es solo para administradores o rol permitido (Rol: " . htmlspecialchars($_SESSION['rol_id']) . "). (admin_cotizaciones.php)");
 }
 
 // Nombre de usuario del admin para mostrar en la UI

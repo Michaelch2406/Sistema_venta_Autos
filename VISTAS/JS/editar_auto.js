@@ -31,11 +31,8 @@ $(document).ready(function () {
     const loader = $('#page-loader'); // Apuntamos al loader que ya existe
 
     if (mostrar) {
-        // Simplemente lo mostramos.
-        // Asumimos que su CSS ya lo posiciona en el centro como un overlay.
         loader.show(); 
     } else {
-        // Lo ocultamos.
         loader.hide();
     }
 }
@@ -72,31 +69,25 @@ $(document).ready(function () {
             await cargarOpcionesSelect(config.id, config.url, config.tipo, vehiculoData[$(config.id).attr('name')]);
         }
         
-        // Una vez cargada la marca, cargar modelos y seleccionar el modelo del vehículo
         if (vehiculoData.mar_id) {
             await cargarOpcionesSelect('#mod_id', `./../AJAX/vehiculos_ajax.php?accion=getModelos&marca_id=${vehiculoData.mar_id}`, 'modelos', vehiculoData.mod_id);
             $('#mod_id').prop('disabled', false);
         }
 
-        // Una vez cargada la provincia de ubicación, cargar ciudades y seleccionar
         if (vehiculoData.veh_ubicacion_provincia) {
             await cargarOpcionesSelect('#veh_ubicacion_ciudad', `./../AJAX/vehiculos_ajax.php?accion=getCiudades&provincia=${encodeURIComponent(vehiculoData.veh_ubicacion_provincia)}`, 'ciudades', vehiculoData.veh_ubicacion_ciudad);
             $('#veh_ubicacion_ciudad').prop('disabled', false);
         }
         
-        // Poblar campos de texto y otros selects
         $('#veh_subtipo_vehiculo').val(vehiculoData.veh_subtipo_vehiculo);
-        $('#veh_condicion').val(vehiculoData.veh_condicion).trigger('change'); // Trigger change para lógica de km/placa
+        $('#veh_condicion').val(vehiculoData.veh_condicion).trigger('change');
         $('#veh_anio').val(vehiculoData.veh_anio);
         $('#veh_kilometraje').val(vehiculoData.veh_kilometraje);
-        $('#veh_placa').val(vehiculoData.veh_placa);
-        // Si veh_placa_provincia_origen ya fue cargado por selectsConfig, solo se re-selecciona si es necesario.
-        // Si no, se puede cargar aquí específicamente si no estaba en selectsConfig.
+        $('#veh_placa').val(vehiculoData.veh_placa).trigger('input'); // Trigger input para que la lógica de placas se ejecute al cargar
         $('#veh_ultimo_digito_placa').val(vehiculoData.veh_ultimo_digito_placa);
         $('#veh_precio').val(parseFloat(vehiculoData.veh_precio).toFixed(2));
         $('#veh_vin').val(vehiculoData.veh_vin);
         
-        // Formatear fecha para input type="date" (YYYY-MM-DD)
         if (vehiculoData.veh_fecha_publicacion) {
             $('#veh_fecha_publicacion').val(vehiculoData.veh_fecha_publicacion.split(' ')[0]);
         }
@@ -112,18 +103,15 @@ $(document).ready(function () {
         $('#veh_sistema_climatizacion').val(vehiculoData.veh_sistema_climatizacion);
         $('#veh_descripcion').val(vehiculoData.veh_descripcion);
 
-        // Poblar checkboxes de detalles_extra
         if (vehiculoData.veh_detalles_extra) {
             const extras = vehiculoData.veh_detalles_extra.split(',').map(extra => extra.trim());
             extras.forEach(extra => {
                 $(`input[name="veh_detalles_extra[]"][value="${extra}"]`).prop('checked', true);
             });
         }
-        // Lógica de visibilidad para campos de usado (similar a publicar_vehiculo.js)
         toggleCamposVehiculoUsado(vehiculoData.veh_condicion === 'usado');
     }
 
-    // --- LÓGICA DE CARGA DE SELECTS (reutilizada de publicar_vehiculo.js, adaptada para async/await) ---
     async function cargarOpcionesSelect(selectId, url, tipoDato, valorSeleccionado = null) {
         try {
             const response = await $.ajax({ url: url, type: 'GET', dataType: 'json' });
@@ -142,17 +130,16 @@ $(document).ready(function () {
                     if (tipoDato === 'marcas') { value = item.mar_id; text = item.mar_nombre; }
                     else if (tipoDato === 'modelos') { value = item.mod_id; text = item.mod_nombre; }
                     else if (tipoDato === 'tipos_vehiculo') { value = item.tiv_id; text = item.tiv_nombre; }
-                    else { value = item; text = item; } // Provincias y Ciudades
+                    else { value = item; text = item; }
                     select.append($('<option>', { value: value, text: text }));
                 });
                 if (valorSeleccionado) {
                     select.val(valorSeleccionado);
                 }
-                 // Habilitar el select si antes estaba deshabilitado (ej. modelos, ciudades)
                 if (select.prop('disabled') && datos.length > 0) {
                     select.prop('disabled', false);
                 } else if (datos.length === 0 && (selectId === '#mod_id' || selectId === '#veh_ubicacion_ciudad')) {
-                     select.prop('disabled', true); // Mantener deshabilitado si no hay opciones
+                     select.prop('disabled', true);
                 }
 
             } else { throw new Error(response.message || `Error cargando ${tipoDato}`); }
@@ -162,7 +149,6 @@ $(document).ready(function () {
         }
     }
     
-    // Event listeners para selects dependientes (marcas -> modelos, provincias -> ciudades)
     $('#mar_id').change(function () {
         const marcaId = $(this).val();
         if (marcaId) {
@@ -183,7 +169,6 @@ $(document).ready(function () {
         }
     });
     
-    // Lógica de visibilidad para campos de vehículo usado (similar a publicar_vehiculo.js)
     $('#veh_condicion').change(function () {
         toggleCamposVehiculoUsado($(this).val() === 'usado');
     });
@@ -200,18 +185,11 @@ $(document).ready(function () {
             kilometrajeDiv.show();
             kmInput.prop('required', true).attr('placeholder', 'Ej: 25000');
             $('#label_kilometraje').html('Recorrido (km) <span class="text-danger">*</span>');
-            
             camposPlacaGroup.show();
-            // Hacer que los campos de placa sean requeridos es opcional, depende de la lógica de negocio.
-            // Por ahora, los mantenemos opcionales pero visibles.
-            // placaInput.prop('required', true);
-            // placaProvinciaSelect.prop('required', true);
-            // ultimoDigitoSelect.prop('required', true);
-        } else { // Nuevo
-            kilometrajeDiv.show(); // Mantener visible pero no requerido y con valor 0
+        } else {
+            kilometrajeDiv.show();
             kmInput.prop('required', false).val('0').attr('placeholder', '0 (Nuevo)');
             $('#label_kilometraje').html('Recorrido (km)');
-            
             camposPlacaGroup.hide();
             placaInput.prop('required', false);
             placaProvinciaSelect.prop('required', false);
@@ -219,7 +197,7 @@ $(document).ready(function () {
         }
     }
 
-    // --- MANEJO DE IMÁGENES ---
+    // --- MANEJO DE IMÁGENES --- (Sin cambios, ya funciona)
     function renderizarImagenesActuales() {
         currentImagesPreviewContainer.empty();
         if (imagenesActuales.length === 0) {
@@ -228,23 +206,12 @@ $(document).ready(function () {
         }
 
         imagenesActuales.forEach(img => {
-            if (imagenesAEliminar.includes(img.ima_id)) return; // No renderizar si está marcada para eliminar
-
-            // La URL de la imagen ya debería venir correcta del backend (ej: ../PUBLIC/uploads/...)
-            // Si viene como PUBLIC/uploads/... , el ../ se añade aquí
+            if (imagenesAEliminar.includes(img.ima_id)) return;
             let imgUrlCorrected = img.ima_url;
             if (imgUrlCorrected && !imgUrlCorrected.startsWith('../')) {
                  imgUrlCorrected = '../' + imgUrlCorrected;
             }
-
-
-            const wrapper = $(`
-                <div class="img-preview-wrapper" data-id="${img.ima_id}">
-                    <img src="${imgUrlCorrected}" alt="Imagen actual">
-                    <button type="button" class="btn btn-danger btn-sm btn-remove-img" title="Eliminar esta imagen"><i class="bi bi-trash"></i></button>
-                </div>
-            `);
-            
+            const wrapper = $(`<div class="img-preview-wrapper" data-id="${img.ima_id}"><img src="${imgUrlCorrected}" alt="Imagen actual"><button type="button" class="btn btn-danger btn-sm btn-remove-img" title="Eliminar esta imagen"><i class="bi bi-trash"></i></button></div>`);
             if (img.ima_es_principal) {
                 imagenPrincipalActualId = img.ima_id;
                 wrapper.append('<span class="badge bg-success badge-principal">Principal</span>');
@@ -258,69 +225,47 @@ $(document).ready(function () {
              currentImagesPreviewContainer.html('<small class="text-muted align-self-center mx-auto">Todas las imágenes han sido marcadas para eliminar. Añade nuevas imágenes.</small>');
          }
     }
-
     currentImagesPreviewContainer.on('click', '.btn-remove-img', function () {
         const imageId = $(this).closest('.img-preview-wrapper').data('id');
         if (imageId) {
-            imagenesAEliminar.push(String(imageId)); // Guardar como string para consistencia con hidden input
-            $(this).closest('.img-preview-wrapper').hide(); // Ocultar en lugar de remover para posible "deshacer"
-            // Si la imagen eliminada era la principal, resetear
+            imagenesAEliminar.push(String(imageId));
+            $(this).closest('.img-preview-wrapper').hide();
             if (imagenPrincipalActualId == imageId) {
                 imagenPrincipalActualId = null; 
-                // Aquí se podría intentar marcar otra como principal automáticamente, o requerir al usuario.
             }
             $('#imagenes_a_eliminar_form').val(imagenesAEliminar.join(','));
-            // Re-renderizar para actualizar botones de "principal" si es necesario
-            // O simplemente ocultar el wrapper y manejar la lógica de principal al enviar.
              if ($('#currentImagesPreviewContainer .img-preview-wrapper:visible').length === 0) {
                 currentImagesPreviewContainer.html('<small class="text-muted align-self-center mx-auto">Todas las imágenes han sido marcadas para eliminar. Añade nuevas imágenes.</small>');
             }
         }
     });
-
     currentImagesPreviewContainer.on('click', '.btn-set-principal', function () {
         const imageId = $(this).closest('.img-preview-wrapper').data('id');
         imagenPrincipalActualId = imageId;
-        nuevaImagenPrincipalNombreTemporal = null; // Si se establece una actual como principal, anular nueva candidata
-        
-        // Actualizar UI
+        nuevaImagenPrincipalNombreTemporal = null;
         $('#currentImagesPreviewContainer .img-preview-wrapper').removeClass('border-success border-2');
         $('#currentImagesPreviewContainer .badge-principal').remove();
         $('#currentImagesPreviewContainer .btn-set-principal').show();
-
         const wrapperSeleccionado = $(this).closest('.img-preview-wrapper');
         wrapperSeleccionado.addClass('border-success border-2');
         wrapperSeleccionado.find('.btn-set-principal').hide();
         wrapperSeleccionado.append('<span class="badge bg-success badge-principal">Principal</span>');
-        
-        // También desmarcar cualquier nueva imagen que se haya marcado como principal
         $('#newImagePreviewContainer .img-preview-wrapper').removeClass('border-primary border-2');
         $('#newImagePreviewContainer .badge-principal-nueva').remove();
         $('#newImagePreviewContainer .btn-set-nueva-principal').show();
     });
-
-    // Manejo de nuevas imágenes (similar a publicar_vehiculo.js)
     $('#veh_imagenes_nuevas').on('change', function (event) {
         imagePreviewContainer.empty().html('<small class="text-muted align-self-center mx-auto">Previsualización de nuevas imágenes aparecerá aquí...</small>');
         uploadedFiles = Array.from(event.target.files);
-        let hasProvisionalPrincipal = false; // Para marcar solo la primera nueva como principal provisionalmente
-
         if (uploadedFiles.length > 0) {
-            imagePreviewContainer.empty(); // Limpiar mensaje "Previsualización..."
+            imagePreviewContainer.empty();
         }
-
         uploadedFiles.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function (e) {
-                const wrapper = $(`
-                    <div class="img-preview-wrapper" data-filename="${file.name}">
-                        <img src="${e.target.result}" alt="${file.name}">
-                        <button type="button" class="btn btn-danger btn-sm btn-remove-new-img" title="Eliminar esta nueva imagen"><i class="bi bi-x-lg"></i></button>
-                    </div>`);
-                
-                // Si no hay una imagen principal actual Y esta es la primera nueva imagen, marcarla provisionalmente.
+                const wrapper = $(`<div class="img-preview-wrapper" data-filename="${file.name}"><img src="${e.target.result}" alt="${file.name}"><button type="button" class="btn btn-danger btn-sm btn-remove-new-img" title="Eliminar esta nueva imagen"><i class="bi bi-x-lg"></i></button></div>`);
                 if (!imagenPrincipalActualId && !nuevaImagenPrincipalNombreTemporal && index === 0) {
-                    wrapper.addClass('border-primary border-2'); // Estilo para nueva principal
+                    wrapper.addClass('border-primary border-2');
                     wrapper.append('<span class="badge bg-info badge-principal-nueva">Principal (Nueva)</span>');
                     nuevaImagenPrincipalNombreTemporal = file.name;
                 } else {
@@ -331,16 +276,12 @@ $(document).ready(function () {
             reader.readAsDataURL(file);
         });
     });
-    
     imagePreviewContainer.on('click', '.btn-remove-new-img', function () {
         const fileNameToRemove = $(this).closest('.img-preview-wrapper').data('filename');
         uploadedFiles = uploadedFiles.filter(file => file.name !== fileNameToRemove);
         $(this).closest('.img-preview-wrapper').remove();
-        
-        // Si la imagen eliminada era la principal provisional, resetear
         if (nuevaImagenPrincipalNombreTemporal === fileNameToRemove) {
             nuevaImagenPrincipalNombreTemporal = null;
-            // Si quedan otras imágenes nuevas, marcar la primera de ellas como principal provisional
             if (uploadedFiles.length > 0) {
                 const firstNewImageWrapper = $('#newImagePreviewContainer .img-preview-wrapper').first();
                 if (firstNewImageWrapper.length) {
@@ -354,83 +295,58 @@ $(document).ready(function () {
         if (imagePreviewContainer.is(':empty') && uploadedFiles.length === 0) {
             imagePreviewContainer.html('<small class="text-muted align-self-center mx-auto">Previsualización de nuevas imágenes aparecerá aquí...</small>');
         }
-        // Actualizar el input file (recreándolo o limpiándolo) para reflejar los archivos eliminados
         const dt = new DataTransfer();
         uploadedFiles.forEach(file => dt.items.add(file));
         $('#veh_imagenes_nuevas')[0].files = dt.files;
     });
-
     imagePreviewContainer.on('click', '.btn-set-nueva-principal', function () {
         const fileName = $(this).closest('.img-preview-wrapper').data('filename');
         nuevaImagenPrincipalNombreTemporal = fileName;
-        imagenPrincipalActualId = null; // Anular la principal actual si se elige una nueva
-
-        // Actualizar UI para nuevas imágenes
+        imagenPrincipalActualId = null;
         $('#newImagePreviewContainer .img-preview-wrapper').removeClass('border-primary border-2');
         $('#newImagePreviewContainer .badge-principal-nueva').remove();
         $('#newImagePreviewContainer .btn-set-nueva-principal').show();
-        
         const wrapperSeleccionado = $(this).closest('.img-preview-wrapper');
         wrapperSeleccionado.addClass('border-primary border-2');
         wrapperSeleccionado.find('.btn-set-nueva-principal').hide();
         wrapperSeleccionado.append('<span class="badge bg-info badge-principal-nueva">Principal (Nueva)</span>');
-
-        // Desmarcar cualquier imagen actual que fuera principal
         $('#currentImagesPreviewContainer .img-preview-wrapper').removeClass('border-success border-2');
         $('#currentImagesPreviewContainer .badge-principal').remove();
-        $('#currentImagesPreviewContainer .btn-set-principal').show(); // Mostrar botón para marcar como principal en todas las actuales
+        $('#currentImagesPreviewContainer .btn-set-principal').show();
     });
 
-
-    // --- ENVÍO DEL FORMULARIO ---
+    // --- ENVÍO DEL FORMULARIO --- (Sin cambios, ya funciona)
     publicarVehiculoForm.on('submit', function (event) {
         event.preventDefault();
         event.stopPropagation();
-
         if (!this.checkValidity()) {
             $(this).addClass('was-validated');
             mostrarAlerta('warning', 'Por favor, corrige los errores en el formulario.');
             return;
         }
         $(this).addClass('was-validated');
-
-        // Validar que haya al menos una imagen (ya sea actual no eliminada o nueva)
         const totalImagenesVisibles = $('#currentImagesPreviewContainer .img-preview-wrapper:visible').length + uploadedFiles.length;
         if (totalImagenesVisibles === 0) {
              mostrarAlerta('error', 'Debes tener al menos una imagen para el vehículo (ya sea existente o nueva).');
              return;
         }
-        // Validar que haya una imagen principal seleccionada
         if (!imagenPrincipalActualId && !nuevaImagenPrincipalNombreTemporal) {
             mostrarAlerta('error', 'Debes seleccionar una imagen como principal.');
             return;
         }
-
-
         const formData = new FormData(this);
-        formData.delete('veh_imagenes_nuevas[]'); // Eliminar el array original de nuevas imágenes
-        uploadedFiles.forEach(file => { // Añadir las nuevas imágenes filtradas
-            formData.append('veh_imagenes_nuevas[]', file);
-        });
-        
-        // Añadir IDs de imágenes a eliminar y la nueva principal
+        formData.delete('veh_imagenes_nuevas[]');
+        uploadedFiles.forEach(file => { formData.append('veh_imagenes_nuevas[]', file); });
         formData.set('imagenes_a_eliminar', imagenesAEliminar.join(','));
-        formData.set('imagen_principal_actual_id', imagenPrincipalActualId || ''); // ID de la imagen existente marcada como principal
-        formData.set('nueva_imagen_principal_nombre_temporal', nuevaImagenPrincipalNombreTemporal || ''); // Nombre de archivo de la nueva imagen marcada como principal
-
+        formData.set('imagen_principal_actual_id', imagenPrincipalActualId || '');
+        formData.set('nueva_imagen_principal_nombre_temporal', nuevaImagenPrincipalNombreTemporal || '');
         mostrarOverlayCarga(true);
-
         $.ajax({
-            url: './../AJAX/vehiculos_ajax.php', // Acción 'actualizarVehiculo' está en el FormData
-            type: 'POST',
-            data: formData,
-            dataType: 'json',
-            contentType: false,
-            processData: false,
+            url: './../AJAX/vehiculos_ajax.php', type: 'POST', data: formData, dataType: 'json', contentType: false, processData: false,
             success: function (response) {
                 if (response.status === 'success') {
                     mostrarAlerta('success', response.message || 'Vehículo actualizado con éxito. Redirigiendo...', () => {
-                        window.location.href = 'admin_vehiculos.php';
+                        window.location.href = REDIRECT_URL_ON_SUCCESS;
                     });
                 } else {
                     mostrarAlerta('error', response.message || 'Error al actualizar el vehículo.');
@@ -448,6 +364,156 @@ $(document).ready(function () {
     });
 
 
-    // Función de alerta (asumimos que está en global.js o se define aquí)
-    // function mostrarAlerta(tipo, mensaje, callback) { ... }
+    // ===== INICIO: ALGORITMO DE GENERACIÓN DE DESCRIPCIÓN (COPIADO DE PUBLICAR_VEHICULO.JS) =====
+    function generarDescripcionVehiculo() {
+        const datos = {
+            marca: $('#mar_id option:selected').text() || '',
+            modelo: $('#mod_id option:selected').text() || '',
+            tipoVehiculo: $('#tiv_id option:selected').text() || '',
+            subtipo: $('#veh_subtipo_vehiculo').val() || '',
+            condicion: $('#veh_condicion').val() || '',
+            anio: $('#veh_anio').val() || '',
+            kilometraje: $('#veh_kilometraje').val() || '',
+            precio: $('#veh_precio').val() || '',
+            provincia: $('#veh_ubicacion_provincia').val() || '',
+            ciudad: $('#veh_ubicacion_ciudad').val() || '',
+            colorExterior: $('#veh_color_exterior').val() || '',
+            colorInterior: $('#veh_color_interior').val() || '',
+            detallesMotor: $('#veh_detalles_motor').val() || '',
+            transmision: $('#veh_tipo_transmision').val() || '',
+            traccion: $('#veh_traccion').val() || '',
+            combustible: $('#veh_tipo_combustible').val() || '',
+            direccion: $('#veh_tipo_direccion').val() || '',
+            vidrios: $('#veh_tipo_vidrios').val() || '',
+            climatizacion: $('#veh_sistema_climatizacion').val() || '',
+            extras: $('input[name="veh_detalles_extra[]"]:checked').map(function() { return $(this).val(); }).get(),
+            placa: $('#veh_placa').val() || '',
+            placaProvincia: $('#veh_placa_provincia_origen').val() || '',
+            ultimoDigito: $('#veh_ultimo_digito_placa').val() || ''
+        };
+        if (!(datos.marca && datos.marca !== 'Selecciona marca...' && datos.modelo && datos.modelo !== 'Selecciona modelo...' && datos.anio && datos.precio)) {
+            return null;
+        }
+        let descripcion = '';
+        const frasesIntro = [ `¡Descubre este increíble ${datos.marca} ${datos.modelo} ${datos.anio}!`, `Te presentamos este espectacular ${datos.marca} ${datos.modelo} ${datos.anio}.`, `¡Oportunidad única! ${datos.marca} ${datos.modelo} ${datos.anio} en excelente estado.`, `No te pierdas este magnífico ${datos.marca} ${datos.modelo} ${datos.anio}.` ];
+        let intro = frasesIntro[Math.floor(Math.random() * frasesIntro.length)];
+        if (datos.condicion === 'nuevo') { intro += ' Este vehículo completamente nuevo te ofrece la última tecnología y garantía de fábrica.';
+        } else if (datos.condicion === 'usado' && datos.kilometraje) {
+            const km = parseInt(datos.kilometraje);
+            if (km < 20000) intro += ' Con muy poco recorrido, prácticamente como nuevo.';
+            else if (km < 50000) intro += ' Con un recorrido moderado y excelente mantenimiento.';
+            else if (km < 100000) intro += ' Con un historial de uso responsable y cuidadoso.';
+            else intro += ' Un vehículo con experiencia que aún tiene mucho que ofrecer.';
+        }
+        descripcion += intro + '\n\n';
+        let caracteristicas = 'Características Destacadas:\n';
+        if (datos.tipoVehiculo) { caracteristicas += `• Tipo: ${datos.tipoVehiculo}${datos.subtipo ? ` (${datos.subtipo})` : ''}\n`; }
+        if (datos.anio) { caracteristicas += `• Año de fabricación: ${datos.anio}\n`; }
+        if (datos.kilometraje && datos.condicion === 'usado') { caracteristicas += `• Recorrido: ${parseInt(datos.kilometraje).toLocaleString()} km\n`; }
+        if (datos.colorExterior) { caracteristicas += `• Color exterior: ${datos.colorExterior}${datos.colorInterior ? ` / Interior: ${datos.colorInterior}` : ''}\n`; }
+        if (datos.ciudad && datos.provincia) { caracteristicas += `• Ubicación: ${datos.ciudad}, ${datos.provincia}\n`; }
+        descripcion += caracteristicas + '\n';
+        let especificaciones = 'Especificaciones Técnicas:\n';
+        let tieneEspecificaciones = false;
+        if (datos.detallesMotor) { especificaciones += `• Motor: ${datos.detallesMotor}\n`; tieneEspecificaciones = true; }
+        if (datos.transmision) { especificaciones += `• Transmisión: ${datos.transmision}\n`; tieneEspecificaciones = true; }
+        if (datos.traccion) { especificaciones += `• Tracción: ${datos.traccion}\n`; tieneEspecificaciones = true; }
+        if (datos.combustible) { especificaciones += `• Combustible: ${datos.combustible}\n`; tieneEspecificaciones = true; }
+        if (datos.direccion) { especificaciones += `• Dirección: ${datos.direccion}\n`; tieneEspecificaciones = true; }
+        if (datos.vidrios) { especificaciones += `• Vidrios: ${datos.vidrios}\n`; tieneEspecificaciones = true; }
+        if (datos.climatizacion && datos.climatizacion !== 'Ninguno') { especificaciones += `• Climatización: ${datos.climatizacion}\n`; tieneEspecificaciones = true; }
+        if(tieneEspecificaciones) descripcion += especificaciones + '\n';
+        if (datos.extras.length > 0) {
+            let extrasTxt = 'Extras y Beneficios:\n';
+            datos.extras.forEach(extra => { extrasTxt += `• ${extra}\n`; });
+            descripcion += extrasTxt + '\n';
+        }
+        const llamadas = [ '¡No dejes pasar esta oportunidad! Contáctanos ahora para más información y agenda tu cita para verlo.', '¡Este vehículo no durará mucho en el mercado! Llámanos hoy mismo para más detalles.', '¿Interesado? Escríbenos o llámanos para coordinar una visita y prueba de manejo.', '¡Tu próximo vehículo te está esperando! Contáctanos para más información y financiamiento.' ];
+        let llamada = llamadas[Math.floor(Math.random() * llamadas.length)];
+        if (datos.extras.includes('Negociable')) llamada += ' ¡Precio negociable!';
+        if (datos.extras.includes('Acepto Vehiculo Como Parte de Pago')) llamada += ' Aceptamos tu vehículo como parte de pago.';
+        descripcion += llamada;
+        return descripcion.trim();
+    }
+    $('#btnGenerarDescripcion').on('click', function() { // Suponiendo que tienes un botón con este ID en editar_auto.php
+        const $boton = $(this);
+        const $textarea = $('#veh_descripcion');
+        const textoOriginal = $boton.html();
+        $boton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Generando...');
+        setTimeout(function() {
+            try {
+                const descripcionGenerada = generarDescripcionVehiculo();
+                if (descripcionGenerada) {
+                    const contenidoActual = $textarea.val().trim();
+                    if (contenidoActual && !confirm('Ya hay contenido en la descripción. ¿Deseas reemplazarlo?')) {
+                        // No hacer nada si el usuario cancela
+                    } else {
+                        $textarea.val(descripcionGenerada).removeClass('is-invalid is-valid');
+                    }
+                } else {
+                    alert('Para generar la descripción automática, completa al menos: Marca, Modelo, Año y Precio.');
+                }
+            } catch (error) {
+                console.error('Error al generar descripción:', error);
+                alert('Ocurrió un error al generar la descripción.');
+            }
+            $boton.prop('disabled', false).html(textoOriginal);
+        }, 500);
+    });
+    // ===== FIN: ALGORITMO DE GENERACIÓN DE DESCRIPCIÓN =====
+
+    // ===== INICIO: LÓGICA DE PLACAS ECUATORIANAS (COPIADO DE PUBLICAR_VEHICULO.JS) =====
+    const placasEcuadorMap = {
+        'A': 'Azuay', 'B': 'Bolívar', 'C': 'Carchi', 'E': 'Esmeraldas', 'G': 'Guayas',
+        'H': 'Chimborazo', 'I': 'Imbabura', 'J': 'Santo Domingo de los Tsáchilas',
+        'K': 'Sucumbíos', 'L': 'Loja', 'M': 'Manabí', 'N': 'Napo', 'O': 'El Oro',
+        'P': 'Pichincha', 'Q': 'Orellana', 'R': 'Los Ríos', 'S': 'Pastaza', 'T': 'Tungurahua',
+        'U': 'Cañar', 'V': 'Morona Santiago', 'W': 'Galápagos', 'X': 'Cotopaxi',
+        'Y': 'Santa Elena', 'Z': 'Zamora Chinchipe'
+    };
+    function obtenerProvinciaPorPlaca(placa) {
+        if (typeof placa !== 'string' || placa.length === 0) return null;
+        return placasEcuadorMap[placa.toUpperCase()[0]] || null;
+    }
+    function obtenerUltimoDigitoPlaca(placa) {
+        if (typeof placa !== 'string' || placa.length < 1) return null;
+        const digitos = placa.match(/\d/g);
+        return digitos ? digitos[digitos.length - 1] : null;
+    }
+    function aplicarEfectoAutoLlenado($elemento) {
+        $elemento.addClass('auto-filled');
+        setTimeout(() => { $elemento.removeClass('auto-filled'); }, 1500);
+    }
+    $('#veh_placa').on('input', function() {
+        let valor = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (valor.length > 3) { valor = valor.substring(0, 3) + '-' + valor.substring(3, 7); }
+        $(this).val(valor);
+
+        if ($('#veh_condicion').val() === 'usado') {
+            const placaInput = $(this).val();
+            const $provinciaSelect = $('#veh_placa_provincia_origen');
+            const $ultimoDigitoSelect = $('#veh_ultimo_digito_placa');
+            
+            const provinciaDetectada = obtenerProvinciaPorPlaca(placaInput);
+            if (provinciaDetectada) {
+                if ($provinciaSelect.val() !== provinciaDetectada) {
+                    $provinciaSelect.val(provinciaDetectada);
+                    aplicarEfectoAutoLlenado($provinciaSelect);
+                }
+            } else {
+                $provinciaSelect.val('');
+            }
+            
+            const ultimoDigitoDetectado = obtenerUltimoDigitoPlaca(placaInput);
+            if (ultimoDigitoDetectado !== null) {
+                if ($ultimoDigitoSelect.val() !== ultimoDigitoDetectado) {
+                    $ultimoDigitoSelect.val(ultimoDigitoDetectado);
+                    aplicarEfectoAutoLlenado($ultimoDigitoSelect);
+                }
+            } else {
+                $ultimoDigitoSelect.val('');
+            }
+        }
+    });
+    // ===== FIN: LÓGICA DE PLACAS ECUATORIANAS =====
 });

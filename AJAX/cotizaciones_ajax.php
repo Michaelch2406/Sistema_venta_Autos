@@ -105,7 +105,7 @@ switch ($action) {
         break;
 
     case 'obtener_detalle_cotizacion_admin':
-        $admin_id = verificar_sesion_y_rol([3]); 
+        $admin_id = verificar_sesion_y_rol([3, 2]); 
         $cot_id = filter_input(INPUT_GET, 'id_cotizacion', FILTER_VALIDATE_INT);
 
         if (!$cot_id) {
@@ -121,7 +121,7 @@ switch ($action) {
         break;
 
     case 'cambiar_estado_cotizacion':
-        $admin_id = verificar_sesion_y_rol([3]);
+        $admin_id = verificar_sesion_y_rol([3, 2]);
         $cot_id = filter_input(INPUT_POST, 'id_cotizacion', FILTER_VALIDATE_INT);
         // Sanitizar el string, aunque el SP usa ENUM que es más seguro.
         $nuevo_estado_raw = filter_input(INPUT_POST, 'nuevo_estado', FILTER_SANITIZE_STRING); 
@@ -148,7 +148,7 @@ switch ($action) {
         break;
 
     case 'guardar_notas_admin':
-        $admin_id = verificar_sesion_y_rol([3]);
+        $admin_id = verificar_sesion_y_rol([3, 2]);
         $cot_id = filter_input(INPUT_POST, 'id_cotizacion', FILTER_VALIDATE_INT);
         $notas = isset($_POST['notas_internas']) ? $_POST['notas_internas'] : ''; // Permitir string vacío
         // Sanitizar si es necesario, aunque TEXT en BD y PDO suelen manejar bien muchos caracteres.

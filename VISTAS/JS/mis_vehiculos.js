@@ -86,126 +86,130 @@ $(document).ready(function() {
     }
 
     // Función para mostrar vehículos en el DOM
-    function mostrarVehiculos(vehiculos) {
-        $listaVehiculosContainer.find('.vehiculo-item-col').remove();
-        $noVehiculosMessage.hide();
-        $noResultsMessage.hide();
+    // Función para mostrar vehículos en el DOM
+function mostrarVehiculos(vehiculos) {
+    $listaVehiculosContainer.find('.vehiculo-item-col').remove();
+    $noVehiculosMessage.hide();
+    $noResultsMessage.hide();
 
-        if (vehiculos.length === 0) {
-            if (vehiculosData.length === 0) {
-                $noVehiculosMessage.show();
-            } else {
-                $noResultsMessage.show();
-            }
-            return;
+    if (vehiculos.length === 0) {
+        if (vehiculosData.length === 0) {
+            $noVehiculosMessage.show();
+        } else {
+            $noResultsMessage.show();
+        }
+        return;
+    }
+
+    vehiculos.forEach((vehiculo, index) => {
+        let imagenUrl = vehiculo.imagen_principal_url ? vehiculo.imagen_principal_url : '../PUBLIC/Img/auto_placeholder.png';
+        
+        if (imagenUrl.startsWith('PUBLIC/')) {
+            imagenUrl = '../' + imagenUrl;
         }
 
-        vehiculos.forEach((vehiculo, index) => {
-            let imagenUrl = vehiculo.imagen_principal_url ? vehiculo.imagen_principal_url : '../PUBLIC/Img/auto_placeholder.png';
-            
-            if (imagenUrl.startsWith('PUBLIC/')) {
-                imagenUrl = '../' + imagenUrl;
-            }
+        let estadoClass = 'estado-' + vehiculo.veh_estado.toLowerCase();
+        let estadoTexto = vehiculo.veh_estado.charAt(0).toUpperCase() + vehiculo.veh_estado.slice(1);
 
-            let estadoClass = 'estado-' + vehiculo.veh_estado.toLowerCase();
-            let estadoTexto = vehiculo.veh_estado.charAt(0).toUpperCase() + vehiculo.veh_estado.slice(1);
-
-            const vehiculoCardHtml = `
-                <div class="col-md-6 col-lg-4 vehiculo-item-col" style="animation-delay: ${index * 0.1}s">
-                    <div class="card h-100 vehiculo-card shadow-sm" data-vehiculo-id="${vehiculo.veh_id}">
-                        <div class="position-relative">
-                            <img src="${imagenUrl}" class="card-img-top" alt="${vehiculo.mar_nombre} ${vehiculo.mod_nombre}" loading="lazy">
-                            <div class="position-absolute top-0 end-0 m-2">
-                                <span class="badge bg-primary">${vehiculo.total_imagenes} fotos</span>
-                            </div>
+        // =======================================================
+        // ========= CAMBIOS REALIZADOS EN LOS ENLACES (href) ========
+        // =======================================================
+        const vehiculoCardHtml = `
+            <div class="col-md-6 col-lg-4 vehiculo-item-col" style="animation-delay: ${index * 0.1}s">
+                <div class="card h-100 vehiculo-card shadow-sm" data-vehiculo-id="${vehiculo.veh_id}">
+                    <div class="position-relative">
+                        <img src="${imagenUrl}" class="card-img-top" alt="${vehiculo.mar_nombre} ${vehiculo.mod_nombre}" loading="lazy">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-primary">${vehiculo.total_imagenes} fotos</span>
                         </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">
-                                ${vehiculo.mar_nombre} ${vehiculo.mod_nombre} 
-                                <small class="text-muted">(${vehiculo.veh_anio})</small>
-                            </h5>
-                            <div class="mb-3">
-                                <p class="card-text mb-1">
-                                    <span class="fw-bold">Condición:</span> 
-                                    <span class="badge bg-light text-dark">${vehiculo.veh_condicion.charAt(0).toUpperCase() + vehiculo.veh_condicion.slice(1)}</span>
-                                </p>
-                                <p class="card-text mb-1">
-                                    <span class="fw-bold">Precio:</span> 
-                                    <span class="text-success fw-bold fs-5">$${parseFloat(vehiculo.veh_precio).toLocaleString('es-EC', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                </p>
-                                <p class="card-text mb-1">
-                                    <span class="fw-bold">Publicado:</span> 
-                                    ${new Date(vehiculo.veh_fecha_publicacion + 'T00:00:00').toLocaleDateString('es-EC')}
-                                </p>
-                                <p class="card-text mb-2">
-                                    <span class="fw-bold">Estado:</span> 
-                                    <span class="${estadoClass}">${estadoTexto}</span>
-                                </p>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            ${vehiculo.mar_nombre} ${vehiculo.mod_nombre} 
+                            <small class="text-muted">(${vehiculo.veh_anio})</small>
+                        </h5>
+                        <div class="mb-3">
+                            <p class="card-text mb-1">
+                                <span class="fw-bold">Condición:</span> 
+                                <span class="badge bg-light text-dark">${vehiculo.veh_condicion.charAt(0).toUpperCase() + vehiculo.veh_condicion.slice(1)}</span>
+                            </p>
+                            <p class="card-text mb-1">
+                                <span class="fw-bold">Precio:</span> 
+                                <span class="text-success fw-bold fs-5">$${parseFloat(vehiculo.veh_precio).toLocaleString('es-EC', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </p>
+                            <p class="card-text mb-1">
+                                <span class="fw-bold">Publicado:</span> 
+                                ${new Date(vehiculo.veh_fecha_publicacion + 'T00:00:00').toLocaleDateString('es-EC')}
+                            </p>
+                            <p class="card-text mb-2">
+                                <span class="fw-bold">Estado:</span> 
+                                <span class="${estadoClass}">${estadoTexto}</span>
+                            </p>
+                        </div>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex gap-2 mb-2">
+                                <a href="editar_auto.php?veh_id=${vehiculo.veh_id}" class="btn btn-outline-primary flex-fill">
+                                    <i class="bi bi-pencil-square me-1"></i>Editar
+                                </a>
+                                <a href="detalle_vehiculo.php?veh_id=${vehiculo.veh_id}" target="_blank" class="btn btn-outline-info flex-fill">
+                                    <i class="bi bi-eye me-1"></i>Ver
+                                </a>
                             </div>
-                            
-                            <div class="mt-auto">
-                                <div class="d-flex gap-2 mb-2">
-                                    <a href="editar_auto.php?id=${vehiculo.veh_id}" class="btn btn-outline-primary flex-fill">
-                                        <i class="bi bi-pencil-square me-1"></i>Editar
-                                    </a>
-                                    <a href="detalle_vehiculo.php?id=${vehiculo.veh_id}" target="_blank" class="btn btn-outline-info flex-fill">
-                                        <i class="bi bi-eye me-1"></i>Ver
-                                    </a>
-                                </div>
-                                <div class="dropup actions-dropdown w-100"> 
-                                    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton-${vehiculo.veh_id}" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-gear me-1"></i>Más Acciones
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="dropdownMenuButton-${vehiculo.veh_id}">
-                                        ${vehiculo.veh_estado === 'disponible' ? `
-                                            <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="reservado">
-                                                <i class="bi bi-calendar-check me-2"></i>Marcar como Reservado
-                                            </a></li>
-                                            <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido">
-                                                <i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido
-                                            </a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado">
-                                                <i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio
-                                            </a></li>
-                                        ` : ''}
-                                        ${vehiculo.veh_estado === 'reservado' ? `
-                                            <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible">
-                                                <i class="bi bi-arrow-clockwise me-2"></i>Marcar como Disponible
-                                            </a></li>
-                                            <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido">
-                                                <i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido
-                                            </a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado">
-                                                <i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio
-                                            </a></li>
-                                        ` : ''}
-                                        ${vehiculo.veh_estado === 'vendido' ? `
-                                            <li><span class="dropdown-item-text text-muted fst-italic">
-                                                <i class="bi bi-check-circle me-2"></i>Vehículo vendido
-                                            </span></li>
-                                        ` : ''}
-                                        ${vehiculo.veh_estado === 'desactivado' ? `
-                                            <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible">
-                                                <i class="bi bi-play-circle me-2"></i>Reactivar Anuncio
-                                            </a></li>
-                                        ` : ''}
-                                    </ul>
-                                </div>
+                            <div class="dropup actions-dropdown w-100"> 
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton-${vehiculo.veh_id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear me-1"></i>Más Acciones
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="dropdownMenuButton-${vehiculo.veh_id}">
+                                    ${vehiculo.veh_estado === 'disponible' ? `
+                                        <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="reservado">
+                                            <i class="bi bi-calendar-check me-2"></i>Marcar como Reservado
+                                        </a></li>
+                                        <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido">
+                                            <i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado">
+                                            <i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio
+                                        </a></li>
+                                    ` : ''}
+                                    ${vehiculo.veh_estado === 'reservado' ? `
+                                        <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible">
+                                            <i class="bi bi-arrow-clockwise me-2"></i>Marcar como Disponible
+                                        </a></li>
+                                        <li><a class="dropdown-item cambiar-estado-btn" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="vendido">
+                                            <i class="bi bi-currency-dollar me-2"></i>Marcar como Vendido
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item cambiar-estado-btn text-warning" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="desactivado">
+                                            <i class="bi bi-pause-circle me-2"></i>Desactivar Anuncio
+                                        </a></li>
+                                    ` : ''}
+                                    ${vehiculo.veh_estado === 'vendido' ? `
+                                        <li><span class="dropdown-item-text text-muted fst-italic">
+                                            <i class="bi bi-check-circle me-2"></i>Vehículo vendido
+                                        </span></li>
+                                    ` : ''}
+                                    ${vehiculo.veh_estado === 'desactivado' ? `
+                                        <li><a class="dropdown-item cambiar-estado-btn text-success" href="#" data-id="${vehiculo.veh_id}" data-estado-actual="${vehiculo.veh_estado}" data-nuevo-estado="disponible">
+                                            <i class="bi bi-play-circle me-2"></i>Reactivar Anuncio
+                                        </a></li>
+                                    ` : ''}
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
-            $listaVehiculosContainer.append(vehiculoCardHtml);
-        });
+            </div>
+        `;
+        $listaVehiculosContainer.append(vehiculoCardHtml);
+    });
 
-        // Agregar clase de animación a los elementos recién agregados
-        setTimeout(() => {
-            $('.vehiculo-item-col').addClass('fade-in');
-        }, 100);
-    }
+    // Agregar clase de animación a los elementos recién agregados
+    setTimeout(() => {
+        $('.vehiculo-item-col').addClass('fade-in');
+    }, 100);
+}
 
     // Función principal para cargar vehículos
     function cargarMisVehiculos() {
@@ -379,4 +383,3 @@ $(document).ready(function() {
         }
     }, 300000); // 5 minutos
 });
-

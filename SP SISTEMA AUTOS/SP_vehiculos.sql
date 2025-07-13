@@ -617,8 +617,9 @@ END //
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS sp_insertar_imagen_vehiculo;
 DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_insertar_imagen_vehiculo;
 CREATE PROCEDURE sp_insertar_imagen_vehiculo(
     IN p_veh_id INT,
     IN p_ima_url VARCHAR(255),
@@ -628,28 +629,42 @@ CREATE PROCEDURE sp_insertar_imagen_vehiculo(
     OUT p_mensaje VARCHAR(255)
 )
 BEGIN
-    SET p_resultado = 0; -- Error por defecto
+    DECLARE v_total_imagenes INT DEFAULT 0;
+
+    SET p_resultado = 0;
     SET p_mensaje = 'Error al guardar la imagen del vehículo.';
     SET p_ima_id_insertado = NULL;
 
-    -- Si se está marcando como principal, desmarcar otras para el mismo vehículo
+    -- Si se está marcando como principal, desmarcar cualquier otra para el mismo vehículo
     IF p_ima_es_principal = TRUE THEN
         UPDATE ImagenesVehiculo SET ima_es_principal = FALSE WHERE veh_id = p_veh_id;
     END IF;
 
+    -- Insertar la nueva imagen
     INSERT INTO ImagenesVehiculo (veh_id, ima_url, ima_es_principal)
     VALUES (p_veh_id, p_ima_url, p_ima_es_principal);
 
     IF ROW_COUNT() > 0 THEN
         SET p_ima_id_insertado = LAST_INSERT_ID();
+
+        -- LÓGICA DE AUTO-CORRECCIÓN: Asegurarse de que siempre haya una imagen principal
+        -- Contar cuántas imágenes principales hay AHORA para este vehículo
+        SELECT COUNT(*) INTO v_total_imagenes FROM ImagenesVehiculo WHERE veh_id = p_veh_id AND ima_es_principal = TRUE;
+
+        -- Si después de la inserción, no hay NINGUNA imagen principal...
+        IF v_total_imagenes = 0 THEN
+            -- ...marcar ESTA imagen que acabamos de insertar como la principal.
+            UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE ima_id = p_ima_id_insertado;
+        END IF;
+        
         SET p_resultado = 1;
         SET p_mensaje = 'Imagen guardada exitosamente.';
     ELSE
         SET p_mensaje = 'No se pudo guardar la imagen en la base de datos.';
     END IF;
-END//
-DELIMITER ;
+END //
 
+DELIMITER ;
 
 USE SistemaVentaAutos; -- Asegúrate de usar la base de datos correcta
 

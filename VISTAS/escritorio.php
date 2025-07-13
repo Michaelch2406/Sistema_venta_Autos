@@ -91,7 +91,7 @@ $es_vendedor_o_asesor = in_array($rol_id, [1, 2]);
                             <h5 class="card-title">Mis Cotizaciones</h5>
                             <p class="card-text text-muted small">Revisa las solicitudes de información de clientes
                                 potenciales.</p>
-                            <a href="mis_cotizaciones.php" class="btn btn-info mt-auto">Gestionar Cotizaciones</a>
+                            <a href="admin_cotizaciones.php" class="btn btn-info mt-auto">Gestionar Cotizaciones</a>
                         </div>
                     </div>
                 </div>
