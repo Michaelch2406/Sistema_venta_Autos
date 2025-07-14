@@ -1004,3 +1004,14 @@
     padding: 1rem 0 !important;
   }
 }
+
+/* Estilos para el calendario Flatpickr inline en el modal */
+#modalAgendarCita .flatpickr-calendar.inline {
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid #dee2e6;
+}
+#modalAgendarCita .flatpickr-input {
+    background-color: #fff !important; /* Para que no parezca deshabilitado */
+    cursor: pointer;
+}

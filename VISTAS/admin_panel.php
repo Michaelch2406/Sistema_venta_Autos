@@ -129,9 +129,9 @@ if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
                         <div class="card h-100 dashboard-card shadow-sm">
                             <div class="card-body text-center d-flex flex-column">
                                 <i class="bi bi-chat-quote-fill text-cyan dashboard-card-icon"></i>
-                                <h5 class="card-title">Gestión de Cotizaciones</h5>
+                                <h5 class="card-title">Gestión de Citas</h5>
                                 <p class="card-text text-muted small">Revisar y gestionar todas las solicitudes de información de los usuarios.</p>
-                                <a href="./admin_cotizaciones.php" class="btn btn-cyan mt-auto">Gestionar Cotizaciones</a>
+                                <a href="./admin_citas.php" class="btn btn-cyan mt-auto">Gestionar Citas</a>
                             </div>
                         </div>
                     </div>

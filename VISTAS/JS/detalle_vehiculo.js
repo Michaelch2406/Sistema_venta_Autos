@@ -143,53 +143,114 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA PARA EL FORMULARIO DE CONTACTO/COTIZACIÓN (ADAPTADA DE ARCHIVO ANTIGUO) ---
-    const formContacto = document.getElementById('formContactoVendedor');
+     // --- LÓGICA PARA AGENDAR CITAS (VERSIÓN FINAL Y REFORZADA) ---
+    const modalCita = document.getElementById('modalAgendarCita');
+    
+    if (modalCita) {
+        const formAgendarCita = document.getElementById('formAgendarCita');
+        const vehId = formAgendarCita.dataset.vehId;
+        const fechaInput = document.getElementById('cita_fecha_input');
+        const horaInput = document.getElementById('cita_hora_input');
+        const mensajeInput = document.getElementById('cita_mensaje');
+        const accionInput = document.getElementById('cita_accion_input'); // El input oculto
+        const btnSolicitarCita = document.getElementById('btnSolicitarCita');
+        
+        let fpDate, fpHour;
 
-    if (formContacto) {
-        formContacto.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const submitButton = document.getElementById('btnEnviarCotizacion');
-            const messageContainer = document.getElementById('contactFormMessage');
-            const originalButtonContent = submitButton.innerHTML;
-
-            submitButton.disabled = true;
-            submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...`;
-            messageContainer.innerHTML = '';
-            messageContainer.className = 'mt-3';
-            
-            const formData = new FormData(formContacto);
-
-            fetch('./../AJAX/cotizaciones_ajax.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    messageContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                    formContacto.querySelector('textarea').disabled = true;
-                    submitButton.disabled = true;
-
-                    setTimeout(() => {
-                        const modalEl = document.getElementById('modalContactoVendedor');
-                        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-                        if(modalInstance) modalInstance.hide();
-                    }, 4000);
-                } else {
-                    messageContainer.innerHTML = `<div class="alert alert-danger">${data.message || 'Ocurrió un error.'}</div>`;
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalButtonContent;
-                }
-            })
-            .catch(error => {
-                console.error('Error de conexión en formulario de contacto:', error);
-                messageContainer.innerHTML = `<div class="alert alert-danger">Error de conexión. Por favor, inténtalo de nuevo.</div>`;
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalButtonContent;
-            });
+        // ... (Lógica de diasLaborablesSimulados se mantiene igual)
+        const vehIdNum = parseInt(vehId, 10);
+        const diasLaborablesSimulados = [
+            false, (vehIdNum + 1) % 2 === 0, (vehIdNum + 2) % 3 !== 0, true,
+            (vehIdNum + 4) % 2 === 0, true, (vehIdNum + 6) % 3 !== 0
+        ];
+        
+        // La inicialización de Flatpickr se mantiene igual que en la última corrección.
+        fpDate = flatpickr(fechaInput, {
+            locale: "es", inline: true, minDate: "today", dateFormat: "Y-m-d",
+            altInput: true, altFormat: "l, j \\de F \\de Y",
+            "disable": [ date => !diasLaborablesSimulados[date.getDay()] ],
+            onChange: async (selectedDates, dateStr) => {
+                if (!selectedDates.length) return;
+                horaInput.value = "";
+                horaInput.placeholder = "Consultando horarios...";
+                if (fpHour) fpHour.clear();
+                try {
+                    const response = await fetch(`./../AJAX/citas_ajax.php?action=obtener_disponibilidad&veh_id=${vehId}&fecha=${dateStr}`);
+                    const data = await response.json();
+                    if (data.success) inicializarSelectorHora(data.horas_ocupadas);
+                    else horaInput.placeholder = "Error al cargar horarios";
+                } catch (error) { horaInput.placeholder = "Error de conexión"; }
+            }
         });
+
+        function inicializarSelectorHora(horasOcupadasDB) {
+            horaInput.placeholder = "Selecciona una hora...";
+            let horasDeshabilitadas = horasOcupadasDB.filter(() => Math.random() > 0.3);
+            if (fpHour) fpHour.destroy(); 
+            fpHour = flatpickr(horaInput, {
+                "disable": horasDeshabilitadas, noCalendar: true, enableTime: true,
+                dateFormat: "h:i K", time_24hr: false, minuteIncrement: 30,
+                minTime: "08:00", maxTime: "17:30",
+                onChange: () => validarFormulario()
+            });
+             fpHour.open(); 
+        }
+        
+        function validarFormulario() {
+            btnSolicitarCita.disabled = !(fechaInput.value && horaInput.value);
+        }
+        
+        // ========= CAMBIO CRÍTICO: MANEJO DEL ENVÍO DEL FORMULARIO =========
+        formAgendarCita.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const messageContainer = document.getElementById('citaFormMessage');
+            const btnSolicitarCita = document.getElementById('btnSolicitarCita');
+            
+            btnSolicitarCita.disabled = true;
+            btnSolicitarCita.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Solicitando...`;
+
+            // FormData ahora recoge AUTOMÁTICAMENTE todos los campos del formulario por su 'name',
+            // incluyendo los inputs ocultos 'accion' y 'veh_id'. Es más robusto y limpio.
+            const formData = new FormData(formAgendarCita);
+            
+            try {
+                const response = await fetch('./../AJAX/citas_ajax.php', { method: 'POST', body: formData });
+                const data = await response.json();
+                
+                if(data.success) {
+                    messageContainer.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    btnSolicitarCita.innerHTML = `Solicitud Enviada`;
+                    // Opcional: limpiar los campos si la ventana se mantiene abierta
+                    formAgendarCita.reset();
+                    if(fpDate) fpDate.clear();
+                    if(fpHour) fpHour.clear();
+                    setTimeout(() => {
+                        const modalInstance = bootstrap.Modal.getInstance(modalCita);
+                        if(modalInstance) modalInstance.hide();
+                    }, 3000);
+                } else {
+                     messageContainer.innerHTML = `<div class="alert alert-danger">${data.message || 'Ocurrió un error inesperado.'}</div>`;
+                     btnSolicitarCita.disabled = false;
+                     btnSolicitarCita.innerHTML = `<i class="bi bi-send-fill me-2"></i>Solicitar Cita`;
+                }
+            } catch (error) {
+                 console.error("Error en el fetch o parseo de JSON:", error);
+                 messageContainer.innerHTML = `<div class="alert alert-danger">Error de comunicación con el servidor.</div>`;
+                 btnSolicitarCita.disabled = false;
+                 btnSolicitarCita.innerHTML = `<i class="bi bi-send-fill me-2"></i>Solicitar Cita`;
+            }
+        });
+
+         modalCita.addEventListener('hidden.bs.modal', () => {
+             formAgendarCita.reset();
+             if(fpDate) fpDate.clear();
+             if(fpHour) { fpHour.clear(); fpHour.destroy(); }
+             btnSolicitarCita.disabled = true;
+             document.getElementById('citaFormMessage').innerHTML = '';
+             horaInput.placeholder = "Primero elige una fecha...";
+             horaInput.value = '';
+         });
     }
 
     // --- LÓGICA PARA COMPARTIR ---

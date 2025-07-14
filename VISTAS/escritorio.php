@@ -88,27 +88,13 @@ $es_vendedor_o_asesor = in_array($rol_id, [1, 2]);
                     <div class="card h-100 dashboard-card shadow-sm">
                         <div class="card-body text-center d-flex flex-column">
                             <i class="bi bi-chat-quote-fill text-info dashboard-card-icon"></i>
-                            <h5 class="card-title">Mis Cotizaciones</h5>
+                            <h5 class="card-title">Mis Citas</h5>
                             <p class="card-text text-muted small">Revisa las solicitudes de información de clientes
                                 potenciales.</p>
-                            <a href="admin_cotizaciones.php" class="btn btn-info mt-auto">Gestionar Cotizaciones</a>
+                            <a href="admin_citas.php" class="btn btn-info mt-auto">Gestionar Citas</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- === TARJETA AÑADIDA === -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 dashboard-card shadow-sm">
-                        <div class="card-body text-center d-flex flex-column">
-                            <i class="bi bi-patch-check-fill text-secondary dashboard-card-icon"></i>
-                            <h5 class="card-title">Historial de Ventas</h5>
-                            <p class="card-text text-muted small">Consulta el registro de los vehículos que has vendido
-                                exitosamente.</p>
-                            <a href="mis_ventas.php" class="btn btn-secondary mt-auto">Ver Mis Ventas</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- ===================== -->
                 <?php endif; ?>
 
                 <!-- Tarjetas para todos los usuarios -->

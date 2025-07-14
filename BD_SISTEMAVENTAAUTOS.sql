@@ -9,56 +9,159 @@ USE sistemaventaautos;
 -- TABLAS MAESTRAS (Sin dependencias externas)
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
--- Tabla: roles
-DROP TABLE IF EXISTS `roles`;
-CREATE TABLE `roles` (
-  `rol_id` int NOT NULL AUTO_INCREMENT,
-  `rol_nombre` varchar(50) NOT NULL,
-  `rol_descripcion` text,
-  `rol_activo` tinyint(1) DEFAULT '1',
-  `rol_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `rol_actualizado_en` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`rol_id`),
-  UNIQUE KEY `uk_roles_rol_nombre` (`rol_nombre`)
-);
+-- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
+--
+-- Host: localhost    Database: sistemaventaautos
 
--- Tabla: marcas
+
+--
+-- Table structure for table `citas`
+--
+
+DROP TABLE IF EXISTS `citas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `citas` (
+  `cit_id` int NOT NULL AUTO_INCREMENT,
+  `usu_id_solicitante` int DEFAULT NULL,
+  `veh_id` int DEFAULT NULL,
+  `cit_detalles_vehiculo_solicitado` text,
+  `cit_mensaje` text,
+  `cit_estado` enum('pendiente','aprobada','rechazado') NOT NULL DEFAULT 'pendiente',
+  `cit_fecha_disponibilidad` date DEFAULT NULL,
+  `cit_hora_disponibilidad` varchar(20) DEFAULT NULL,
+  `cit_fecha_solicitud` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cit_notas_admin` text,
+  PRIMARY KEY (`cit_id`),
+  KEY `idx_cot_usuario` (`usu_id_solicitante`),
+  KEY `idx_cot_vehiculo` (`veh_id`),
+  KEY `idx_cot_estado` (`cit_estado`),
+  CONSTRAINT `citas_ibfk_1` FOREIGN KEY (`usu_id_solicitante`) REFERENCES `usuarios` (`usu_id`) ON DELETE CASCADE,
+  CONSTRAINT `citas_ibfk_2` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `detallesventa`
+--
+
+DROP TABLE IF EXISTS `detallesventa`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `detallesventa` (
+  `dve_id` int NOT NULL AUTO_INCREMENT,
+  `ven_id` int NOT NULL,
+  `veh_id` int NOT NULL,
+  `dve_precio_unitario` decimal(12,2) NOT NULL,
+  `dve_cantidad` int DEFAULT '1',
+  PRIMARY KEY (`dve_id`),
+  UNIQUE KEY `veh_id` (`veh_id`),
+  KEY `idx_dve_venta` (`ven_id`),
+  KEY `idx_dve_vehiculo` (`veh_id`),
+  CONSTRAINT `detallesventa_ibfk_1` FOREIGN KEY (`ven_id`) REFERENCES `ventas` (`ven_id`) ON DELETE CASCADE,
+  CONSTRAINT `detallesventa_ibfk_2` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `favoritos`
+--
+
+DROP TABLE IF EXISTS `favoritos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `favoritos` (
+  `fav_id` int NOT NULL AUTO_INCREMENT,
+  `usu_id` int NOT NULL,
+  `veh_id` int NOT NULL,
+  `fav_fecha_agregado` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`fav_id`),
+  UNIQUE KEY `uk_usuario_vehiculo_fav` (`usu_id`,`veh_id`),
+  KEY `idx_fav_usuario` (`usu_id`),
+  KEY `idx_fav_vehiculo` (`veh_id`),
+  CONSTRAINT `favoritos_ibfk_1` FOREIGN KEY (`usu_id`) REFERENCES `usuarios` (`usu_id`) ON DELETE CASCADE,
+  CONSTRAINT `favoritos_ibfk_2` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `formaspago`
+--
+
+DROP TABLE IF EXISTS `formaspago`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `formaspago` (
+  `fpa_id` int NOT NULL AUTO_INCREMENT,
+  `fpa_nombre` varchar(50) NOT NULL,
+  `fpa_activo` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`fpa_id`),
+  UNIQUE KEY `fpa_nombre` (`fpa_nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `imagenesvehiculo`
+--
+
+DROP TABLE IF EXISTS `imagenesvehiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `imagenesvehiculo` (
+  `ima_id` int NOT NULL AUTO_INCREMENT,
+  `veh_id` int NOT NULL,
+  `ima_url` varchar(255) NOT NULL,
+  `ima_es_principal` tinyint(1) DEFAULT '0',
+  `ima_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ima_id`),
+  KEY `idx_ima_vehiculo` (`veh_id`),
+  CONSTRAINT `imagenesvehiculo_ibfk_1` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `marcas`
+--
+
 DROP TABLE IF EXISTS `marcas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `marcas` (
   `mar_id` int NOT NULL AUTO_INCREMENT,
   `mar_nombre` varchar(100) NOT NULL,
   `mar_logo_url` varchar(255) DEFAULT NULL,
   `mar_actualizado_en` datetime DEFAULT NULL,
   PRIMARY KEY (`mar_id`),
-  UNIQUE KEY `uk_marcas_mar_nombre` (`mar_nombre`)
-);
+  UNIQUE KEY `mar_nombre` (`mar_nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: tiposvehiculo
-DROP TABLE IF EXISTS `tiposvehiculo`;
-CREATE TABLE `tiposvehiculo` (
-  `tiv_id` int NOT NULL AUTO_INCREMENT,
-  `tiv_nombre` varchar(100) NOT NULL,
-  `tiv_descripcion` text,
-  `tiv_icono_url` varchar(255) DEFAULT NULL,
-  `tiv_activo` tinyint(1) DEFAULT '1',
-  `tiv_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `tiv_actualizado_en` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`tiv_id`),
-  UNIQUE KEY `uk_tiposvehiculo_tiv_nombre` (`tiv_nombre`)
-);
+--
+-- Table structure for table `modelos`
+--
 
--- Tabla: formaspago
-DROP TABLE IF EXISTS `formaspago`;
-CREATE TABLE `formaspago` (
-  `fpa_id` int NOT NULL AUTO_INCREMENT,
-  `fpa_nombre` varchar(50) NOT NULL,
-  `fpa_activo` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`fpa_id`),
-  UNIQUE KEY `uk_formaspago_fpa_nombre` (`fpa_nombre`)
-);
+DROP TABLE IF EXISTS `modelos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `modelos` (
+  `mod_id` int NOT NULL AUTO_INCREMENT,
+  `mar_id` int NOT NULL,
+  `mod_nombre` varchar(100) NOT NULL,
+  `mod_actualizado_en` datetime DEFAULT NULL,
+  PRIMARY KEY (`mod_id`),
+  UNIQUE KEY `uk_marca_modelo` (`mar_id`,`mod_nombre`),
+  KEY `idx_mod_marca` (`mar_id`),
+  CONSTRAINT `modelos_ibfk_1` FOREIGN KEY (`mar_id`) REFERENCES `marcas` (`mar_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: ofertaspromociones
+--
+-- Table structure for table `ofertaspromociones`
+--
+
 DROP TABLE IF EXISTS `ofertaspromociones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ofertaspromociones` (
   `ofe_id` int NOT NULL AUTO_INCREMENT,
   `ofe_nombre` varchar(150) NOT NULL,
@@ -71,20 +174,86 @@ CREATE TABLE `ofertaspromociones` (
   `ofe_estado` enum('activa','inactiva','caducada') DEFAULT 'activa',
   `ofe_uso_maximo` int DEFAULT NULL,
   `ofe_uso_por_cliente` int DEFAULT '1',
-  `ofe_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `ofe_actualizado_en` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ofe_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `ofe_actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ofe_id`),
-  UNIQUE KEY `uk_ofertaspromociones_ofe_codigo_cupon` (`ofe_codigo_cupon`),
-  KEY `idx_ofertaspromociones_ofe_estado` (`ofe_estado`)
-);
+  UNIQUE KEY `ofe_codigo_cupon` (`ofe_codigo_cupon`),
+  KEY `idx_ofe_estado_fechas` (`ofe_estado`,`ofe_fecha_inicio`,`ofe_fecha_fin`),
+  KEY `idx_ofe_codigo_cupon` (`ofe_codigo_cupon`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `pagos`
+--
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- TABLAS CON DEPENDENCIAS DE PRIMER NIVEL
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+DROP TABLE IF EXISTS `pagos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pagos` (
+  `pag_id` int NOT NULL AUTO_INCREMENT,
+  `ven_id` int NOT NULL,
+  `fpa_id` int NOT NULL,
+  `pag_monto` decimal(12,2) NOT NULL,
+  `pag_fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `pag_referencia` varchar(100) DEFAULT NULL,
+  `pag_estado` enum('pendiente','completado','fallido','reembolsado') DEFAULT 'pendiente',
+  `pag_notas` text,
+  PRIMARY KEY (`pag_id`),
+  KEY `idx_pag_venta` (`ven_id`),
+  KEY `idx_pag_formapago` (`fpa_id`),
+  KEY `idx_pag_estado` (`pag_estado`),
+  CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`ven_id`) REFERENCES `ventas` (`ven_id`) ON DELETE CASCADE,
+  CONSTRAINT `pagos_ibfk_2` FOREIGN KEY (`fpa_id`) REFERENCES `formaspago` (`fpa_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: usuarios
+--
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `roles` (
+  `rol_id` int NOT NULL AUTO_INCREMENT,
+  `rol_nombre` varchar(50) NOT NULL,
+  `rol_descripcion` text,
+  `rol_activo` tinyint(1) DEFAULT '1',
+  `rol_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `rol_actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`rol_id`),
+  UNIQUE KEY `rol_nombre` (`rol_nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tiposvehiculo`
+--
+
+DROP TABLE IF EXISTS `tiposvehiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tiposvehiculo` (
+  `tiv_id` int NOT NULL AUTO_INCREMENT,
+  `tiv_nombre` varchar(100) NOT NULL,
+  `tiv_descripcion` text,
+  `tiv_icono_url` varchar(255) DEFAULT NULL,
+  `tiv_activo` tinyint(1) DEFAULT '1',
+  `tiv_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `tiv_actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`tiv_id`),
+  UNIQUE KEY `tiv_nombre` (`tiv_nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `usuarios`
+--
+
 DROP TABLE IF EXISTS `usuarios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usuarios` (
   `usu_id` int NOT NULL AUTO_INCREMENT,
   `rol_id` int NOT NULL,
@@ -97,33 +266,44 @@ CREATE TABLE `usuarios` (
   `usu_direccion` varchar(255) DEFAULT NULL,
   `usu_fnacimiento` date DEFAULT NULL,
   `usu_verificado` tinyint(1) DEFAULT '0',
-  `usu_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `usu_actualizado_en` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `usu_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `usu_actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `usu_cedula` varchar(13) NOT NULL,
   PRIMARY KEY (`usu_id`),
-  UNIQUE KEY `uk_usuarios_usu_usuario` (`usu_usuario`),
-  UNIQUE KEY `uk_usuarios_usu_email` (`usu_email`),
-  UNIQUE KEY `uk_usuarios_usu_cedula` (`usu_cedula`),
-  KEY `fk_usuarios_roles` (`rol_id`),
-  CONSTRAINT `fk_usuarios_roles` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`rol_id`)
-);
+  UNIQUE KEY `usu_usuario` (`usu_usuario`),
+  UNIQUE KEY `usu_email` (`usu_email`),
+  UNIQUE KEY `UQ_usu_cedula` (`usu_cedula`),
+  KEY `idx_usu_rol` (`rol_id`),
+  CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`rol_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: modelos
-DROP TABLE IF EXISTS `modelos`;
-CREATE TABLE `modelos` (
-  `mod_id` int NOT NULL AUTO_INCREMENT,
-  `mar_id` int NOT NULL,
-  `mod_nombre` varchar(100) NOT NULL,
-  `mod_actualizado_en` datetime DEFAULT NULL,
-  PRIMARY KEY (`mod_id`),
-  KEY `fk_modelos_marcas` (`mar_id`),
-  CONSTRAINT `fk_modelos_marcas` FOREIGN KEY (`mar_id`) REFERENCES `marcas` (`mar_id`)
-);
+--
+-- Table structure for table `vehiculooferta`
+--
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- TABLA CENTRAL: vehiculos
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+DROP TABLE IF EXISTS `vehiculooferta`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `vehiculooferta` (
+  `vof_id` int NOT NULL AUTO_INCREMENT,
+  `veh_id` int NOT NULL,
+  `ofe_id` int NOT NULL,
+  PRIMARY KEY (`vof_id`),
+  UNIQUE KEY `uk_vehiculo_oferta` (`veh_id`,`ofe_id`),
+  KEY `ofe_id` (`ofe_id`),
+  CONSTRAINT `vehiculooferta_ibfk_1` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`) ON DELETE CASCADE,
+  CONSTRAINT `vehiculooferta_ibfk_2` FOREIGN KEY (`ofe_id`) REFERENCES `ofertaspromociones` (`ofe_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vehiculos`
+--
+
 DROP TABLE IF EXISTS `vehiculos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `vehiculos` (
   `veh_id` int NOT NULL AUTO_INCREMENT,
   `mar_id` int NOT NULL,
@@ -154,29 +334,31 @@ CREATE TABLE `vehiculos` (
   `veh_detalles_extra` text,
   `veh_estado` enum('disponible','reservado','vendido','desactivado') DEFAULT 'disponible',
   `veh_fecha_publicacion` date NOT NULL,
-  `veh_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `veh_actualizado_en` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `veh_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `veh_actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`veh_id`),
-  UNIQUE KEY `uk_vehiculos_veh_vin` (`veh_vin`),
-  UNIQUE KEY `uk_vehiculos_veh_placa` (`veh_placa`),
-  KEY `fk_vehiculos_marcas` (`mar_id`),
-  KEY `fk_vehiculos_modelos` (`mod_id`),
-  KEY `fk_vehiculos_tiposvehiculo` (`tiv_id`),
-  KEY `fk_vehiculos_usuarios_gestor` (`usu_id_gestor`),
-  KEY `idx_vehiculos_veh_ubicacion_provincia` (`veh_ubicacion_provincia`),
-  KEY `idx_vehiculos_veh_estado` (`veh_estado`),
-  CONSTRAINT `fk_vehiculos_marcas` FOREIGN KEY (`mar_id`) REFERENCES `marcas` (`mar_id`),
-  CONSTRAINT `fk_vehiculos_modelos` FOREIGN KEY (`mod_id`) REFERENCES `modelos` (`mod_id`),
-  CONSTRAINT `fk_vehiculos_tiposvehiculo` FOREIGN KEY (`tiv_id`) REFERENCES `tiposvehiculo` (`tiv_id`),
-  CONSTRAINT `fk_vehiculos_usuarios_gestor` FOREIGN KEY (`usu_id_gestor`) REFERENCES `usuarios` (`usu_id`)
-);
+  UNIQUE KEY `veh_vin` (`veh_vin`),
+  UNIQUE KEY `veh_placa` (`veh_placa`),
+  KEY `idx_veh_marca_modelo` (`mar_id`,`mod_id`),
+  KEY `idx_veh_tipo` (`tiv_id`),
+  KEY `idx_veh_usuario_gestor` (`usu_id_gestor`),
+  KEY `idx_veh_estado` (`veh_estado`),
+  KEY `idx_veh_ubicacion` (`veh_ubicacion_provincia`,`veh_ubicacion_ciudad`),
+  KEY `mod_id` (`mod_id`),
+  CONSTRAINT `vehiculos_ibfk_1` FOREIGN KEY (`mar_id`) REFERENCES `marcas` (`mar_id`) ON DELETE RESTRICT,
+  CONSTRAINT `vehiculos_ibfk_2` FOREIGN KEY (`mod_id`) REFERENCES `modelos` (`mod_id`) ON DELETE RESTRICT,
+  CONSTRAINT `vehiculos_ibfk_3` FOREIGN KEY (`tiv_id`) REFERENCES `tiposvehiculo` (`tiv_id`) ON DELETE RESTRICT,
+  CONSTRAINT `vehiculos_ibfk_4` FOREIGN KEY (`usu_id_gestor`) REFERENCES `usuarios` (`usu_id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
--- TABLAS TRANSACCIONALES Y DE RELACIÓN
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+--
+-- Table structure for table `ventas`
+--
 
--- Tabla: ventas
 DROP TABLE IF EXISTS `ventas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ventas` (
   `ven_id` int NOT NULL AUTO_INCREMENT,
   `usu_id_comprador` int NOT NULL,
@@ -189,80 +371,26 @@ CREATE TABLE `ventas` (
   `ven_precio_total` decimal(12,2) NOT NULL,
   `ven_estado` enum('pendiente_pago','pagado_parcial','pagado_completo','en_entrega','completado','cancelado') DEFAULT 'pendiente_pago',
   `ven_notas_internas` text,
-  `ven_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `ven_actualizado_en` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ven_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `ven_actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`ven_id`),
-  KEY `fk_ventas_usuarios_comprador` (`usu_id_comprador`),
-  KEY `fk_ventas_usuarios_gestor` (`usu_id_gestor`),
-  KEY `fk_ventas_ofertaspromociones` (`ofe_id`),
-  KEY `idx_ventas_ven_estado` (`ven_estado`),
-  CONSTRAINT `fk_ventas_ofertaspromociones` FOREIGN KEY (`ofe_id`) REFERENCES `ofertaspromociones` (`ofe_id`),
-  CONSTRAINT `fk_ventas_usuarios_comprador` FOREIGN KEY (`usu_id_comprador`) REFERENCES `usuarios` (`usu_id`),
-  CONSTRAINT `fk_ventas_usuarios_gestor` FOREIGN KEY (`usu_id_gestor`) REFERENCES `usuarios` (`usu_id`)
-);
+  KEY `idx_ven_comprador` (`usu_id_comprador`),
+  KEY `idx_ven_gestor` (`usu_id_gestor`),
+  KEY `idx_ven_estado` (`ven_estado`),
+  KEY `ofe_id` (`ofe_id`),
+  CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`usu_id_comprador`) REFERENCES `usuarios` (`usu_id`) ON DELETE RESTRICT,
+  CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`usu_id_gestor`) REFERENCES `usuarios` (`usu_id`) ON DELETE SET NULL,
+  CONSTRAINT `ventas_ibfk_3` FOREIGN KEY (`ofe_id`) REFERENCES `ofertaspromociones` (`ofe_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- Tabla: cotizaciones
-DROP TABLE IF EXISTS `cotizaciones`;
-CREATE TABLE `cotizaciones` (
-  `cot_id` int NOT NULL AUTO_INCREMENT,
-  `usu_id_solicitante` int NOT NULL,
-  `veh_id` int DEFAULT NULL,
-  `cot_detalles_vehiculo_solicitado` text,
-  `cot_mensaje` text,
-  `cot_estado` enum('pendiente','contactado','cerrado','rechazado') DEFAULT 'pendiente',
-  `cot_fecha_solicitud` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`cot_id`),
-  KEY `fk_cotizaciones_usuarios` (`usu_id_solicitante`),
-  KEY `fk_cotizaciones_vehiculos` (`veh_id`),
-  KEY `idx_cotizaciones_cot_estado` (`cot_estado`),
-  CONSTRAINT `fk_cotizaciones_usuarios` FOREIGN KEY (`usu_id_solicitante`) REFERENCES `usuarios` (`usu_id`),
-  CONSTRAINT `fk_cotizaciones_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`)
-);
+--
+-- Table structure for table `videosvehiculo`
+--
 
--- Tabla: detallesventa
-DROP TABLE IF EXISTS `detallesventa`;
-CREATE TABLE `detallesventa` (
-  `dve_id` int NOT NULL AUTO_INCREMENT,
-  `ven_id` int NOT NULL,
-  `veh_id` int NOT NULL,
-  `dve_precio_unitario` decimal(12,2) NOT NULL,
-  `dve_cantidad` int DEFAULT '1',
-  PRIMARY KEY (`dve_id`),
-  UNIQUE KEY `uk_detallesventa_veh_id` (`veh_id`),
-  KEY `fk_detallesventa_ventas` (`ven_id`),
-  CONSTRAINT `fk_detallesventa_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`),
-  CONSTRAINT `fk_detallesventa_ventas` FOREIGN KEY (`ven_id`) REFERENCES `ventas` (`ven_id`)
-);
-
--- Tabla: favoritos
-DROP TABLE IF EXISTS `favoritos`;
-CREATE TABLE `favoritos` (
-  `fav_id` int NOT NULL AUTO_INCREMENT,
-  `usu_id` int NOT NULL,
-  `veh_id` int NOT NULL,
-  `fav_fecha_agregado` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`fav_id`),
-  KEY `fk_favoritos_usuarios` (`usu_id`),
-  KEY `fk_favoritos_vehiculos` (`veh_id`),
-  CONSTRAINT `fk_favoritos_usuarios` FOREIGN KEY (`usu_id`) REFERENCES `usuarios` (`usu_id`),
-  CONSTRAINT `fk_favoritos_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`)
-);
-
--- Tabla: imagenesvehiculo
-DROP TABLE IF EXISTS `imagenesvehiculo`;
-CREATE TABLE `imagenesvehiculo` (
-  `ima_id` int NOT NULL AUTO_INCREMENT,
-  `veh_id` int NOT NULL,
-  `ima_url` varchar(255) NOT NULL,
-  `ima_es_principal` tinyint(1) DEFAULT '0',
-  `ima_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ima_id`),
-  KEY `fk_imagenesvehiculo_vehiculos` (`veh_id`),
-  CONSTRAINT `fk_imagenesvehiculo_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`)
-);
-
--- Tabla: videosvehiculo
 DROP TABLE IF EXISTS `videosvehiculo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `videosvehiculo` (
   `viv_id` int NOT NULL AUTO_INCREMENT,
   `veh_id` int NOT NULL,
@@ -271,43 +399,12 @@ CREATE TABLE `videosvehiculo` (
   `viv_plataforma` enum('youtube','vimeo','local','otro') DEFAULT 'otro',
   `viv_id_plataforma` varchar(100) DEFAULT NULL,
   `viv_es_principal` tinyint(1) DEFAULT '0',
-  `viv_creado_en` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `viv_creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`viv_id`),
-  KEY `fk_videosvehiculo_vehiculos` (`veh_id`),
-  CONSTRAINT `fk_videosvehiculo_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`)
-);
+  KEY `idx_viv_vehiculo` (`veh_id`),
+  CONSTRAINT `videosvehiculo_ibfk_1` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Tabla: pagos
-DROP TABLE IF EXISTS `pagos`;
-CREATE TABLE `pagos` (
-  `pag_id` int NOT NULL AUTO_INCREMENT,
-  `ven_id` int NOT NULL,
-  `fpa_id` int NOT NULL,
-  `pag_monto` decimal(12,2) NOT NULL,
-  `pag_fecha` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `pag_referencia` varchar(100) DEFAULT NULL,
-  `pag_estado` enum('pendiente','completado','fallido','reembolsado') DEFAULT 'pendiente',
-  `pag_notas` text,
-  PRIMARY KEY (`pag_id`),
-  KEY `fk_pagos_ventas` (`ven_id`),
-  KEY `fk_pagos_formaspago` (`fpa_id`),
-  KEY `idx_pagos_pag_estado` (`pag_estado`),
-  CONSTRAINT `fk_pagos_formaspago` FOREIGN KEY (`fpa_id`) REFERENCES `formaspago` (`fpa_id`),
-  CONSTRAINT `fk_pagos_ventas` FOREIGN KEY (`ven_id`) REFERENCES `ventas` (`ven_id`)
-);
-
--- Tabla: vehiculooferta (Tabla de enlace)
-DROP TABLE IF EXISTS `vehiculooferta`;
-CREATE TABLE `vehiculooferta` (
-  `vof_id` int NOT NULL AUTO_INCREMENT,
-  `veh_id` int NOT NULL,
-  `ofe_id` int NOT NULL,
-  PRIMARY KEY (`vof_id`),
-  KEY `fk_vehiculooferta_vehiculos` (`veh_id`),
-  KEY `fk_vehiculooferta_ofertaspromociones` (`ofe_id`),
-  CONSTRAINT `fk_vehiculooferta_ofertaspromociones` FOREIGN KEY (`ofe_id`) REFERENCES `ofertaspromociones` (`ofe_id`),
-  CONSTRAINT `fk_vehiculooferta_vehiculos` FOREIGN KEY (`veh_id`) REFERENCES `vehiculos` (`veh_id`)
-);
 
 
 
