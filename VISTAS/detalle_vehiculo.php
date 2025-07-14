@@ -380,7 +380,7 @@ $especificaciones = getSpecifications($vehiculo);
                     <div class="modal-body">
                         <!-- ===================== INICIO DE LA CORRECCIÓN ===================== -->
                         <!-- 1. Campo oculto para la ACCIÓN (El más importante) -->
-                        <input type="hidden" name="accion" value="insertar_cita">
+                        <input type="hidden" name="action" value="insertar_cita">
 
                         <!-- 2. Campo oculto para el ID del vehículo -->
                         <input type="hidden" name="veh_id" value="<?php echo htmlspecialchars($veh_id); ?>">
