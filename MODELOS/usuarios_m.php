@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../CONFIG/Conexion.php";
+include "./../CONFIG/Conexion.php";
 
 class Usuario
 {

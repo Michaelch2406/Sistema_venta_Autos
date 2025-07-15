@@ -65,7 +65,7 @@ class ImagenesVehiculo_M
         $veh_id_esc = $this->conn->real_escape_string($veh_id);
         // No necesitamos un SP para una consulta tan simple, pero se podría crear por consistencia
         $sql = "SELECT ima_id, ima_url, ima_es_principal 
-                FROM ImagenesVehiculo 
+                FROM imagenesvehiculo 
                 WHERE veh_id = $veh_id_esc 
                 ORDER BY ima_es_principal DESC, ima_id ASC";
         

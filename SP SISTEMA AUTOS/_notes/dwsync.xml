@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dwsync>
-<file name="SP_cotizaciones.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133961364804764374" remote="133961408960000000" Dst="0" />
 <file name="SP_favoritos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133955547344020890" remote="133961408960000000" Dst="0" />
 <file name="SP_marca_modelo.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133955547188275894" remote="133961408960000000" Dst="0" />
 <file name="SP_usuarios.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133958993285337737" remote="133961408960000000" Dst="0" />
-<file name="SP_vehiculos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133961364831325539" remote="133961408960000000" Dst="0" />
+<file name="SP_vehiculos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133968375943200016" remote="133970833420000000" Dst="0" />
+<file name="SP_citas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133969427605720228" remote="133970833420000000" Dst="0" />
+<file name="SP_imagenes.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133962444616283982" remote="133970833420000000" Dst="0" />
 </dwsync>

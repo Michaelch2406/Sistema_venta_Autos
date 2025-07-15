@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $rol_admin_id = 3; 
 
                     if ($_SESSION['rol_id'] === $rol_admin_id) {
-                        $response['redirect_url'] = 'admin_panel.php';
+                        $response['redirect_url'] = './admin_panel.php';
                     } else {
-                        $response['redirect_url'] = 'escritorio.php';
+                        $response['redirect_url'] = './escritorio.php';
                     }
 
                 } else {
