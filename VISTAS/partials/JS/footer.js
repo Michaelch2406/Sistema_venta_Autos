@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         threshold: 0.1, // Aparece cuando al menos el 10% es visible
         rootMargin: '0px 0px -50px 0px' // Se activa un poco antes de que entre completamente en viewport
     };
+    
 
     const sectionObserver = new IntersectionObserver(function(entries, observer) {
         entries.forEach(entry => {

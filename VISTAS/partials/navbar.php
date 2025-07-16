@@ -77,6 +77,7 @@ $currentPageNavbar = basename($_SERVER['PHP_SELF']);
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                             <li><a class="dropdown-item" href="./configuracion_cuenta.php"><i class="bi bi-person-fill-gear me-2"></i>Mi Perfil</a></li>
                             <li><a class="dropdown-item" href="./mis_vehiculos.php"><i class="bi bi-card-list me-2"></i>Mis Publicaciones</a></li>
+                            <li><a class="dropdown-item" href="./mis_ventas.php"><i class="bi bi-receipt me-2"></i>Mis Ventas</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="./logout.php"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
                         </ul>

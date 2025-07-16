@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 gestionarEstadoCita(citaId, 'aprobada', boton);
             } else if (boton.classList.contains('btn-admin-rechazar')) {
                 gestionarEstadoCita(citaId, 'rechazado', boton);
+            } else if (boton.classList.contains('btn-registrar-venta')) {
+                registrarVenta(citaId, boton);
             }
         });
     }
@@ -197,6 +199,39 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             boton.disabled = false;
             boton.innerHTML = '<i class="bi bi-save me-2"></i>Guardar Notas';
+        }
+    }
+
+    // Registra la venta de un vehículo
+    async function registrarVenta(citaId, boton) {
+        const precio = prompt('Ingrese el precio final de la venta:');
+        if (precio === null || precio.trim() === '') {
+            return;
+        }
+
+        boton.disabled = true;
+        boton.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+        const formData = new FormData();
+        formData.append('action', 'registrar_venta');
+        formData.append('id_cita', citaId);
+        formData.append('precio_final', precio);
+
+        try {
+            const response = await fetch('./../AJAX/citas_ajax.php', {
+                method: 'POST',
+                body: formData
+            });
+            const resultado = await response.json();
+            if (resultado.success) {
+                alert('Venta registrada exitosamente.');
+                location.reload();
+            } else {
+                alert(`Error: ${resultado.message}`);
+                boton.disabled = false;
+            }
+        } catch (error) {
+            alert('Error de conexión al registrar la venta.');
+            boton.disabled = false;
         }
     }
 });

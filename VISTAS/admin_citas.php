@@ -1,12 +1,12 @@
 <?php
 // VISTAS/admin_citas.php
 ini_set('display_errors', 0); error_reporting(E_ALL);
-ini_set('log_errors', 1); ini_set('error_log', __DIR__ . './../php_error.log'); 
+ini_set('log_errors', 1); ini_set('error_log', './../php_error.log'); 
 
 if (session_status() == PHP_SESSION_NONE) { session_start(); }
 
-require_once __DIR__ . './../CONFIG/Conexion.php';
-require_once __DIR__ . './../MODELOS/citas_m.php';
+require_once './../CONFIG/Conexion.php';
+require_once './../MODELOS/citas_m.php';
 
 $db_conn_mysqli = null;
 try {
@@ -132,6 +132,10 @@ $estados_disponibles = ['pendiente', 'aprobada', 'rechazado'];
                                     <button class="btn-admin-accion btn-admin-rechazar"
                                         data-id="<?php echo htmlspecialchars($cita['cit_id']); ?>"
                                         title="Rechazar Cita"><i class="bi bi-x-lg"></i></button>
+                                    <?php elseif ($cita['cit_estado'] === 'aprobada'): ?>
+                                    <button class="btn-admin-accion btn-registrar-venta"
+                                        data-id="<?php echo htmlspecialchars($cita['cit_id']); ?>"
+                                        title="Registrar Venta"><i class="bi bi-cash-stack"></i></button>
                                     <?php endif; ?>
                                 </div>
                             </td>

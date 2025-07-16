@@ -15,3 +15,21 @@
 [14-Jul-2025 00:44:28 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 8
 [15-Jul-2025 17:44:41 America/New_York] Error en actualizarVehiculoDB para veh_id 10: Error al ejecutar SP de actualización de vehículo: Table 'Chasiguano_4.Vehiculos' doesn't exist
 [15-Jul-2025 17:44:41 America/New_York] Error desde actualizarVehiculoDB para veh_id 10: Error al actualizar el vehículo: Error al ejecutar SP de actualización de vehículo: Table 'Chasiguano_4.Vehiculos' doesn't exist
+[16-Jul-2025 00:52:47 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'v.vnt_id' in 'field list'
+[16-Jul-2025 00:52:57 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'v.vnt_id' in 'field list'
+[16-Jul-2025 00:55:59 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'v.vnt_id' in 'field list'
+[16-Jul-2025 01:30:28 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 01:37:33 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 01:37:43 America/New_York] PHP Notice:  session_start(): ps_files_cleanup_dir: opendir(C:\Windows\Temp\) failed: No error (0) in C:\inetpub\wwwroot\Sistema_venta_Autos\VISTAS\mis_ventas.php on line 6
+[16-Jul-2025 01:37:43 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 01:38:47 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:07:57 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:08:59 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:09:17 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:09:19 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:10:22 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:13:42 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:15:33 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:16:47 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 02:18:15 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 10:12:23 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'

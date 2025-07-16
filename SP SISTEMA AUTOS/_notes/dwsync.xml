@@ -6,4 +6,5 @@
 <file name="SP_vehiculos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133968375943200016" remote="133970833420000000" Dst="0" />
 <file name="SP_citas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133969427605720228" remote="133970833420000000" Dst="0" />
 <file name="SP_imagenes.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133962444616283982" remote="133970833420000000" Dst="0" />
+<file name="SP_ventas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971177245225798" remote="133971491930000000" Dst="0" />
 </dwsync>

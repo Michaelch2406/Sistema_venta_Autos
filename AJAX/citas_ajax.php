@@ -160,6 +160,38 @@ case 'insertar_cita':
     }
     break;
     
+    case 'registrar_venta':
+        $admin_id = verificar_sesion_y_rol([3, 2]);
+        $cit_id = filter_input(INPUT_POST, 'id_cita', FILTER_VALIDATE_INT);
+        $precio_final = filter_input(INPUT_POST, 'precio_final', FILTER_VALIDATE_FLOAT);
+
+        if (!$cit_id || !$precio_final) {
+            echo json_encode(['success' => false, 'message' => 'Datos inválidos para registrar la venta.']); exit;
+        }
+
+        $cita_detalle = $citaModelo->obtener_detalle_cita($cit_id);
+        if (!$cita_detalle) {
+            echo json_encode(['success' => false, 'message' => 'No se encontró la cita.']); exit;
+        }
+
+        $comprador_id = $cita_detalle['usu_id_solicitante'];
+        $vehiculo_id = $cita_detalle['veh_id'];
+
+        // Obtener el ID del vendedor (propietario del vehículo)
+        // Esta parte puede necesitar un ajuste dependiendo de cómo se almacena el propietario del vehículo.
+        // Por ahora, asumiré que el administrador que registra la venta es el vendedor.
+        $vendedor_id = $admin_id;
+
+        // Llamada al procedimiento almacenado de registro de venta
+        $sql = "CALL sp_registrar_venta(?, ?, ?, ?, ?, ?)";
+        $stmt = $db_conn_mysqli->prepare($sql);
+        $notas = "Venta registrada por el administrador ID: " . $admin_id;
+        $stmt->bind_param("idiiis", $cit_id, $precio_final, $comprador_id, $vendedor_id, $vehiculo_id, $notas);
+        $stmt->execute();
+        
+        echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente.']);
+        break;
+
     default:
         echo json_encode(['success' => false, 'message' => 'Acción desconocida: ' . htmlspecialchars($action)]);
         break;
