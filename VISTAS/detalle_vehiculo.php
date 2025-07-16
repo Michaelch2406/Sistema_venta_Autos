@@ -427,7 +427,7 @@ $especificaciones = getSpecifications($vehiculo);
     </div>
     <?php endif; ?>
 
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <?php include './partials/footer.php'; ?>
 
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>

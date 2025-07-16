@@ -13,3 +13,5 @@
 [14-Jul-2025 00:44:28 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 8
 [14-Jul-2025 00:44:28 America/New_York] PHP Warning:  session_start(): open(C:\Windows\Temp\\sess_kicj9tpgaa3p6247fvlcr87p4r, O_RDWR) failed: Permission denied (13) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 8
 [14-Jul-2025 00:44:28 America/New_York] PHP Warning:  session_start(): Failed to read session data: files (path: C:\Windows\Temp\) in C:\inetpub\wwwroot\Sistema_venta_Autos\AJAX\vehiculos_ajax.php on line 8
+[15-Jul-2025 17:44:41 America/New_York] Error en actualizarVehiculoDB para veh_id 10: Error al ejecutar SP de actualización de vehículo: Table 'Chasiguano_4.Vehiculos' doesn't exist
+[15-Jul-2025 17:44:41 America/New_York] Error desde actualizarVehiculoDB para veh_id 10: Error al actualizar el vehículo: Error al ejecutar SP de actualización de vehículo: Table 'Chasiguano_4.Vehiculos' doesn't exist
