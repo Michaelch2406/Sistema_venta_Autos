@@ -200,6 +200,7 @@ $(document).ready(function() {
       dataType: 'json'
     })
     .done(function(resp) {
+      console.log("Registro success response:", resp);
       if (resp.status === 'success') {
         // Animación de éxito
         $btn.removeClass('loading').addClass('success');
@@ -218,6 +219,7 @@ $(document).ready(function() {
       }
     })
     .fail(function(xhr, status, err) {
+      console.error("Registro AJAX error:", status, err, xhr.responseText);
       $btn.removeClass('loading');
       showErrorMessage('Error de servidor: ' + status);
       console.error(xhr.responseText);

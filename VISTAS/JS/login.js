@@ -24,6 +24,7 @@ $(document).ready(function () {
             dataType: 'json',
             // En VISTAS/JS/login.js, dentro del success de AJAX:
             success: function (response) {
+                console.log("Login success response:", response);
                 if (response.status === 'success') {
                     if (response.redirect_url) { // Usar la URL de redirección proporcionada por el backend
                         window.location.href = response.redirect_url;
@@ -36,6 +37,7 @@ $(document).ready(function () {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Login AJAX error:", textStatus, errorThrown, jqXHR.responseText);
                 alert('Error de conexión o del servidor: ' + textStatus + " - " + errorThrown);
                 console.error("AJAX Error en login:", jqXHR.responseText);
             },

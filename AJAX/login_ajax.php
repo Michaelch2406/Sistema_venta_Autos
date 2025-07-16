@@ -1,14 +1,9 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 if (session_status() == PHP_SESSION_NONE) {
-
-    $cookieParams = session_get_cookie_params();
-    session_set_cookie_params(
-        $cookieParams["lifetime"],
-        '/', // Path
-        $cookieParams["domain"], // Domain - adjust if using subdomains
-        true // HttpOnly
-    );
     session_start();
 }
 
@@ -28,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $datos_usuario_sp = $usuario_model->loginUsuario($usuario_login);
 
         if (isset($datos_usuario_sp['resultado'])) {
+            error_log("Login Ajax: Resultado de SP: " . $datos_usuario_sp['resultado']);
             if ($datos_usuario_sp['resultado'] == 1) { // Usuario encontrado por SP
                 if (password_verify($password_login, $datos_usuario_sp['usu_password'])) {
                     // Contraseña correcta

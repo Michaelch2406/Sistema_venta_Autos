@@ -1,8 +1,7 @@
 <?php
-ini_set('display_errors', 0); 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', './../php_error.log'); 
 
 require_once "./../MODELOS/usuarios_m.php";
 require_once "./../CONFIG/global.php";
@@ -62,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cedula, // Parámetro añadido en la llamada
         $password, $telefono, $direccion, $fnac
     );
+    error_log("Registro Ajax: Resultado de SP: " . print_r($res, true));
     if (isset($res['resultado']) && $res['resultado'] == 1) {
         $response['status']  = 'success';
         $response['message'] = $res['mensaje'];
