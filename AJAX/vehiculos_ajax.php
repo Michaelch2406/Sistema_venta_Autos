@@ -245,8 +245,44 @@ try {
 
                 if (isset($resultado_sp_vehiculo['resultado']) && $resultado_sp_vehiculo['resultado'] == 1) {
                     $veh_id_insertado = $resultado_sp_vehiculo['veh_id'];
-                    // Lógica de subida de imágenes... (sin cambios)
-                     $response = ['status' => 'success', 'message' => 'Vehículo publicado (lógica de imagen omitida para brevedad)', 'veh_id' => $veh_id_insertado];
+                    
+                    $imagenes_subidas = $_FILES['veh_imagenes'];
+                    $imagen_principal_nombre_temporal = $_POST['imagen_principal_nombre_temporal'] ?? null;
+                    $upload_dir = __DIR__ . '/../PUBLIC/uploads/vehiculos/' . $veh_id_insertado . '/';
+                    if (!file_exists($upload_dir)) {
+                        mkdir($upload_dir, 0775, true);
+                    }
+
+                    $errores_imagenes = [];
+                    $imagenes_model = new ImagenesVehiculo_M();
+
+                    foreach ($imagenes_subidas['name'] as $key => $name) {
+                        if ($imagenes_subidas['error'][$key] == UPLOAD_ERR_OK) {
+                            $tmp_name = $imagenes_subidas['tmp_name'][$key];
+                            $original_name = basename(filter_var($name, FILTER_SANITIZE_STRING));
+                            $extension = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+                            $safe_filename = uniqid('vehiculo_' . $veh_id_insertado . '_', true) . '.' . $extension;
+                            $destination = $upload_dir . $safe_filename;
+
+                            if (move_uploaded_file($tmp_name, $destination)) {
+                                $url_relativa_db = 'PUBLIC/uploads/vehiculos/' . $veh_id_insertado . '/' . $safe_filename;
+                                $es_principal = ($original_name === $imagen_principal_nombre_temporal);
+                                
+                                $resultado_db = $imagenes_model->insertarImagen($veh_id_insertado, $url_relativa_db, $es_principal);
+                                if (!isset($resultado_db['resultado']) || $resultado_db['resultado'] != 1) {
+                                    $errores_imagenes[] = "Error al guardar '{$original_name}' en la base de datos: " . ($resultado_db['mensaje'] ?? 'Error desconocido.');
+                                }
+                            } else {
+                                $errores_imagenes[] = "Error al mover el archivo '{$original_name}'.";
+                            }
+                        }
+                    }
+
+                    if (empty($errores_imagenes)) {
+                        $response = ['status' => 'success', 'message' => '¡Vehículo publicado con éxito!', 'veh_id' => $veh_id_insertado];
+                    } else {
+                        $response = ['status' => 'warning', 'message' => 'Vehículo publicado, pero con errores en las imágenes: ' . implode('; ', $errores_imagenes), 'veh_id' => $veh_id_insertado];
+                    }
                 } else {
                      $response['message'] = $resultado_sp_vehiculo['mensaje'] ?? 'Error al publicar vehículo.';
                 }

@@ -315,7 +315,7 @@ for ($year = $current_year + 1; $year >= 1950; $year--) {
             </form>
         </div>
     </main>
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <?php include __DIR__ . '/partials/footer.php'; ?>
 
 
     <script>

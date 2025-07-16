@@ -520,7 +520,7 @@ class Vehiculo
             foreach ($ids_imagenes_a_eliminar as $ima_id_str) {
                 $ima_id = filter_var(trim($ima_id_str), FILTER_VALIDATE_INT);
                 if ($ima_id) {
-                    $stmt_get_url = $this->conn->prepare("SELECT ima_url FROM ImagenesVehiculo WHERE ima_id = ? AND veh_id = ?");
+                    $stmt_get_url = $this->conn->prepare("SELECT ima_url FROM imagenesvehiculo WHERE ima_id = ? AND veh_id = ?");
                     $stmt_get_url->bind_param("ii", $ima_id, $veh_id);
                     $stmt_get_url->execute();
                     $res_url = $stmt_get_url->get_result();
@@ -533,7 +533,7 @@ class Vehiculo
                     }
                     $stmt_get_url->close();
 
-                    $stmt_delete = $this->conn->prepare("DELETE FROM ImagenesVehiculo WHERE ima_id = ?");
+                    $stmt_delete = $this->conn->prepare("DELETE FROM imagenesvehiculo WHERE ima_id = ?");
                     $stmt_delete->bind_param("i", $ima_id);
                     $stmt_delete->execute();
                     $stmt_delete->close();
@@ -583,18 +583,18 @@ class Vehiculo
         
         // === PASO 4: Establecer la imagen principal (si no fue una nueva) ===
         if (!$nombre_archivo_nueva_principal && $imagen_principal_actual_id) {
-            $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = FALSE WHERE veh_id = {$veh_id}");
-            $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE veh_id = {$veh_id} AND ima_id = {$imagen_principal_actual_id}");
+            $this->conn->query("UPDATE imagenesvehiculo SET ima_es_principal = FALSE WHERE veh_id = {$veh_id}");
+            $this->conn->query("UPDATE imagenesvehiculo SET ima_es_principal = TRUE WHERE veh_id = {$veh_id} AND ima_id = {$imagen_principal_actual_id}");
         }
 
         // === PASO 5: Asegurarse de que SIEMPRE haya una imagen principal si existen imágenes ===
-        $res_check_main = $this->conn->query("SELECT COUNT(*) as count_main FROM ImagenesVehiculo WHERE veh_id = {$veh_id} AND ima_es_principal = TRUE");
+        $res_check_main = $this->conn->query("SELECT COUNT(*) as count_main FROM imagenesvehiculo WHERE veh_id = {$veh_id} AND ima_es_principal = TRUE");
         $count_main = (int)$res_check_main->fetch_assoc()['count_main'];
         if ($count_main === 0) {
-            $res_any_img = $this->conn->query("SELECT ima_id FROM ImagenesVehiculo WHERE veh_id = {$veh_id} ORDER BY ima_id ASC LIMIT 1");
+            $res_any_img = $this->conn->query("SELECT ima_id FROM imagenesvehiculo WHERE veh_id = {$veh_id} ORDER BY ima_id ASC LIMIT 1");
             if ($res_any_img && $res_any_img->num_rows > 0) {
                 $first_img_id = $res_any_img->fetch_assoc()['ima_id'];
-                $this->conn->query("UPDATE ImagenesVehiculo SET ima_es_principal = TRUE WHERE ima_id = {$first_img_id}");
+                $this->conn->query("UPDATE imagenesvehiculo SET ima_es_principal = TRUE WHERE ima_id = {$first_img_id}");
             }
         }
 
