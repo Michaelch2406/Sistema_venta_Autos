@@ -225,6 +225,7 @@ class Vehiculo
         $precio_max = isset($filtros['precio_max']) && is_numeric($filtros['precio_max']) ? "'" . $this->conn->real_escape_string($filtros['precio_max']) . "'" : 'NULL';
         $anio_min = isset($filtros['anio_min']) && filter_var($filtros['anio_min'], FILTER_VALIDATE_INT) ? (int)$filtros['anio_min'] : 'NULL';
         $anio_max = isset($filtros['anio_max']) && filter_var($filtros['anio_max'], FILTER_VALIDATE_INT) ? (int)$filtros['anio_max'] : 'NULL';
+        $kilometraje_max = isset($filtros['kilometraje_max']) && filter_var($filtros['kilometraje_max'], FILTER_VALIDATE_INT) ? (int)$filtros['kilometraje_max'] : 'NULL';
         $provincia = isset($filtros['provincia']) && !empty($filtros['provincia']) ? "'" . $this->conn->real_escape_string($filtros['provincia']) . "'" : 'NULL';
         
         $items_por_pagina = isset($filtros['items_por_pagina']) && filter_var($filtros['items_por_pagina'], FILTER_VALIDATE_INT) ? (int)$filtros['items_por_pagina'] : 12; // Default 12 items
@@ -233,7 +234,7 @@ class Vehiculo
 
         $sql = "CALL sp_get_vehiculos_listado(
             '$condicion', $mar_id, $mod_id, $tiv_id,
-            $precio_min, $precio_max, $anio_min, $anio_max, $provincia,
+            $precio_min, $precio_max, $anio_min, $anio_max, $kilometraje_max, $provincia,
             $items_por_pagina, $offset,
             @p_total_vehiculos
         )";

@@ -63,7 +63,7 @@
                             <!-- Filtro por Marca -->
                             <div class="filter-group">
                                 <label class="filter-group-title" for="filtro_mar_id">Marca</label>
-                                <select class="form-select enhanced-select" id="filtro_mar_id" name="marca_id">
+                                <select class="form-select enhanced-select" id="filtro_mar_id" name="mar_id">
                                     <option value="">Selecciona una marca</option>
                                 </select>
                             </div>
@@ -71,7 +71,7 @@
                             <!-- Filtro por Modelo -->
                             <div class="filter-group">
                                 <label class="filter-group-title" for="filtro_mod_id">Modelo</label>
-                                <select class="form-select enhanced-select" id="filtro_mod_id" name="modelo_id" disabled>
+                                <select class="form-select enhanced-select" id="filtro_mod_id" name="mod_id" disabled>
                                     <option value="">Selecciona marca primero</option>
                                 </select>
                             </div>
@@ -79,7 +79,7 @@
                             <!-- Filtro por Tipo de Vehículo -->
                             <div class="filter-group">
                                 <label class="filter-group-title" for="filtro_tiv_id">Tipo de Vehículo</label>
-                                <select class="form-select enhanced-select" id="filtro_tiv_id" name="tipo_vehiculo_id">
+                                <select class="form-select enhanced-select" id="filtro_tiv_id" name="tiv_id">
                                     <option value="">Todos los tipos</option>
                                 </select>
                             </div>

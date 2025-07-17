@@ -335,6 +335,7 @@ CREATE PROCEDURE sp_get_vehiculos_listado(
     IN p_precio_max DECIMAL(12,2),
     IN p_anio_min INT,
     IN p_anio_max INT,
+    IN p_kilometraje_max INT,   -- Filtro de kilometraje máximo
     IN p_ubicacion_provincia VARCHAR(100), -- Vacío o NULL para no filtrar
     IN p_items_por_pagina INT,
     IN p_offset INT,
@@ -378,6 +379,9 @@ BEGIN
     END IF;
     IF p_anio_max IS NOT NULL THEN
         SET @sql_query = CONCAT(@sql_query, ' AND v.veh_anio <= ', p_anio_max);
+    END IF;
+    IF p_kilometraje_max IS NOT NULL THEN
+        SET @sql_query = CONCAT(@sql_query, ' AND v.veh_kilometraje <= ', p_kilometraje_max);
     END IF;
     IF p_ubicacion_provincia IS NOT NULL AND p_ubicacion_provincia != '' THEN
         SET @sql_query = CONCAT(@sql_query, ' AND v.veh_ubicacion_provincia = ''', p_ubicacion_provincia, '''');

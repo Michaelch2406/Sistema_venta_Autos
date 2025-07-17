@@ -149,6 +149,7 @@ try {
             if (isset($_GET['precio_max']) && $_GET['precio_max'] !== '') $filtros['precio_max'] = filter_var($_GET['precio_max'], FILTER_VALIDATE_FLOAT);
             if (isset($_GET['anio_min']) && !empty($_GET['anio_min'])) $filtros['anio_min'] = filter_var($_GET['anio_min'], FILTER_VALIDATE_INT);
             if (isset($_GET['anio_max']) && !empty($_GET['anio_max'])) $filtros['anio_max'] = filter_var($_GET['anio_max'], FILTER_VALIDATE_INT);
+            if (isset($_GET['kilometraje_max']) && $_GET['kilometraje_max'] !== '') $filtros['kilometraje_max'] = filter_var($_GET['kilometraje_max'], FILTER_VALIDATE_INT);
             if (isset($_GET['provincia']) && !empty($_GET['provincia'])) $filtros['provincia'] = trim($_GET['provincia']);
             $filtros['pagina'] = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
             if ($filtros['pagina'] < 1) $filtros['pagina'] = 1;
