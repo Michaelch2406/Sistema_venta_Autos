@@ -36,3 +36,51 @@
 [16-Jul-2025 13:43:49 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
 [16-Jul-2025 21:23:46 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
 [16-Jul-2025 22:20:39 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'
+[17-Jul-2025 15:54:31 America/New_York] Error en la consulta SQL: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'usado', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            9, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:54:31 America/New_York] Error al ejecutar sp_get_vehiculos_listado: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'usado', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            9, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:55:18 America/New_York] Error en la consulta SQL: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'usado', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            9, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:55:18 America/New_York] Error al ejecutar sp_get_vehiculos_listado: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'usado', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            9, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:56:50 America/New_York] Error en la consulta SQL: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'usado', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            9, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:56:50 America/New_York] Error al ejecutar sp_get_vehiculos_listado: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'usado', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            9, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:58:07 America/New_York] Error en la consulta SQL: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'nuevo', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            6, 0,
+            @p_total_vehiculos
+        ))
+[17-Jul-2025 15:58:07 America/New_York] Error al ejecutar sp_get_vehiculos_listado: Incorrect number of arguments for PROCEDURE sistemaventaautos.sp_get_vehiculos_listado; expected 13, got 12 (SQL: CALL sp_get_vehiculos_listado(
+            'nuevo', NULL, NULL, NULL,
+            NULL, NULL, NULL, NULL, NULL,
+            6, 0,
+            @p_total_vehiculos
+        ))

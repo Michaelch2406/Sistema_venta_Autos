@@ -234,7 +234,7 @@ class Vehiculo
 
         $sql = "CALL sp_get_vehiculos_listado(
             '$condicion', $mar_id, $mod_id, $tiv_id,
-            $precio_min, $precio_max, $anio_min, $anio_max, $provincia,
+            $precio_min, $precio_max, $anio_min, $anio_max, $kilometraje_max, $provincia,
             $items_por_pagina, $offset,
             @p_total_vehiculos
         )";
@@ -245,10 +245,6 @@ class Vehiculo
         if ($resultado_sp && $resultado_sp instanceof mysqli_result) {
             if ($resultado_sp->num_rows > 0) {
                 while ($fila = $resultado_sp->fetch_assoc()) {
-                    // Aplicar filtro de kilometraje si está definido
-                    if ($kilometraje_max !== 'NULL' && isset($fila['veh_kilometraje']) && $fila['veh_kilometraje'] > $kilometraje_max) {
-                        continue; // Saltar este vehículo si excede el kilometraje máximo
-                    }
                     $vehiculos[] = $fila;
                 }
             }
