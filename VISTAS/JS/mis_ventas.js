@@ -193,7 +193,16 @@ function setupRefreshButton() {
          * Función para ver detalles de una venta específica
          */
         function verDetallesVenta(ventaId) {
-            const modal = new bootstrap.Modal(document.getElementById('modalDetallesVenta'));
+            // Prevenir múltiples llamadas
+            if (window.ventaDetailsLoading) {
+                return;
+            }
+            window.ventaDetailsLoading = true;
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalDetallesVenta'), {
+                backdrop: 'static',
+                keyboard: false
+            });
             const contenido = document.getElementById('contenidoDetallesVenta');
             
             // Mostrar loading
@@ -209,12 +218,21 @@ function setupRefreshButton() {
             // Mostrar modal
             modal.show();
             
+            // Limpiar flag cuando se cierre el modal
+            document.getElementById('modalDetallesVenta').addEventListener('hidden.bs.modal', function() {
+                window.ventaDetailsLoading = false;
+            }, { once: true });
+            
             // Cargar detalles via AJAX
             $.ajax({
-                url: 'ajax/obtener_detalle_venta.php',
+                url: './../AJAX/detalles_venta_ajax.php',
                 method: 'GET',
-                data: { id: ventaId },
+                data: { 
+                    action: 'obtener_detalle_venta',
+                    id: ventaId 
+                },
                 dataType: 'json',
+                timeout: 10000, // 10 segundos timeout
                 success: function(response) {
                     if (response.success) {
                         mostrarDetallesVenta(response.venta);
@@ -222,8 +240,24 @@ function setupRefreshButton() {
                         mostrarErrorDetalles(response.message);
                     }
                 },
-                error: function() {
-                    mostrarErrorDetalles('Error de conexión al cargar los detalles.');
+                error: function(xhr, status, error) {
+                    console.error('Error AJAX:', status, error);
+                    let errorMessage = 'Error de conexión al cargar los detalles.';
+                    if (status === 'timeout') {
+                        errorMessage = 'La solicitud tardó demasiado tiempo. Intente nuevamente.';
+                    } else if (xhr.responseText) {
+                        try {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            errorMessage = errorResponse.message || errorMessage;
+                        } catch(e) {
+                            errorMessage = 'Error del servidor al procesar la solicitud.';
+                        }
+                    }
+                    mostrarErrorDetalles(errorMessage);
+                },
+                complete: function() {
+                    // Limpiar flag de carga cuando termine la petición
+                    window.ventaDetailsLoading = false;
                 }
             });
         }
@@ -284,6 +318,13 @@ function setupRefreshButton() {
                     </a>
                 </div>
             `;
+            
+            // Permitir cerrar modal después de cargar detalles
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetallesVenta'));
+            if (modal) {
+                modal._config.backdrop = true;
+                modal._config.keyboard = true;
+            }
         }
         
         /**
@@ -296,7 +337,18 @@ function setupRefreshButton() {
                     <i class="bi bi-exclamation-triangle"></i>
                     <strong>Error:</strong> ${mensaje}
                 </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cerrar
+                    </button>
+                </div>
             `;
+            // Permitir cerrar modal después de error
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetallesVenta'));
+            if (modal) {
+                modal._config.backdrop = true;
+                modal._config.keyboard = true;
+            }
         }
         
         // Configuración adicional cuando el documento esté listo
@@ -490,7 +542,7 @@ function calculateTotalIngresos() {
     let total = 0;
     $('#tabla-ventas-body tr').each(function() {
         const precioText = $(this).find('td').eq(3).text();
-        const precio = parseFloat(precioText.replace(/[^\d.-]/g, '')) || 0;
+        const precio = parseFloat(precioText.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '')) || 0;
         total += precio;
     });
     return total;

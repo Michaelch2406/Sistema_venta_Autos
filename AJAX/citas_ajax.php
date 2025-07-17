@@ -101,7 +101,8 @@ switch ($action) {
         if ($actualizado) {
             echo json_encode(['success' => true, 'message' => "Estado de la cita #{$cit_id} actualizado a '{$nuevo_estado_raw}'.", 'nuevo_estado' => $nuevo_estado_raw]);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Error al actualizar el estado de la cita.']);
+            error_log("Error al actualizar estado de cita #{$cit_id} a '{$nuevo_estado_raw}' por usuario {$user_id}");
+            echo json_encode(['success' => false, 'message' => "Error al actualizar el estado de la cita #{$cit_id}. Verifique los logs para más detalles."]);
         }
         break;
 

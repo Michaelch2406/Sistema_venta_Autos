@@ -173,15 +173,58 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Respuesta del servidor:', resultado); // Para debug
             
             if (resultado.success) {
-                alert('Estado actualizado.');
-                location.reload();
+                // Mostrar mensaje de éxito más detallado
+                alert(`¡Éxito! ${resultado.message}`);
+                // Actualizar la UI sin recargar toda la página
+                const fila = boton.closest('tr');
+                if (fila) {
+                    // Actualizar el badge de estado en la fila
+                    const estadoCell = fila.querySelector('.estado-tag');
+                    if (estadoCell) {
+                        estadoCell.className = `estado-tag estado-${nuevoEstado}`;
+                        estadoCell.textContent = nuevoEstado.charAt(0).toUpperCase() + nuevoEstado.slice(1);
+                    }
+                    
+                    // Actualizar los botones de acción
+                    const botonesContainer = boton.closest('.btn-group');
+                    if (botonesContainer && nuevoEstado === 'aprobada') {
+                        // Remover botones de aprobar/rechazar y agregar botón de venta
+                        botonesContainer.innerHTML = `
+                            <button class="btn-admin-accion btn-admin-ver-detalle" data-id="${citaId}" title="Ver detalles">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn-admin-accion btn-registrar-venta" data-id="${citaId}" title="Registrar Venta">
+                                <i class="bi bi-cash-stack"></i>
+                            </button>
+                        `;
+                    } else if (nuevoEstado === 'rechazado') {
+                        // Solo mostrar botón de ver detalles para citas rechazadas
+                        botonesContainer.innerHTML = `
+                            <button class="btn-admin-accion btn-admin-ver-detalle" data-id="${citaId}" title="Ver detalles">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        `;
+                    }
+                }
             } else {
                 alert(`Error: ${resultado.message}`);
+                // Restaurar el botón a su estado original
+                if (nuevoEstado === 'aprobada') {
+                    boton.innerHTML = '<i class="bi bi-check-lg"></i>';
+                } else if (nuevoEstado === 'rechazado') {
+                    boton.innerHTML = '<i class="bi bi-x-lg"></i>';
+                }
                 boton.disabled = false;
             }
         } catch (error) {
             console.error('Error completo:', error);
             alert('Error de conexión al cambiar estado: ' + error.message);
+            // Restaurar el botón a su estado original
+            if (nuevoEstado === 'aprobada') {
+                boton.innerHTML = '<i class="bi bi-check-lg"></i>';
+            } else if (nuevoEstado === 'rechazado') {
+                boton.innerHTML = '<i class="bi bi-x-lg"></i>';
+            }
             boton.disabled = false;
         }
     }

@@ -53,11 +53,11 @@ switch ($action) {
         $detalle_venta = $detalleVentaModelo->obtener_detalle_venta($vnt_id);
         
         if ($detalle_venta) {
-            // Verificar que el usuario actual es el comprador o el vendedor
-            if ($usu_id_actual == $detalle_venta['comprador_id'] || $usu_id_actual == $detalle_venta['vendedor_id']) {
-                echo json_encode(['success' => true, 'data' => $detalle_venta]);
+            // Verificar permisos: Admin puede ver todo, otros solo sus ventas
+            if ($_SESSION['rol_id'] == 3 || $usu_id_actual == $detalle_venta['comprador_id'] || $usu_id_actual == $detalle_venta['vendedor_id']) {
+                echo json_encode(['success' => true, 'venta' => $detalle_venta]);
             } else {
-                echo json_encode(['success' => false, 'message' => 'No tiene permiso para ver esta factura.']);
+                echo json_encode(['success' => false, 'message' => 'No tiene permiso para ver esta venta.']);
             }
         } else {
             echo json_encode(['success' => false, 'message' => 'No se encontró el detalle de la venta.']);

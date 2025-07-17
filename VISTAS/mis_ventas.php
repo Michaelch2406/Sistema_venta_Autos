@@ -31,7 +31,7 @@ if (!isset($_SESSION['usu_id'])) {
     exit;
 }
 
-$ventas = $ventaModelo->obtener_ventas_por_usuario($_SESSION['usu_id']);
+$ventas = $ventaModelo->obtener_ventas_por_usuario($_SESSION['usu_id'], $_SESSION['rol_id']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -41,7 +41,7 @@ $ventas = $ventaModelo->obtener_ventas_por_usuario($_SESSION['usu_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Gestión de mis ventas - Panel de control de ventas realizadas">
     <meta name="keywords" content="ventas, gestión, vehículos, facturas">
-    <title>Mis Ventas - Panel de Control</title>
+    <title><?php echo ($_SESSION['rol_id'] == 3) ? 'Gestión de Ventas - Panel de Administración' : 'Mis Ventas - Panel de Control'; ?></title>
     
     <!-- Bootstrap CSS -->
     <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -71,7 +71,7 @@ $ventas = $ventaModelo->obtener_ventas_por_usuario($_SESSION['usu_id']);
             <h2>
                 <span>
                     <i class="bi bi-receipt me-2"></i>
-                    Mis Ventas
+                    <?php echo ($_SESSION['rol_id'] == 3) ? 'Gestión de Ventas (Administrador)' : 'Mis Ventas'; ?>
                 </span>
             </h2>
             
@@ -117,7 +117,7 @@ $ventas = $ventaModelo->obtener_ventas_por_usuario($_SESSION['usu_id']);
                                 </td>
                                 <td>
                                     <div class="d-flex gap-1">
-                                        <a href="factura.php?id=<?php echo htmlspecialchars($venta['vnt_id']); ?>" 
+                                        <a href="./factura.php?id=<?php echo htmlspecialchars($venta['vnt_id']); ?>" 
                                            class="btn btn-primary btn-sm" 
                                            title="Ver Factura"
                                            aria-label="Ver factura de la venta <?php echo htmlspecialchars($venta['vnt_id']); ?>">

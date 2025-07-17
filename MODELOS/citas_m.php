@@ -68,10 +68,11 @@ class CitaModelo {
         }
         
         if ($this->mysqli->query($sql_call)) {
-            $res = $this->mysqli->store_result();
-            if($res){ 
-                $row = $res->fetch_assoc(); 
-                $res->free(); 
+            // Obtener el resultado del stored procedure
+            $result = $this->mysqli->store_result();
+            if ($result) {
+                $row = $result->fetch_assoc();
+                $result->free();
                 
                 // Limpiar resultados posteriores
                 while($this->mysqli->more_results() && $this->mysqli->next_result()){ 
@@ -79,10 +80,14 @@ class CitaModelo {
                 }
                 
                 $filas_afectadas = isset($row['filas_afectadas']) ? (int)$row['filas_afectadas'] : 0;
-                error_log("SP ejecutado. Filas afectadas: " . $filas_afectadas . " (SQL: " . $sql_call . ")");
+                error_log("SP ejecutado exitosamente. Filas afectadas: " . $filas_afectadas . " (SQL: " . $sql_call . ")");
                 return $filas_afectadas > 0;
+            } else {
+                // Si no hay resultado, verificar si hubo cambios con affected_rows
+                $affected_rows = $this->mysqli->affected_rows;
+                error_log("SP ejecutado sin resultado. Filas afectadas (affected_rows): " . $affected_rows . " (SQL: " . $sql_call . ")");
+                return $affected_rows > 0;
             }
-            return false;
         } else {
             error_log("Error en CitaModelo al ejecutar SP (afecta filas): " . $this->mysqli->error . " (SQL: " . $sql_call . ")");
             return false;

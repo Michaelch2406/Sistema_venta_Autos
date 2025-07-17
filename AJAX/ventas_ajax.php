@@ -47,7 +47,7 @@ function verificar_sesion_y_rol($roles_permitidos = []) {
 switch ($action) {
     case 'obtener_ventas_usuario':
         $usu_id_actual = verificar_sesion_y_rol([1, 2, 3]); 
-        $ventas = $ventaModelo->obtener_ventas_por_usuario($usu_id_actual);
+        $ventas = $ventaModelo->obtener_ventas_por_usuario($usu_id_actual, $_SESSION['rol_id']);
         echo json_encode(['success' => true, 'data' => $ventas]);
         break;
 

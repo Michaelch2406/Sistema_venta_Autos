@@ -18,25 +18,51 @@ class VentaModelo {
         }
     }
 
-    public function obtener_ventas_por_usuario($usu_id) {
+    public function obtener_ventas_por_usuario($usu_id, $rol_id = null) {
         $usu_id_san = (int)$usu_id;
-        $sql = "
-            SELECT 
-                v.vnt_id,
-                v.vnt_fecha_venta,
-                v.vnt_precio_final,
-                CONCAT(m.mar_nombre, ' ', mo.mod_nombre) AS vehiculo_nombre,
-                CONCAT(comp.usu_nombre, ' ', comp.usu_apellido) AS comprador_nombre,
-                CONCAT(vend.usu_nombre, ' ', vend.usu_apellido) AS vendedor_nombre
-            FROM ventas v
-            JOIN vehiculos veh ON v.vehiculo_id = veh.veh_id
-            JOIN marcas m ON veh.mar_id = m.mar_id
-            JOIN modelos mo ON veh.mod_id = mo.mod_id
-            JOIN usuarios comp ON v.comprador_id = comp.usu_id
-            JOIN usuarios vend ON v.vendedor_id = vend.usu_id
-            WHERE v.comprador_id = {$usu_id_san} OR v.vendedor_id = {$usu_id_san}
-            ORDER BY v.vnt_fecha_venta DESC
-        ";
+        
+        // Si es administrador (rol_id = 3), obtener todas las ventas
+        if ($rol_id == 3) {
+            $sql = "
+                SELECT 
+                    v.vnt_id,
+                    v.vnt_fecha_venta,
+                    v.vnt_precio_final,
+                    v.comprador_id,
+                    v.vendedor_id,
+                    CONCAT(m.mar_nombre, ' ', mo.mod_nombre) AS vehiculo_nombre,
+                    CONCAT(comp.usu_nombre, ' ', comp.usu_apellido) AS comprador_nombre,
+                    CONCAT(vend.usu_nombre, ' ', vend.usu_apellido) AS vendedor_nombre
+                FROM ventas v
+                JOIN vehiculos veh ON v.vehiculo_id = veh.veh_id
+                JOIN marcas m ON veh.mar_id = m.mar_id
+                JOIN modelos mo ON veh.mod_id = mo.mod_id
+                JOIN usuarios comp ON v.comprador_id = comp.usu_id
+                JOIN usuarios vend ON v.vendedor_id = vend.usu_id
+                ORDER BY v.vnt_fecha_venta DESC
+            ";
+        } else {
+            // Para usuarios normales, solo sus ventas (como comprador o vendedor)
+            $sql = "
+                SELECT 
+                    v.vnt_id,
+                    v.vnt_fecha_venta,
+                    v.vnt_precio_final,
+                    v.comprador_id,
+                    v.vendedor_id,
+                    CONCAT(m.mar_nombre, ' ', mo.mod_nombre) AS vehiculo_nombre,
+                    CONCAT(comp.usu_nombre, ' ', comp.usu_apellido) AS comprador_nombre,
+                    CONCAT(vend.usu_nombre, ' ', vend.usu_apellido) AS vendedor_nombre
+                FROM ventas v
+                JOIN vehiculos veh ON v.vehiculo_id = veh.veh_id
+                JOIN marcas m ON veh.mar_id = m.mar_id
+                JOIN modelos mo ON veh.mod_id = mo.mod_id
+                JOIN usuarios comp ON v.comprador_id = comp.usu_id
+                JOIN usuarios vend ON v.vendedor_id = vend.usu_id
+                WHERE v.comprador_id = {$usu_id_san} OR v.vendedor_id = {$usu_id_san}
+                ORDER BY v.vnt_fecha_venta DESC
+            ";
+        }
         
         $result = $this->mysqli->query($sql);
         if (!$result) {

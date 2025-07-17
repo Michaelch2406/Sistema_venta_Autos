@@ -84,3 +84,5 @@
             6, 0,
             @p_total_vehiculos
         ))
+[17-Jul-2025 16:18:00 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'
+[17-Jul-2025 16:18:18 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'
