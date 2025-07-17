@@ -213,13 +213,25 @@ case 'insertar_cita':
         $stmt->bind_param("idiiis", $cit_id, $precio_final, $comprador_id, $vendedor_id, $vehiculo_id, $notas);
         $stmt->execute();
         
+        // Obtener el ID de la venta insertada
+        $venta_id = $db_conn_mysqli->insert_id;
+        
         // Actualizar el estado del vehículo a 'vendido'
         $sql_update = "UPDATE VEHICULOS SET veh_estado = 'vendido' WHERE veh_id = ?";
         $stmt_update = $db_conn_mysqli->prepare($sql_update);
         $stmt_update->bind_param("i", $vehiculo_id);
         $stmt_update->execute();
         
-        echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente. El vehículo ha sido marcado como vendido.']);
+        // Generar detalle de venta (reemplaza el trigger MySQL)
+        require_once './../MODELOS/detalles_venta_m.php';
+        $detalleVentaModelo = new DetalleVentaModelo($db_conn_mysqli);
+        $detalle_generado = $detalleVentaModelo->generar_detalle_venta($venta_id);
+        
+        if ($detalle_generado) {
+            echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente. El vehículo ha sido marcado como vendido y se ha generado la factura.']);
+        } else {
+            echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente, pero hubo un problema al generar la factura. Contacte al administrador.']);
+        }
         break;
 
     default:

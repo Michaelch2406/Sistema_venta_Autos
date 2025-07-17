@@ -199,10 +199,16 @@ function setupRefreshButton() {
             }
             window.ventaDetailsLoading = true;
             
-            const modal = new bootstrap.Modal(document.getElementById('modalDetallesVenta'), {
-                backdrop: 'static',
-                keyboard: false
-            });
+            // Obtener o crear instancia del modal
+            const modalElement = document.getElementById('modalDetallesVenta');
+            let modal = bootstrap.Modal.getInstance(modalElement);
+            if (!modal) {
+                modal = new bootstrap.Modal(modalElement, {
+                    backdrop: true,
+                    keyboard: true
+                });
+            }
+            
             const contenido = document.getElementById('contenidoDetallesVenta');
             
             // Mostrar loading
@@ -218,10 +224,10 @@ function setupRefreshButton() {
             // Mostrar modal
             modal.show();
             
-            // Limpiar flag cuando se cierre el modal
-            document.getElementById('modalDetallesVenta').addEventListener('hidden.bs.modal', function() {
+            // Limpiar flag cuando se cierre el modal - usar jQuery para evitar conflictos
+            $(modalElement).off('hidden.bs.modal.ventaDetails').on('hidden.bs.modal.ventaDetails', function() {
                 window.ventaDetailsLoading = false;
-            }, { once: true });
+            });
             
             // Cargar detalles via AJAX
             $.ajax({
@@ -319,12 +325,16 @@ function setupRefreshButton() {
                 </div>
             `;
             
-            // Permitir cerrar modal después de cargar detalles
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetallesVenta'));
+            // Asegurar que el modal se puede cerrar
+            const modalElement = document.getElementById('modalDetallesVenta');
+            const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) {
                 modal._config.backdrop = true;
                 modal._config.keyboard = true;
             }
+            
+            // Limpiar flag después de mostrar detalles
+            window.ventaDetailsLoading = false;
         }
         
         /**
@@ -343,12 +353,17 @@ function setupRefreshButton() {
                     </button>
                 </div>
             `;
-            // Permitir cerrar modal después de error
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalDetallesVenta'));
+            
+            // Asegurar que el modal se puede cerrar
+            const modalElement = document.getElementById('modalDetallesVenta');
+            const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) {
                 modal._config.backdrop = true;
                 modal._config.keyboard = true;
             }
+            
+            // Asegurar que el loading flag se resetee
+            window.ventaDetailsLoading = false;
         }
         
         // Configuración adicional cuando el documento esté listo
