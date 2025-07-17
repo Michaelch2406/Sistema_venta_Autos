@@ -203,7 +203,7 @@ BEGIN
     SET p_resultado = 0;
     SET p_mensaje = 'Error al eliminar el modelo.';
     -- Verificar si hay vehículos asociados (la FK con ON DELETE RESTRICT lo previene)
-    IF EXISTS (SELECT 1 FROM Vehiculos WHERE mod_id = p_mod_id) THEN
+    IF EXISTS (SELECT 1 FROM vehiculos WHERE mod_id = p_mod_id) THEN
         SET p_mensaje = 'No se puede eliminar el modelo porque tiene vehículos asociados. Elimine o reasigne los vehículos primero.';
     ELSE
         DELETE FROM Modelos WHERE mod_id = p_mod_id;

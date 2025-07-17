@@ -261,7 +261,7 @@ if (!isset($_SESSION['usu_id']) || !isset($_SESSION['rol_id']) || $_SESSION['rol
         </div>
     </div>
 
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -164,7 +164,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const resultado = await response.json();
+            console.log('Respuesta del servidor:', resultado); // Para debug
+            
             if (resultado.success) {
                 alert('Estado actualizado.');
                 location.reload();
@@ -173,7 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 boton.disabled = false;
             }
         } catch (error) {
-            alert('Error de conexión al cambiar estado.');
+            console.error('Error completo:', error);
+            alert('Error de conexión al cambiar estado: ' + error.message);
             boton.disabled = false;
         }
     }

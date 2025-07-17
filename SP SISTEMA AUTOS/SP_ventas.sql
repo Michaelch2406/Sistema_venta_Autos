@@ -1,39 +1,98 @@
--- Nueva tabla para registrar las ventas
-CREATE TABLE IF NOT EXISTS ventas (
-    vnt_id INT AUTO_INCREMENT PRIMARY KEY,
-    cit_id_venta INT NOT NULL,
-    vnt_fecha_venta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    vnt_precio_final DECIMAL(10, 2) NOT NULL,
-    comprador_id INT NOT NULL,
-    vendedor_id INT NOT NULL,
-    vehiculo_id INT NOT NULL,
-    vnt_notas TEXT,
-    FOREIGN KEY (cit_id_venta) REFERENCES citas(cit_id),
-    FOREIGN KEY (comprador_id) REFERENCES usuarios(usu_id),
-    FOREIGN KEY (vendedor_id) REFERENCES usuarios(usu_id),
-    FOREIGN KEY (vehiculo_id) REFERENCES vehiculos(veh_id)
-);
 
--- Nueva tabla para los detalles de la venta
-CREATE TABLE IF NOT EXISTS detalles_venta (
-    dv_id INT AUTO_INCREMENT PRIMARY KEY,
-    vnt_id INT NOT NULL,
-    dv_codigo_factura VARCHAR(20) NOT NULL,
-    dv_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (vnt_id) REFERENCES ventas(vnt_id)
-);
+-- Elimina el procedimiento almacenado si ya existe para evitar errores en la creación.
+DROP PROCEDURE IF EXISTS sp_obtener_datos_factura;
 
--- Trigger para generar el código de factura
-DELIMITER $$
+DELIMITER //
+
+-- SP para obtener datos completos de una factura
+CREATE PROCEDURE sp_obtener_datos_factura(IN p_vnt_id INT)
+BEGIN
+    SELECT
+        v.vnt_id,
+        v.vnt_fecha_venta,
+        v.vnt_precio_final,
+        v.vnt_notas,
+        dv.dv_codigo_factura,
+        dv.dv_fecha_creacion,
+
+        -- Datos del comprador
+        comp.usu_nombre    AS comprador_nombre,
+        comp.usu_apellido  AS comprador_apellido,
+        comp.usu_cedula    AS comprador_cedula,
+        comp.usu_email     AS comprador_email,
+        comp.usu_telefono  AS comprador_telefono,
+        comp.usu_direccion AS comprador_direccion,
+
+        -- Datos del vendedor
+        vend.usu_nombre    AS vendedor_nombre,
+        vend.usu_apellido  AS vendedor_apellido,
+        vend.usu_cedula    AS vendedor_cedula,
+        vend.usu_email     AS vendedor_email,
+
+        -- Datos del vehículo
+        veh.veh_anio,
+        veh.veh_kilometraje,
+        veh.veh_condicion,
+        veh.veh_placa,
+        veh.veh_vin,
+        veh.veh_color_exterior,
+        veh.veh_descripcion,
+
+        -- Datos de marca y modelo
+        m.mar_nombre,
+        mo.mod_nombre,
+
+        -- Datos del tipo de vehículo
+        tv.tiv_nombre
+
+    FROM ventas v
+    INNER JOIN detalles_venta dv ON v.vnt_id = dv.vnt_id
+    INNER JOIN usuarios comp ON v.comprador_id = comp.usu_id
+    INNER JOIN usuarios vend ON v.vendedor_id = vend.usu_id
+    INNER JOIN vehiculos veh ON v.vehiculo_id = veh.veh_id
+    INNER JOIN marcas m ON veh.mar_id = m.mar_id
+    INNER JOIN modelos mo ON veh.mod_id = mo.mod_id
+    INNER JOIN tiposvehiculo tv ON veh.tiv_id = tv.tiv_id
+
+    WHERE v.vnt_id = p_vnt_id;
+END //
+
+DELIMITER ;
+
+
+-- Elimina el trigger si ya existe para evitar errores en la creación.
+DROP TRIGGER IF EXISTS trg_generar_codigo_factura;
+
+DELIMITER //
+
+-- Elimina el trigger si ya existe para evitar errores en la creación.
+DROP TRIGGER IF EXISTS trg_generar_codigo_factura;
+
+-- Cambiamos el delimitador para que MySQL trate todo el bloque como una sola instrucción.
+DELIMITER //
+
 CREATE TRIGGER trg_generar_codigo_factura
 AFTER INSERT ON ventas
 FOR EACH ROW
 BEGIN
-    DECLARE nuevo_id INT;
-    SET nuevo_id = (SELECT IFNULL(MAX(dv_id), 0) + 1 FROM detalles_venta);
+    -- Declaración de variables. Cada una debe terminar con ';'
+    DECLARE nuevo_codigo VARCHAR(20); -- <-- FALTABA EL PUNTO Y COMA AQUÍ.
+    DECLARE contador INT;             -- <-- ES BUENA PRÁCTICA AÑADIRLO AQUÍ TAMBIÉN.
+
+    -- Obtener el siguiente número secuencial. La instrucción SET también debe terminar con ';'.
+    SET contador = (SELECT IFNULL(MAX(dv_id), 0) + 1 FROM detalles_venta);
+
+    -- Generar código con formato AT-YYYYMM-000001
+    SET nuevo_codigo = CONCAT('AT-', DATE_FORMAT(NOW(), '%Y%m'), '-', LPAD(contador, 6, '0'));
+
+    -- Insertar el detalle de venta con el código generado. La instrucción INSERT también debe terminar con ';'.
     INSERT INTO detalles_venta (vnt_id, dv_codigo_factura)
-    VALUES (NEW.vnt_id, CONCAT('AT-', LPAD(nuevo_id, 6, '0')));
-END$$
+    VALUES (NEW.vnt_id, nuevo_codigo);
+
+-- El 'END' va seguido del nuevo delimitador que definimos al principio.
+END //
+
+-- Devolvemos el delimitador a su estado original.
 DELIMITER ;
 
 -- Stored procedure para registrar una nueva venta

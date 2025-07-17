@@ -183,7 +183,7 @@ $page_title = "Configuración de la Cuenta";
 
     <?php
     // Incluye footer usando la ruta de sistema
-    include './partials/footer.php';
+    ?><footer id="footer-placeholder"></footer><?php
   ?>
 
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>

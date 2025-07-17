@@ -81,7 +81,7 @@
     </main>
 
     <!-- Pie de Página -->
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <!-- Scripts -->
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>

@@ -21,7 +21,7 @@ BEGIN
     ELSE
         SELECT CONCAT(m.mar_nombre, ' ', mo.mod_nombre, ' (Año: ', v.veh_anio, ', Precio: ', v.veh_precio, ')')
         INTO v_vehiculo_info
-        FROM Vehiculos v JOIN Marcas m ON v.mar_id = m.mar_id JOIN Modelos mo ON v.mod_id = mo.mod_id
+        FROM vehiculos v JOIN Marcas m ON v.mar_id = m.mar_id JOIN Modelos mo ON v.mod_id = mo.mod_id
         WHERE v.veh_id = p_veh_id;
 
         INSERT INTO citas (

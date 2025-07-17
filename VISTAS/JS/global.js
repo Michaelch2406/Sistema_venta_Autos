@@ -50,6 +50,14 @@ $(document).ready(function () {
         });
     }); // Fin del callback de .load() para navbar
 
+    // Cargar el Footer
+    $("#footer-placeholder").load("../VISTAS/partials/footer.php", function (response, status, xhr) {
+        if (status == "error") {
+            console.error("Error al cargar footer.php: " + xhr.status + " " + xhr.statusText);
+            $("#footer-placeholder").html("<p class='text-center text-danger'>Error al cargar el pie de página.</p>");
+        }
+    });
+
     // --- Lógica para el Page Loader ---
     $(window).on('load', function () {
         $('#page-loader').fadeOut(500, function () {

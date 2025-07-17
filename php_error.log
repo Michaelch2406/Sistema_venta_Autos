@@ -33,3 +33,6 @@
 [16-Jul-2025 02:16:47 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
 [16-Jul-2025 02:18:15 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
 [16-Jul-2025 10:12:23 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 13:43:49 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 21:23:46 America/New_York] Error en VentaModelo al obtener ventas: Unknown column 'veh.veh_marca' in 'field list'
+[16-Jul-2025 22:20:39 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'

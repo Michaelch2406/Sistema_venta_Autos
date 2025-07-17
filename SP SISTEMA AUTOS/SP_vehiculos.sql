@@ -72,15 +72,15 @@ BEGIN
     SET p_veh_id_insertado = NULL;
 
     -- Validaciones antes de insertar
-    IF p_veh_placa IS NOT NULL AND p_veh_placa != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_placa = p_veh_placa) THEN
+    IF p_veh_placa IS NOT NULL AND p_veh_placa != '' AND EXISTS (SELECT 1 FROM vehiculos WHERE veh_placa = p_veh_placa) THEN
         SET p_mensaje = 'La placa ingresada ya existe para otro vehículo.';
-    ELSEIF p_veh_vin IS NOT NULL AND p_veh_vin != '' AND EXISTS (SELECT 1 FROM Vehiculos WHERE veh_vin = p_veh_vin) THEN
+    ELSEIF p_veh_vin IS NOT NULL AND p_veh_vin != '' AND EXISTS (SELECT 1 FROM vehiculos WHERE veh_vin = p_veh_vin) THEN
         SET p_mensaje = 'El VIN ingresado ya existe para otro vehículo.';
     ELSE
         -- === PUNTO CLAVE DE LA CORRECCIÓN ===
         -- La sentencia INSERT utiliza el parámetro p_usu_id_gestor que viene de PHP.
         -- No hay ningún valor '1' escrito en el código.
-        INSERT INTO Vehiculos (
+        INSERT INTO vehiculos (
             mar_id, mod_id, tiv_id, veh_subtipo_vehiculo, usu_id_gestor, veh_condicion, veh_anio, veh_kilometraje,
             veh_precio, veh_vin, veh_placa, veh_ubicacion_provincia, veh_ubicacion_ciudad, veh_placa_provincia_origen, veh_ultimo_digito_placa,
             veh_color_exterior, veh_color_interior, veh_detalles_motor, veh_tipo_transmision,
@@ -154,7 +154,7 @@ BEGIN
 
     main_block: BEGIN
 
-        SELECT COUNT(*) INTO v_vehiculo_existe FROM Vehiculos WHERE veh_id = p_veh_id;
+        SELECT COUNT(*) INTO v_vehiculo_existe FROM vehiculos WHERE veh_id = p_veh_id;
 
         IF v_vehiculo_existe = 0 THEN
             SET p_mensaje = CONCAT('Error: El vehículo con ID ', p_veh_id, ' no existe.');
@@ -164,7 +164,7 @@ BEGIN
         -- Validar duplicidad de placa
         IF p_veh_placa IS NOT NULL AND p_veh_placa != '' THEN
             SELECT COUNT(*) INTO v_placa_duplicada 
-            FROM Vehiculos 
+            FROM vehiculos 
             WHERE veh_placa = p_veh_placa AND veh_id != p_veh_id;
 
             IF v_placa_duplicada > 0 THEN
@@ -176,7 +176,7 @@ BEGIN
         -- Validar duplicidad de VIN
         IF p_veh_vin IS NOT NULL AND p_veh_vin != '' THEN
             SELECT COUNT(*) INTO v_vin_duplicado 
-            FROM Vehiculos 
+            FROM vehiculos 
             WHERE veh_vin = p_veh_vin AND veh_id != p_veh_id;
 
             IF v_vin_duplicado > 0 THEN
@@ -186,7 +186,7 @@ BEGIN
         END IF;
 
         -- Actualizar vehículo
-        UPDATE Vehiculos SET
+        UPDATE vehiculos SET
             mar_id = p_mar_id,
             mod_id = p_mod_id,
             tiv_id = p_tiv_id,
@@ -251,7 +251,7 @@ BEGIN
         v.veh_ubicacion_provincia,
         v.veh_creado_en,
         v.veh_actualizado_en
-    FROM Vehiculos v
+    FROM vehiculos v
     JOIN Marcas m ON v.mar_id = m.mar_id
     JOIN Modelos mo ON v.mod_id = mo.mod_id
     JOIN Usuarios u ON v.usu_id_gestor = u.usu_id -- Asumiendo que usu_id_gestor es el publicador
@@ -277,7 +277,7 @@ BEGIN
     SET p_resultado = 0; -- 0 = Error, 1 = Éxito
 
     -- Verificar si el vehículo existe
-    SELECT COUNT(*) INTO v_vehiculo_existe FROM Vehiculos WHERE veh_id = p_veh_id_a_eliminar;
+    SELECT COUNT(*) INTO v_vehiculo_existe FROM vehiculos WHERE veh_id = p_veh_id_a_eliminar;
 
     IF v_vehiculo_existe = 0 THEN
         SET p_mensaje = CONCAT('Error: El vehículo con ID ', p_veh_id_a_eliminar, ' no existe.');
@@ -303,7 +303,7 @@ BEGIN
         DELETE FROM Favoritos WHERE veh_id = p_veh_id_a_eliminar;
         
         -- 4. Finalmente, eliminar el vehículo de la tabla principal
-        DELETE FROM Vehiculos WHERE veh_id = p_veh_id_a_eliminar;
+        DELETE FROM vehiculos WHERE veh_id = p_veh_id_a_eliminar;
 
         IF ROW_COUNT() > 0 THEN
             COMMIT;
@@ -347,7 +347,7 @@ BEGIN
         'v.veh_id, v.veh_anio, v.veh_kilometraje, v.veh_precio, v.veh_ubicacion_ciudad, v.veh_ubicacion_provincia, ',
         'm.mar_nombre, mo.mod_nombre, tv.tiv_nombre, ',
         '(SELECT ima_url FROM ImagenesVehiculo iv WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE LIMIT 1) AS imagen_principal_url ',
-        'FROM Vehiculos v ',
+        'FROM vehiculos v ',
         'JOIN Marcas m ON v.mar_id = m.mar_id ',
         'JOIN Modelos mo ON v.mod_id = mo.mod_id ',
         'JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id ',
@@ -508,7 +508,7 @@ CREATE PROCEDURE sp_admin_eliminar_tipo_vehiculo(
 BEGIN
     SET p_resultado = 0;
     SET p_mensaje = 'Error al eliminar el tipo de vehículo.';
-    IF EXISTS (SELECT 1 FROM Vehiculos WHERE tiv_id = p_tiv_id) THEN
+    IF EXISTS (SELECT 1 FROM vehiculos WHERE tiv_id = p_tiv_id) THEN
         SET p_mensaje = 'No se puede eliminar el tipo de vehículo porque tiene vehículos asociados. Reasigne los vehículos primero.';
     ELSE
         DELETE FROM TiposVehiculo WHERE tiv_id = p_tiv_id;
@@ -542,7 +542,7 @@ BEGIN
 
     -- Obtener el usu_id_gestor del vehículo y el estado actual
     SELECT usu_id_gestor, veh_estado INTO v_usu_id_gestor_vehiculo, v_estado_actual
-    FROM Vehiculos
+    FROM vehiculos
     WHERE veh_id = p_veh_id;
 
     IF v_usu_id_gestor_vehiculo IS NULL THEN
@@ -560,7 +560,7 @@ BEGIN
                 SET p_mensaje = CONCAT('El vehículo ya se encuentra en estado ', p_nuevo_estado, '.');
                 -- Considerar p_resultado = 1 aquí si no se considera un error, o incluso 0 si no se hizo cambio.
             ELSE
-                UPDATE Vehiculos
+                UPDATE vehiculos
                 SET veh_estado = p_nuevo_estado,
                     veh_actualizado_en = CURRENT_TIMESTAMP
                 WHERE veh_id = p_veh_id;
@@ -607,7 +607,7 @@ BEGIN
         u_gestor.usu_usuario AS gestor_usuario, 
         CONCAT(u_gestor.usu_nombre, ' ', u_gestor.usu_apellido) AS gestor_nombre_completo,
         u_gestor.usu_telefono AS gestor_telefono
-    FROM Vehiculos v
+    FROM vehiculos v
     JOIN Marcas m ON v.mar_id = m.mar_id
     JOIN Modelos mo ON v.mod_id = mo.mod_id
     JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id
@@ -690,7 +690,7 @@ BEGIN
          FROM ImagenesVehiculo iv 
          WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE 
          LIMIT 1) AS imagen_principal_url
-    FROM Vehiculos v
+    FROM vehiculos v
     JOIN Marcas m ON v.mar_id = m.mar_id
     JOIN Modelos mo ON v.mod_id = mo.mod_id
     WHERE v.veh_condicion = p_condicion 

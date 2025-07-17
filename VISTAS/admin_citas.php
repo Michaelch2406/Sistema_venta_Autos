@@ -159,7 +159,7 @@ $estados_disponibles = ['pendiente', 'aprobada', 'rechazado'];
         </div>
     </main>
 
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <script src="./../PUBLIC/jquery-3.7.1.min.js"></script>
     <script src="./../Bootstrap/js/bootstrap.bundle.min.js"></script>

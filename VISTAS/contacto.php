@@ -380,7 +380,7 @@
     </main>
 
     <!-- Pie de Página -->
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <!-- Botón de scroll to top -->
     <button class="scroll-to-top" id="scrollToTop">

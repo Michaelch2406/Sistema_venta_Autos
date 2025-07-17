@@ -203,7 +203,7 @@ $ventas = $ventaModelo->obtener_ventas_por_usuario($_SESSION['usu_id']);
     </main>
 
     <!-- Footer -->
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <!-- Scripts -->
     <!-- jQuery (requerido para funcionalidad existente) -->

@@ -15,7 +15,7 @@ BEGIN
 
     IF NOT EXISTS (SELECT 1 FROM Usuarios WHERE usu_id = p_usu_id) THEN
         SET p_mensaje = 'Usuario no válido.';
-    ELSEIF NOT EXISTS (SELECT 1 FROM Vehiculos WHERE veh_id = p_veh_id AND veh_estado = 'disponible') THEN
+    ELSEIF NOT EXISTS (SELECT 1 FROM vehiculos WHERE veh_id = p_veh_id AND veh_estado = 'disponible') THEN
         SET p_mensaje = 'Vehículo no válido o no disponible.';
     ELSEIF EXISTS (SELECT 1 FROM Favoritos WHERE usu_id = p_usu_id AND veh_id = p_veh_id) THEN
         SET p_resultado = 0;
@@ -97,7 +97,7 @@ BEGIN
         (SELECT ima_url FROM ImagenesVehiculo iv WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE LIMIT 1) AS imagen_principal_url,
         f.fav_fecha_agregado
     FROM Favoritos f
-    JOIN Vehiculos v ON f.veh_id = v.veh_id
+    JOIN vehiculos v ON f.veh_id = v.veh_id
     JOIN Marcas m ON v.mar_id = m.mar_id
     JOIN Modelos mo ON v.mod_id = mo.mod_id
     JOIN TiposVehiculo tv ON v.tiv_id = tv.tiv_id

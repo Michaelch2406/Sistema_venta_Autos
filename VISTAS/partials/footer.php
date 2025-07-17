@@ -1,5 +1,5 @@
 <!-- Enlace al CSS específico del Footer -->
-<link rel="stylesheet" href="./partials/css/footer.css">
+<link rel="stylesheet" href="./partials/CSS/footer.css">
 
 <footer class="footer-enhanced content-hidden"> <!-- content-hidden se maneja por global.js -->
     <div class="footer-content">
@@ -25,11 +25,9 @@
                     <h5>Enlaces Rápidos</h5>
                     <ul class="footer-links">
                         <li><a href="./inicio.php"><i class="bi bi-house"></i>Inicio</a></li>
-                        <li><a href="#"><i class="bi bi-car-front-fill"></i>Vehículos Nuevos</a></li>
+                        <li><a href="./autos_nuevos.php"><i class="bi bi-car-front-fill"></i>Vehículos Nuevos</a></li>
                         <li><a href="./autos_usados.php"><i class="bi bi-car-front"></i>Vehículos Usados</a></li>
                         <li><a href="./contacto.php"><i class="bi bi-envelope"></i>Contacto</a></li>
-                        <li><a href="#"><i class="bi bi-shield-check"></i>Garantías</a></li>
-                        <li><a href="#"><i class="bi bi-tools"></i>Servicios</a></li>
                         <li><a href="./publicar_vehiculo.php"><i class="bi bi-upload"></i>Publica tu Vehículo</a></li>
                     </ul>
                 </div>
@@ -77,4 +75,4 @@
 </footer>
 
 <!-- Enlace al JS específico del Footer -->
-<script src="./partials/js/footer.js"></script>
+<script src="./partials/JS/footer.js"></script>

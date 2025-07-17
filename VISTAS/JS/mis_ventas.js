@@ -326,12 +326,13 @@ function refreshVentasData() {
     button.html('<i class="bi bi-arrow-clockwise spin"></i> Actualizando...').prop('disabled', true);
     
     $.ajax({
-        url: 'ajax/obtener_ventas.php',
+        url: './../AJAX/ventas_ajax.php',
         method: 'GET',
+        data: { action: 'obtener_ventas_usuario' },
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                updateVentasTable(response.ventas);
+                updateVentasTable(response.data);
                 showNotification('Datos actualizados correctamente', 'success');
             } else {
                 showNotification('Error al actualizar datos: ' + response.message, 'error');

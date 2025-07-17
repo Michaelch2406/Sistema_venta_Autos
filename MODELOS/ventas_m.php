@@ -25,11 +25,13 @@ class VentaModelo {
                 v.vnt_id,
                 v.vnt_fecha_venta,
                 v.vnt_precio_final,
-                CONCAT(veh.veh_marca, ' ', veh.veh_modelo) AS vehiculo_nombre,
+                CONCAT(m.mar_nombre, ' ', mo.mod_nombre) AS vehiculo_nombre,
                 CONCAT(comp.usu_nombre, ' ', comp.usu_apellido) AS comprador_nombre,
                 CONCAT(vend.usu_nombre, ' ', vend.usu_apellido) AS vendedor_nombre
             FROM ventas v
             JOIN vehiculos veh ON v.vehiculo_id = veh.veh_id
+            JOIN marcas m ON veh.mar_id = m.mar_id
+            JOIN modelos mo ON veh.mod_id = mo.mod_id
             JOIN usuarios comp ON v.comprador_id = comp.usu_id
             JOIN usuarios vend ON v.vendedor_id = vend.usu_id
             WHERE v.comprador_id = {$usu_id_san} OR v.vendedor_id = {$usu_id_san}

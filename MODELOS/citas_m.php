@@ -62,10 +62,26 @@ class CitaModelo {
     }
 
     private function _ejecutar_sp_afecta_filas($sql_call) {
-        while($this->mysqli->more_results() && $this->mysqli->next_result()){ if($res = $this->mysqli->store_result()){ $res->free(); } }
+        // Limpiar resultados previos
+        while($this->mysqli->more_results() && $this->mysqli->next_result()){ 
+            if($res = $this->mysqli->store_result()){ $res->free(); } 
+        }
+        
         if ($this->mysqli->query($sql_call)) {
             $res = $this->mysqli->store_result();
-            if($res){ $row = $res->fetch_assoc(); $res->free(); return (isset($row['filas_afectadas']) && $row['filas_afectadas'] >= 0); }
+            if($res){ 
+                $row = $res->fetch_assoc(); 
+                $res->free(); 
+                
+                // Limpiar resultados posteriores
+                while($this->mysqli->more_results() && $this->mysqli->next_result()){ 
+                    if($res = $this->mysqli->store_result()){ $res->free(); } 
+                }
+                
+                $filas_afectadas = isset($row['filas_afectadas']) ? (int)$row['filas_afectadas'] : 0;
+                error_log("SP ejecutado. Filas afectadas: " . $filas_afectadas . " (SQL: " . $sql_call . ")");
+                return $filas_afectadas > 0;
+            }
             return false;
         } else {
             error_log("Error en CitaModelo al ejecutar SP (afecta filas): " . $this->mysqli->error . " (SQL: " . $sql_call . ")");

@@ -142,7 +142,7 @@ if (!isset($_SESSION['usu_id']) || !in_array($_SESSION['rol_id'], [1, 2, 3])) {
         </div>
     </main>
 
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <!-- Modal de Confirmación -->
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">

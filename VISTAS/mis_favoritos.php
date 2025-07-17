@@ -197,7 +197,7 @@ $page_title = "Mis Vehículos Favoritos";
         </div>
     </main>
 
-    <?php include __DIR__ . './partials/footer.php'; ?>
+    <footer id="footer-placeholder"></footer>
 
     <!-- Toast Container -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
