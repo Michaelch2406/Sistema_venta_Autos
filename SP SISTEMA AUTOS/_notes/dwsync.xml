@@ -3,10 +3,11 @@
 <file name="SP_favoritos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971900114808951" remote="133972352260000000" Dst="0" />
 <file name="SP_marca_modelo.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971898827175817" remote="133972352260000000" Dst="0" />
 <file name="SP_usuarios.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133958993285337737" remote="133961408960000000" Dst="0" />
-<file name="SP_vehiculos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352260000000" Dst="0" />
+<file name="SP_vehiculos.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972389725249662" remote="133972395300000000" Dst="0" />
 <file name="SP_citas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972374647849587" remote="133972379560000000" Dst="0" />
 <file name="SP_imagenes.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133962444616283982" remote="133970833420000000" Dst="0" />
 <file name="SP_ventas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352260000000" Dst="0" />
 <file name="SP_facturas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352260000000" Dst="0" />
 <file name="SP_actualizar_citas.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972377376800404" remote="133972379560000000" Dst="0" />
+<file name="SP_actualizar_vehiculos_filtros.sql" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972391379420252" remote="133972395300000000" Dst="0" />
 </dwsync>
