@@ -16,8 +16,8 @@ try {
 if ($db_conn_mysqli === null) { die("Error crítico: Conexión no disponible."); }
 $citaModelo = new CitaModelo($db_conn_mysqli);
 
-if (!isset($_SESSION['usu_id']) || !in_array($_SESSION['rol_id'], [2, 3])) {
-    die("Acceso denegado. Se requiere rol de Administrador o Gestor.");
+if (!isset($_SESSION['usu_id']) || !in_array($_SESSION['rol_id'], [1, 2, 3])) {
+    die("Acceso denegado. Debe iniciar sesión.");
 }
 
 $admin_nombre_display = htmlspecialchars(($_SESSION['usu_nombre'] ?? '') . ' ' . ($_SESSION['usu_apellido'] ?? 'Admin'));
@@ -27,9 +27,18 @@ $filtro_estado_val = trim($_GET['filtro_estado'] ?? '');
 $filtro_fecha_desde_val = trim($_GET['filtro_fecha_desde'] ?? '');
 $filtro_fecha_hasta_val = trim($_GET['filtro_fecha_hasta'] ?? '');
 
-$todas_las_citas = $citaModelo->obtener_todas_las_citas(
-    $filtro_texto_val, $filtro_estado_val, $filtro_fecha_desde_val, $filtro_fecha_hasta_val
-);
+// Filtrar citas según el rol del usuario
+if ($_SESSION['rol_id'] == 3) {
+    // Admin: ver todas las citas
+    $todas_las_citas = $citaModelo->obtener_todas_las_citas(
+        $filtro_texto_val, $filtro_estado_val, $filtro_fecha_desde_val, $filtro_fecha_hasta_val
+    );
+} else {
+    // Otros roles: solo citas de vehículos propios
+    $todas_las_citas = $citaModelo->obtener_citas_por_vehiculos_propios(
+        $_SESSION['usu_id'], $filtro_texto_val, $filtro_estado_val, $filtro_fecha_desde_val, $filtro_fecha_hasta_val
+    );
+}
 
 // Nuevos estados disponibles
 $estados_disponibles = ['pendiente', 'aprobada', 'rechazado'];
@@ -40,7 +49,7 @@ $estados_disponibles = ['pendiente', 'aprobada', 'rechazado'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administración de Citas - <?php echo $admin_nombre_display; ?></title>
+    <title>Gestión de Citas - <?php echo $admin_nombre_display; ?></title>
     <link href="./../Bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="./../PUBLIC/css/styles.css" rel="stylesheet">
@@ -80,7 +89,7 @@ $estados_disponibles = ['pendiente', 'aprobada', 'rechazado'];
 
         <section id="lista-todas-citas">
             <h2>
-                <i class="bi bi-table me-2"></i>Listado General de Citas
+                <i class="bi bi-table me-2"></i><?php echo $_SESSION['rol_id'] == 3 ? 'Listado General de Citas' : 'Citas de Mis Vehículos'; ?>
                 <span class="badge bg-primary ms-2"><?php echo count($todas_las_citas); ?> resultados</span>
             </h2>
             <div class="tabla-responsive-contenedor">
@@ -132,10 +141,12 @@ $estados_disponibles = ['pendiente', 'aprobada', 'rechazado'];
                                     <button class="btn-admin-accion btn-admin-rechazar"
                                         data-id="<?php echo htmlspecialchars($cita['cit_id']); ?>"
                                         title="Rechazar Cita"><i class="bi bi-x-lg"></i></button>
-                                    <?php elseif ($cita['cit_estado'] === 'aprobada'): ?>
+                                    <?php elseif ($cita['cit_estado'] === 'aprobada' && $cita['veh_estado'] !== 'vendido'): ?>
                                     <button class="btn-admin-accion btn-registrar-venta"
                                         data-id="<?php echo htmlspecialchars($cita['cit_id']); ?>"
                                         title="Registrar Venta"><i class="bi bi-cash-stack"></i></button>
+                                    <?php elseif ($cita['veh_estado'] === 'vendido'): ?>
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Vendido</span>
                                     <?php endif; ?>
                                 </div>
                             </td>

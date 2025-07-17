@@ -104,6 +104,16 @@ class CitaModelo {
         return $this->_ejecutar_sp_y_obtener_todos($sql);
     }
 
+    public function obtener_citas_por_vehiculos_propios($usu_id, $filtro_texto, $filtro_estado, $filtro_fecha_desde, $filtro_fecha_hasta) {
+        $usu_id_san = (int)$usu_id;
+        $ft = $filtro_texto ? "'" . $this->mysqli->real_escape_string($filtro_texto) . "'" : "NULL";
+        $fe = $filtro_estado ? "'" . $this->mysqli->real_escape_string($filtro_estado) . "'" : "NULL";
+        $ffd = $filtro_fecha_desde ? "'" . $this->mysqli->real_escape_string($filtro_fecha_desde) . "'" : "NULL";
+        $ffh = $filtro_fecha_hasta ? "'" . $this->mysqli->real_escape_string($filtro_fecha_hasta) . "'" : "NULL";
+        $sql = "CALL sp_obtener_citas_vehiculos_propios({$usu_id_san}, {$ft}, {$fe}, {$ffd}, {$ffh})";
+        return $this->_ejecutar_sp_y_obtener_todos($sql);
+    }
+
     public function obtener_detalle_cita($cit_id) {
         $cit_id_san = (int)$cit_id;
         $sql = "CALL sp_obtener_detalle_cita({$cit_id_san})";

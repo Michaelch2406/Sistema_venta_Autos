@@ -7,7 +7,7 @@
 <file name="login_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971502283953911" remote="133971502830000000" Dst="0" />
 <file name="registro_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971502445797947" remote="133971502830000000" Dst="0" />
 <file name="vehiculos_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352230000000" Dst="0" />
-<file name="citas_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971153153889383" remote="133971491920000000" Dst="0" />
+<file name="citas_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972372984897868" remote="133972379550000000" Dst="0" />
 <file name="detalles_venta_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971176393060590" remote="133971491920000000" Dst="0" />
 <file name="ventas_ajax.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972358153842869" remote="133972358240000000" Dst="0" />
 </dwsync>

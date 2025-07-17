@@ -64,20 +64,25 @@ switch ($action) {
         break;
 
     case 'obtener_detalle_cita_admin':
-        $admin_id = verificar_sesion_y_rol([3, 2]); 
+        $user_id = verificar_sesion_y_rol([1, 2, 3]); 
         $cit_id = filter_input(INPUT_GET, 'id_cita', FILTER_VALIDATE_INT);
         if (!$cit_id) { echo json_encode(['success' => false, 'message' => 'ID de cita no válido (admin).']); exit; }
         
         $detalle = $citaModelo->obtener_detalle_cita($cit_id);
         if ($detalle) {
-            echo json_encode(['success' => true, 'data' => $detalle]);
+            // Verificar permisos: admin ve todo, otros solo sus vehículos
+            if ($_SESSION['rol_id'] == 3 || $detalle['usu_id_gestor'] == $user_id) {
+                echo json_encode(['success' => true, 'data' => $detalle]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No tiene permisos para ver esta cita.']);
+            }
         } else {
             echo json_encode(['success' => false, 'message' => 'Cita no encontrada o error al obtener detalles.']);
         }
         break;
 
     case 'cambiar_estado_cita':
-        $admin_id = verificar_sesion_y_rol([3, 2]);
+        $user_id = verificar_sesion_y_rol([1, 2, 3]);
         $cit_id = filter_input(INPUT_POST, 'id_cita', FILTER_VALIDATE_INT);
         $nuevo_estado_raw = filter_input(INPUT_POST, 'nuevo_estado', FILTER_SANITIZE_STRING); 
         
@@ -86,7 +91,13 @@ switch ($action) {
             echo json_encode(['success' => false, 'message' => 'Datos inválidos para cambiar estado.']); exit;
         }
 
-        $actualizado = $citaModelo->actualizar_estado_cita($cit_id, $nuevo_estado_raw, $admin_id);
+        // Verificar permisos: admin puede cambiar cualquier cita, otros solo sus vehículos
+        $detalle = $citaModelo->obtener_detalle_cita($cit_id);
+        if (!$detalle || ($_SESSION['rol_id'] != 3 && $detalle['usu_id_gestor'] != $user_id)) {
+            echo json_encode(['success' => false, 'message' => 'No tiene permisos para cambiar el estado de esta cita.']); exit;
+        }
+
+        $actualizado = $citaModelo->actualizar_estado_cita($cit_id, $nuevo_estado_raw, $user_id);
         if ($actualizado) {
             echo json_encode(['success' => true, 'message' => "Estado de la cita #{$cit_id} actualizado a '{$nuevo_estado_raw}'.", 'nuevo_estado' => $nuevo_estado_raw]);
         } else {
@@ -95,12 +106,18 @@ switch ($action) {
         break;
 
     case 'guardar_notas_admin':
-        $admin_id = verificar_sesion_y_rol([3, 2]);
+        $user_id = verificar_sesion_y_rol([1, 2, 3]);
         $cit_id = filter_input(INPUT_POST, 'id_cita', FILTER_VALIDATE_INT);
         $notas = isset($_POST['notas_internas']) ? $_POST['notas_internas'] : '';
         if (!$cit_id) { echo json_encode(['success' => false, 'message' => 'ID de cita no válido para guardar notas.']); exit; }
         
-        $guardado = $citaModelo->guardar_notas_admin_cita($cit_id, $notas, $admin_id);
+        // Verificar permisos: admin puede editar cualquier cita, otros solo sus vehículos
+        $detalle = $citaModelo->obtener_detalle_cita($cit_id);
+        if (!$detalle || ($_SESSION['rol_id'] != 3 && $detalle['usu_id_gestor'] != $user_id)) {
+            echo json_encode(['success' => false, 'message' => 'No tiene permisos para editar las notas de esta cita.']); exit;
+        }
+        
+        $guardado = $citaModelo->guardar_notas_admin_cita($cit_id, $notas, $user_id);
         if ($guardado) {
             echo json_encode(['success' => true, 'message' => "Notas administrativas para la cita #{$cit_id} guardadas."]);
         } else {
@@ -161,7 +178,7 @@ case 'insertar_cita':
     break;
     
     case 'registrar_venta':
-        $admin_id = verificar_sesion_y_rol([3, 2]);
+        $user_id = verificar_sesion_y_rol([1, 2, 3]);
         $cit_id = filter_input(INPUT_POST, 'id_cita', FILTER_VALIDATE_INT);
         $precio_final = filter_input(INPUT_POST, 'precio_final', FILTER_VALIDATE_FLOAT);
 
@@ -174,22 +191,34 @@ case 'insertar_cita':
             echo json_encode(['success' => false, 'message' => 'No se encontró la cita.']); exit;
         }
 
+        // Verificar permisos: admin puede registrar cualquier venta, otros solo sus vehículos
+        if ($_SESSION['rol_id'] != 3 && $cita_detalle['usu_id_gestor'] != $user_id) {
+            echo json_encode(['success' => false, 'message' => 'No tiene permisos para registrar la venta de este vehículo.']); exit;
+        }
+
+        // Verificar que el vehículo no esté ya vendido
+        if ($cita_detalle['veh_estado'] === 'vendido') {
+            echo json_encode(['success' => false, 'message' => 'Este vehículo ya ha sido vendido.']); exit;
+        }
+
         $comprador_id = $cita_detalle['usu_id_solicitante'];
         $vehiculo_id = $cita_detalle['veh_id'];
-
-        // Obtener el ID del vendedor (propietario del vehículo)
-        // Esta parte puede necesitar un ajuste dependiendo de cómo se almacena el propietario del vehículo.
-        // Por ahora, asumiré que el administrador que registra la venta es el vendedor.
-        $vendedor_id = $admin_id;
+        $vendedor_id = $cita_detalle['usu_id_gestor'];
 
         // Llamada al procedimiento almacenado de registro de venta
         $sql = "CALL sp_registrar_venta(?, ?, ?, ?, ?, ?)";
         $stmt = $db_conn_mysqli->prepare($sql);
-        $notas = "Venta registrada por el administrador ID: " . $admin_id;
+        $notas = "Venta registrada por el usuario ID: " . $user_id;
         $stmt->bind_param("idiiis", $cit_id, $precio_final, $comprador_id, $vendedor_id, $vehiculo_id, $notas);
         $stmt->execute();
         
-        echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente.']);
+        // Actualizar el estado del vehículo a 'vendido'
+        $sql_update = "UPDATE VEHICULOS SET veh_estado = 'vendido' WHERE veh_id = ?";
+        $stmt_update = $db_conn_mysqli->prepare($sql_update);
+        $stmt_update->bind_param("i", $vehiculo_id);
+        $stmt_update->execute();
+        
+        echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente. El vehículo ha sido marcado como vendido.']);
         break;
 
     default:
