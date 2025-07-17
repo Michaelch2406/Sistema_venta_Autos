@@ -4,8 +4,9 @@
 <file name="favoritos_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970892063130128" remote="133970892230000000" Dst="0" />
 <file name="imagenes_vehiculo_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970892063130128" remote="133970892230000000" Dst="0" />
 <file name="usuarios_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970900920789767" remote="133970900970000000" Dst="0" />
-<file name="vehiculos_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971527247841172" remote="133971528070000000" Dst="0" />
-<file name="citas_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133969407756632939" remote="133970833410000000" Dst="0" />
+<file name="vehiculos_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352240000000" Dst="0" />
+<file name="citas_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971923875204300" remote="133972352230000000" Dst="0" />
 <file name="detalles_venta_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971176751938777" remote="133971491920000000" Dst="0" />
-<file name="ventas_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971122743922102" remote="133971491920000000" Dst="0" />
+<file name="ventas_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352240000000" Dst="0" />
+<file name="facturas_m.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971942877929809" remote="133972352240000000" Dst="0" />
 </dwsync>

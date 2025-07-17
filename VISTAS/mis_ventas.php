@@ -3,14 +3,14 @@
 ini_set('display_errors', 0); 
 error_reporting(E_ALL);
 ini_set('log_errors', 1); 
-ini_set('error_log', __DIR__ . './../php_error.log'); 
+ini_set('error_log', './../php_error.log'); 
 
 if (session_status() == PHP_SESSION_NONE) { 
     session_start(); 
 }
 
-require_once __DIR__ . './../CONFIG/Conexion.php';
-require_once __DIR__ . './../MODELOS/ventas_m.php';
+require_once './../CONFIG/Conexion.php';
+require_once './../MODELOS/ventas_m.php';
 
 $db_conn_mysqli = null;
 try {

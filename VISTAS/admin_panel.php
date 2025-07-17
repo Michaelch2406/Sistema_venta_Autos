@@ -135,28 +135,6 @@ if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != $rol_admin_id) {
                             </div>
                         </div>
                     </div>
-                    <!-- ========================== -->
-
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 dashboard-card shadow-sm">
-                            <div class="card-body text-center d-flex flex-column">
-                                <i class="bi bi-cash-coin text-danger dashboard-card-icon"></i>
-                                <h5 class="card-title">Ventas y Pagos</h5>
-                                <p class="card-text text-muted small">Monitorear el historial de ventas, transacciones y estados de pago.</p>
-                                <a href="./admin_ventas.php" class="btn btn-danger mt-auto">Revisar Ventas</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 dashboard-card shadow-sm">
-                            <div class="card-body text-center d-flex flex-column">
-                                <i class="bi bi-gear-wide-connected text-secondary dashboard-card-icon"></i>
-                                <h5 class="card-title">Configuración General</h5>
-                                <p class="card-text text-muted small">Ajustes globales del sistema, parámetros y configuraciones avanzadas.</p>
-                                <a href="./admin_configuracion_general.php" class="btn btn-secondary mt-auto">Ir a Configuración</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 

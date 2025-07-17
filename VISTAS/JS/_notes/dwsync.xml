@@ -18,9 +18,9 @@
 <file name="mis_vehiculos.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970892063286720" remote="133970892250000000" Dst="0" />
 <file name="publicar_vehiculo.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970885091955992" remote="133970890210000000" Dst="0" />
 <file name="registro.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971502795174736" remote="133971502840000000" Dst="0" />
-<file name="admin_citas.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971149984860687" remote="133971491930000000" Dst="0" />
-<file name="admin_vehiculos.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970892063130128" remote="133970892250000000" Dst="0" />
+<file name="admin_citas.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971923416127169" remote="133972352290000000" Dst="0" />
+<file name="admin_vehiculos.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352290000000" Dst="0" />
 <file name="editar_auto.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970892063286720" remote="133970892250000000" Dst="0" />
 <file name="mis_citas.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970885091897521" remote="133970890210000000" Dst="0" />
-<file name="mis_ventas.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971202913569273" remote="133971491930000000" Dst="0" />
+<file name="mis_ventas.js" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972000630695553" remote="133972352290000000" Dst="0" />
 </dwsync>
