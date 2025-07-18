@@ -232,6 +232,7 @@ class Vehiculo
         $pagina_actual = isset($filtros['pagina']) && filter_var($filtros['pagina'], FILTER_VALIDATE_INT) ? (int)$filtros['pagina'] : 1;
         $offset = ($pagina_actual - 1) * $items_por_pagina;
 
+        // Intentar con la versión actual del SP (13 parámetros)
         $sql = "CALL sp_get_vehiculos_listado(
             '$condicion', $mar_id, $mod_id, $tiv_id,
             $precio_min, $precio_max, $anio_min, $anio_max, $kilometraje_max, $provincia,
@@ -240,6 +241,12 @@ class Vehiculo
         )";
         
         $resultado_sp = $this->conn_obj->ejecutarSP($sql);
+        
+        // Si falla el SP, usar consulta directa como fallback
+        if (!$resultado_sp) {
+            error_log("SP falló, usando consulta directa como fallback");
+            return $this->getVehiculosListadoDirecto($filtros);
+        }
         $vehiculos = [];
 
         if ($resultado_sp && $resultado_sp instanceof mysqli_result) {
@@ -267,6 +274,166 @@ class Vehiculo
             error_log("Error al ejecutar sp_get_vehiculos_listado: " . $this->conn->error . " (SQL: " . $sql . ")");
             return ['vehiculos' => [], 'total' => 0, 'error' => 'Error en la consulta de vehículos.'];
         }
+    }
+
+    /**
+     * Método fallback que usa consulta directa cuando el SP falla
+     */
+    private function getVehiculosListadoDirecto($filtros) {
+        if (!$this->conn) return ['vehiculos' => [], 'total' => 0, 'error' => 'No hay conexión a BD'];
+
+        // Reconstruir filtros
+        $condicion = isset($filtros['condicion']) ? $filtros['condicion'] : 'todos';
+        $mar_id = isset($filtros['mar_id']) ? (int)$filtros['mar_id'] : null;
+        $mod_id = isset($filtros['mod_id']) ? (int)$filtros['mod_id'] : null;
+        $tiv_id = isset($filtros['tiv_id']) ? (int)$filtros['tiv_id'] : null;
+        $precio_min = isset($filtros['precio_min']) ? (float)$filtros['precio_min'] : null;
+        $precio_max = isset($filtros['precio_max']) ? (float)$filtros['precio_max'] : null;
+        $anio_min = isset($filtros['anio_min']) ? (int)$filtros['anio_min'] : null;
+        $anio_max = isset($filtros['anio_max']) ? (int)$filtros['anio_max'] : null;
+        $kilometraje_max = isset($filtros['kilometraje_max']) ? (int)$filtros['kilometraje_max'] : null;
+        $provincia = isset($filtros['provincia']) ? $filtros['provincia'] : null;
+        $items_por_pagina = isset($filtros['items_por_pagina']) ? (int)$filtros['items_por_pagina'] : 12;
+        $pagina_actual = isset($filtros['pagina']) ? (int)$filtros['pagina'] : 1;
+        $offset = ($pagina_actual - 1) * $items_por_pagina;
+
+        // Construir consulta WHERE
+        $whereConditions = [];
+        $params = [];
+        $types = "";
+
+        if ($condicion !== 'todos') {
+            $whereConditions[] = "v.veh_condicion = ?";
+            $params[] = $condicion;
+            $types .= "s";
+        }
+
+        if ($mar_id) {
+            $whereConditions[] = "v.mar_id = ?";
+            $params[] = $mar_id;
+            $types .= "i";
+        }
+
+        if ($mod_id) {
+            $whereConditions[] = "v.mod_id = ?";
+            $params[] = $mod_id;
+            $types .= "i";
+        }
+
+        if ($tiv_id) {
+            $whereConditions[] = "v.tiv_id = ?";
+            $params[] = $tiv_id;
+            $types .= "i";
+        }
+
+        if ($precio_min !== null) {
+            $whereConditions[] = "v.veh_precio >= ?";
+            $params[] = $precio_min;
+            $types .= "d";
+        }
+
+        if ($precio_max !== null) {
+            $whereConditions[] = "v.veh_precio <= ?";
+            $params[] = $precio_max;
+            $types .= "d";
+        }
+
+        if ($anio_min !== null) {
+            $whereConditions[] = "v.veh_anio >= ?";
+            $params[] = $anio_min;
+            $types .= "i";
+        }
+
+        if ($anio_max !== null) {
+            $whereConditions[] = "v.veh_anio <= ?";
+            $params[] = $anio_max;
+            $types .= "i";
+        }
+
+        if ($kilometraje_max !== null) {
+            $whereConditions[] = "v.veh_kilometraje <= ?";
+            $params[] = $kilometraje_max;
+            $types .= "i";
+        }
+
+        if ($provincia) {
+            $whereConditions[] = "v.veh_ubicacion_provincia = ?";
+            $params[] = $provincia;
+            $types .= "s";
+        }
+
+        // Agregar filtro de estado para excluir vehículos vendidos
+        $whereConditions[] = "v.veh_estado != 'vendido'";
+
+        $whereClause = !empty($whereConditions) ? "WHERE " . implode(" AND ", $whereConditions) : "";
+
+        // Consulta principal
+        $sql = "SELECT v.veh_id, v.veh_anio, v.veh_kilometraje, v.veh_precio, 
+                       v.veh_ubicacion_ciudad, v.veh_ubicacion_provincia,
+                       m.mar_nombre, mo.mod_nombre, tv.tiv_nombre,
+                       (SELECT ima_url FROM imagenesvehiculo iv 
+                        WHERE iv.veh_id = v.veh_id AND iv.ima_es_principal = TRUE 
+                        LIMIT 1) AS imagen_principal_url
+                FROM vehiculos v
+                JOIN marcas m ON v.mar_id = m.mar_id
+                JOIN modelos mo ON v.mod_id = mo.mod_id
+                JOIN tiposvehiculo tv ON v.tiv_id = tv.tiv_id
+                $whereClause
+                ORDER BY v.veh_id DESC
+                LIMIT ? OFFSET ?";
+
+        $params[] = $items_por_pagina;
+        $params[] = $offset;
+        $types .= "ii";
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            error_log("Error preparando consulta directa: " . $this->conn->error);
+            return ['vehiculos' => [], 'total' => 0, 'error' => 'Error en la consulta de vehículos.'];
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $vehiculos = [];
+        while ($row = $result->fetch_assoc()) {
+            $vehiculos[] = $row;
+        }
+
+        $stmt->close();
+
+        // Consulta para contar total
+        $countSql = "SELECT COUNT(*) as total
+                     FROM vehiculos v
+                     JOIN marcas m ON v.mar_id = m.mar_id
+                     JOIN modelos mo ON v.mod_id = mo.mod_id
+                     JOIN tiposvehiculo tv ON v.tiv_id = tv.tiv_id
+                     $whereClause";
+
+        $countStmt = $this->conn->prepare($countSql);
+        if (!$countStmt) {
+            error_log("Error preparando consulta de conteo: " . $this->conn->error);
+            return ['vehiculos' => $vehiculos, 'total' => count($vehiculos)];
+        }
+
+        // Remover los últimos 2 parámetros (LIMIT y OFFSET) para el conteo
+        $countParams = array_slice($params, 0, -2);
+        $countTypes = substr($types, 0, -2);
+
+        if (!empty($countParams)) {
+            $countStmt->bind_param($countTypes, ...$countParams);
+        }
+
+        $countStmt->execute();
+        $countResult = $countStmt->get_result();
+        $total = $countResult->fetch_assoc()['total'];
+        $countStmt->close();
+
+        return ['vehiculos' => $vehiculos, 'total' => (int)$total];
     }
     public function getVehiculoDetalle($veh_id)
     {
