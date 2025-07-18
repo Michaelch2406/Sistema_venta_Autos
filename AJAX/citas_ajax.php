@@ -1,7 +1,7 @@
 <?php
 // AJAX/citas_ajax.php
-ini_set('display_errors', 1); // Cambiar a 0 en producción
-ini_set('display_startup_errors', 1); // Cambiar a 0 en producción
+ini_set('display_errors', 0); // Cambiar a 0 en producción
+ini_set('display_startup_errors', 0); // Cambiar a 0 en producción
 error_reporting(E_ALL);
 
 // Configuración del archivo de log. El path es relativo a este script (citas_ajax.php)
@@ -12,29 +12,35 @@ ini_set('error_log', __DIR__ . '/../php_error.log');
 
 header('Content-Type: application/json');
 
-if (session_status() == PHP_SESSION_NONE) { session_start(); }
-
-require_once './../CONFIG/Conexion.php';
-require_once './../MODELOS/citas_m.php';
-
-$db_conn_mysqli = null;
 try {
-    $conexionObj = new Conexion();
-    $db_conn_mysqli = $conexionObj->conecta();
+    if (session_status() == PHP_SESSION_NONE) { session_start(); }
+
+    require_once './../CONFIG/Conexion.php';
+    require_once './../MODELOS/citas_m.php';
+
+    $db_conn_mysqli = null;
+    try {
+        $conexionObj = new Conexion();
+        $db_conn_mysqli = $conexionObj->conecta();
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Error de conexión.']); exit;
+    }
+
+    if ($db_conn_mysqli === null) {
+        echo json_encode(['success' => false, 'message' => 'Conexión no disponible.']); exit;
+    }
+
+    $citaModelo = new CitaModelo($db_conn_mysqli);
+
+    $action = $_POST['action'] ?? $_GET['action'] ?? null;
+
+    if (!$action) {
+        echo json_encode(['success' => false, 'message' => 'Acción no especificada.']); exit;
+    }
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Error de conexión.']); exit;
-}
-
-if ($db_conn_mysqli === null) {
-    echo json_encode(['success' => false, 'message' => 'Conexión no disponible.']); exit;
-}
-
-$citaModelo = new CitaModelo($db_conn_mysqli);
-
-$action = $_POST['action'] ?? $_GET['action'] ?? null;
-
-if (!$action) {
-    echo json_encode(['success' => false, 'message' => 'Acción no especificada.']); exit;
+    error_log("Error fatal en citas_ajax.php: " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'Error interno del servidor.']);
+    exit;
 }
 
 function verificar_sesion_y_rol($roles_permitidos = []) {
@@ -106,10 +112,11 @@ switch ($action) {
                 $vehiculo_id = $detalle['veh_id'];
                 $resultado_reserva = $vehiculoModelo->actualizarEstadoVehiculo($vehiculo_id, 'reservado', $user_id);
                 
-                if ($resultado_reserva['resultado'] == 1) {
+                if ($resultado_reserva && isset($resultado_reserva['resultado']) && $resultado_reserva['resultado'] == 1) {
                     echo json_encode(['success' => true, 'message' => "Cita #{$cit_id} aprobada exitosamente. El vehículo ha sido marcado como reservado automáticamente.", 'nuevo_estado' => $nuevo_estado_raw]);
                 } else {
-                    error_log("Cita aprobada pero error al reservar vehículo #{$vehiculo_id}: " . $resultado_reserva['mensaje']);
+                    $error_msg = isset($resultado_reserva['mensaje']) ? $resultado_reserva['mensaje'] : 'Error desconocido';
+                    error_log("Cita aprobada pero error al reservar vehículo #{$vehiculo_id}: " . $error_msg);
                     echo json_encode(['success' => true, 'message' => "Cita #{$cit_id} aprobada exitosamente, pero hubo un problema al reservar el vehículo. Verifique manualmente el estado del vehículo.", 'nuevo_estado' => $nuevo_estado_raw]);
                 }
             } else {
@@ -176,20 +183,41 @@ case 'insertar_cita':
         exit;
     }
     
-    // Llamada al procedimiento almacenado de inserción
-    $sql = "CALL sp_insertar_cita(?, ?, ?, ?, ?, @p_resultado, @p_mensaje_respuesta)";
-    $stmt = $db_conn_mysqli->prepare($sql);
-    $stmt->bind_param("issss", $usu_id_actual, $veh_id, $mensaje, $fecha_disp, $hora_disp);
-    $stmt->execute();
+    // Validar formato de fecha
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_disp)) {
+        echo json_encode(['success' => false, 'message' => 'Formato de fecha inválido.']);
+        exit;
+    }
     
-    // Obtener resultados de los parámetros OUT
-    $select = $db_conn_mysqli->query("SELECT @p_resultado AS resultado, @p_mensaje_respuesta AS mensaje");
-    $result = $select->fetch_assoc();
+    // Validar formato de hora
+    if (!preg_match('/^\d{1,2}:\d{2}\s*(AM|PM)$/i', $hora_disp)) {
+        echo json_encode(['success' => false, 'message' => 'Formato de hora inválido.']);
+        exit;
+    }
     
-    if ($result['resultado'] == 1) {
-        echo json_encode(['success' => true, 'message' => $result['mensaje']]);
-    } else {
-        echo json_encode(['success' => false, 'message' => $result['mensaje']]);
+    try {
+        // Insertar cita directamente en la base de datos
+        $sql = "INSERT INTO citas (usu_id_solicitante, veh_id, cit_mensaje, cit_fecha_disponibilidad, cit_hora_disponibilidad, cit_estado) VALUES (?, ?, ?, ?, ?, 'pendiente')";
+        $stmt = $db_conn_mysqli->prepare($sql);
+        
+        if (!$stmt) {
+            throw new Exception("Error al preparar consulta: " . $db_conn_mysqli->error);
+        }
+        
+        $stmt->bind_param("iisss", $usu_id_actual, $veh_id, $mensaje, $fecha_disp, $hora_disp);
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Error al ejecutar consulta: " . $stmt->error);
+        }
+        
+        $cita_id = $db_conn_mysqli->insert_id;
+        $stmt->close();
+        
+        echo json_encode(['success' => true, 'message' => "Cita #{$cita_id} solicitada exitosamente. Un gestor se pondrá en contacto contigo pronto."]);
+        
+    } catch (Exception $e) {
+        error_log("Error al insertar cita: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Error interno del servidor. Intente nuevamente.']);
     }
     break;
     
@@ -234,26 +262,34 @@ case 'insertar_cita':
         $comprador_id = $cita_detalle['usu_id_solicitante'];
         $vendedor_id = $cita_detalle['usu_id_gestor'];
 
-        // Llamada al procedimiento almacenado de registro de venta
-        $sql = "CALL sp_registrar_venta(?, ?, ?, ?, ?, ?)";
-        $stmt = $db_conn_mysqli->prepare($sql);
+        // Registrar la venta directamente en la tabla ventas
+        $fecha_venta = date('Y-m-d');
         $notas = "Venta registrada por el usuario ID: " . $user_id . " con precio automático del vehículo";
-        $stmt->bind_param("idiiis", $cit_id, $precio_final, $comprador_id, $vendedor_id, $vehiculo_id, $notas);
-        $stmt->execute();
+        
+        $sql_venta = "INSERT INTO ventas (usu_id_comprador, usu_id_gestor, ven_fecha_venta, ven_subtotal, ven_precio_total, ven_estado, ven_notas_internas) 
+                     VALUES (?, ?, ?, ?, ?, 'completado', ?)";
+        $stmt_venta = $db_conn_mysqli->prepare($sql_venta);
+        $stmt_venta->bind_param("iisdds", $comprador_id, $vendedor_id, $fecha_venta, $precio_final, $precio_final, $notas);
+        
+        if (!$stmt_venta->execute()) {
+            echo json_encode(['success' => false, 'message' => 'Error al registrar la venta: ' . $stmt_venta->error]); exit;
+        }
         
         // Obtener el ID de la venta insertada
         $venta_id = $db_conn_mysqli->insert_id;
+        $stmt_venta->close();
         
         // Actualizar el estado del vehículo a 'vendido'
-        $sql_update = "UPDATE VEHICULOS SET veh_estado = 'vendido' WHERE veh_id = ?";
+        $sql_update = "UPDATE vehiculos SET veh_estado = 'vendido' WHERE veh_id = ?";
         $stmt_update = $db_conn_mysqli->prepare($sql_update);
         $stmt_update->bind_param("i", $vehiculo_id);
         $stmt_update->execute();
+        $stmt_update->close();
         
         // Generar detalle de venta (reemplaza el trigger MySQL)
         require_once './../MODELOS/detalles_venta_m.php';
         $detalleVentaModelo = new DetalleVentaModelo($db_conn_mysqli);
-        $detalle_generado = $detalleVentaModelo->generar_detalle_venta($venta_id);
+        $detalle_generado = $detalleVentaModelo->generar_detalle_venta($venta_id, $vehiculo_id, $precio_final);
         
         if ($detalle_generado) {
             echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente por $' . number_format($precio_final, 2) . '. El vehículo ha sido marcado como vendido y se ha generado la factura.']);

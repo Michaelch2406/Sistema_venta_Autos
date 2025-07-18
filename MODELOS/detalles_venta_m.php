@@ -21,7 +21,7 @@ class DetalleVentaModelo {
     public function obtener_detalle_venta($vnt_id) {
         $vnt_id_san = (int)$vnt_id;
         
-        // Usar consulta directa en lugar del stored procedure problemático
+        // Usar consulta directa con la estructura correcta de la base de datos
         $sql = "
             SELECT 
                 v.vnt_id,
@@ -29,17 +29,18 @@ class DetalleVentaModelo {
                 v.vnt_precio_final,
                 v.comprador_id,
                 v.vendedor_id,
+                v.vehiculo_id,
                 CONCAT(m.mar_nombre, ' ', mo.mod_nombre) AS vehiculo_nombre,
                 CONCAT(comp.usu_nombre, ' ', comp.usu_apellido) AS comprador_nombre,
                 CONCAT(vend.usu_nombre, ' ', vend.usu_apellido) AS vendedor_nombre,
                 COALESCE(dv.dv_codigo_factura, 'N/A') AS dv_codigo_factura
             FROM ventas v
+            LEFT JOIN detalles_venta dv ON v.vnt_id = dv.vnt_id
             JOIN vehiculos veh ON v.vehiculo_id = veh.veh_id
             JOIN marcas m ON veh.mar_id = m.mar_id
             JOIN modelos mo ON veh.mod_id = mo.mod_id
             JOIN usuarios comp ON v.comprador_id = comp.usu_id
             JOIN usuarios vend ON v.vendedor_id = vend.usu_id
-            LEFT JOIN detalles_venta dv ON v.vnt_id = dv.vnt_id
             WHERE v.vnt_id = {$vnt_id_san}
         ";
         

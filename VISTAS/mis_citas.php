@@ -82,6 +82,13 @@ $citas_usuario = $citaModelo->obtener_citas_por_usuario($usu_id_actual);
                                     data-id="<?php echo htmlspecialchars($cita['cit_id']); ?>">
                                     <i class="icon-eye"></i> Ver Detalle
                                 </button>
+                                <?php if ($cita['cit_estado'] === 'aprobada' && $_SESSION['rol_id'] != 1): ?>
+                                <button class="btn-accion btn-registrar-venta"
+                                    data-id="<?php echo htmlspecialchars($cita['cit_id']); ?>"
+                                    style="background-color: #28a745; margin-left: 5px;">
+                                    <i class="icon-dollar"></i> Registrar Venta
+                                </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

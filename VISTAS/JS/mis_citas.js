@@ -43,10 +43,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tablaCitasBody) {
         tablaCitasBody.addEventListener('click', function(event) {
             const botonVerDetalle = event.target.closest('.btn-ver-detalle');
-            if (!botonVerDetalle) return;
-            const citaId = botonVerDetalle.dataset.id;
-            if (!citaId) return;
-            abrirDetalleUsuarioModal(citaId);
+            if (botonVerDetalle) {
+                const citaId = botonVerDetalle.dataset.id;
+                if (!citaId) return;
+                abrirDetalleUsuarioModal(citaId);
+                return;
+            }
+            
+            const botonRegistrarVenta = event.target.closest('.btn-registrar-venta');
+            if (botonRegistrarVenta) {
+                const citaId = botonRegistrarVenta.dataset.id;
+                if (!citaId) return;
+                registrarVenta(citaId, botonRegistrarVenta);
+                return;
+            }
         });
     }
 
@@ -128,5 +138,46 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         document.getElementById('detalle-cita-contenido-modal').innerHTML = contenido;
+    }
+    
+    // Función para registrar venta
+    async function registrarVenta(citaId, botonElement) {
+        if (!confirm('¿Estás seguro de que deseas registrar esta venta? Esta acción no se puede deshacer.')) {
+            return;
+        }
+        
+        // Deshabilitar el botón mientras se procesa
+        botonElement.disabled = true;
+        botonElement.textContent = 'Registrando...';
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'registrar_venta');
+            formData.append('id_cita', citaId);
+            
+            const response = await fetch('./../AJAX/citas_ajax.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const resultado = await response.json();
+            
+            if (resultado.success) {
+                alert('Venta registrada exitosamente: ' + resultado.message);
+                // Recargar la página para reflejar los cambios
+                location.reload();
+            } else {
+                alert('Error al registrar la venta: ' + resultado.message);
+                // Rehabilitar el botón en caso de error
+                botonElement.disabled = false;
+                botonElement.textContent = 'Registrar Venta';
+            }
+        } catch (error) {
+            console.error('Error al registrar venta:', error);
+            alert('Error de conexión al registrar la venta.');
+            // Rehabilitar el botón en caso de error
+            botonElement.disabled = false;
+            botonElement.textContent = 'Registrar Venta';
+        }
     }
 });
