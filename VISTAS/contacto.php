@@ -325,56 +325,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Sección de Estadísticas -->
-                <div class="row mt-5 pt-4" data-aos="fade-up">
-                    <div class="col-12">
-                        <div class="stats-section">
-                            <h2 class="text-center mb-5 fw-light section-title">
-                                <span class="title-highlight">Confía</span> en Nosotros
-                            </h2>
-                            <div class="row text-center">
-                                <div class="col-md-3 col-6 mb-4">
-                                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
-                                        <div class="stat-icon">
-                                            <i class="bi bi-car-front"></i>
-                                        </div>
-                                        <div class="stat-number" data-count="500">0</div>
-                                        <div class="stat-label">Vehículos Vendidos</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-6 mb-4">
-                                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-                                        <div class="stat-icon">
-                                            <i class="bi bi-people"></i>
-                                        </div>
-                                        <div class="stat-number" data-count="1200">0</div>
-                                        <div class="stat-label">Clientes Satisfechos</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-6 mb-4">
-                                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
-                                        <div class="stat-icon">
-                                            <i class="bi bi-award"></i>
-                                        </div>
-                                        <div class="stat-number" data-count="15">0</div>
-                                        <div class="stat-label">Años de Experiencia</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-6 mb-4">
-                                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
-                                        <div class="stat-icon">
-                                            <i class="bi bi-star-fill"></i>
-                                        </div>
-                                        <div class="stat-number" data-count="98">0</div>
-                                        <div class="stat-label">% Satisfacción</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </div>                
             </div>
         </section>
     </main>

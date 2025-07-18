@@ -88,3 +88,4 @@
 [17-Jul-2025 16:18:18 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'
 [17-Jul-2025 16:21:52 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'
 [17-Jul-2025 16:21:57 America/New_York] Error en DetalleVentaModelo al obtener detalle de venta: Unknown column 'veh.veh_marca' in 'field list'
+[18-Jul-2025 10:55:46 America/New_York] Error al generar detalle de venta: Error al insertar detalle de venta: Cannot add or update a child row: a foreign key constraint fails (`sistemaventaautos`.`detalles_venta`, CONSTRAINT `detalles_venta_ibfk_1` FOREIGN KEY (`vnt_id`) REFERENCES `ventas` (`vnt_id`))

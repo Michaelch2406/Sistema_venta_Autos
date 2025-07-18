@@ -99,7 +99,22 @@ switch ($action) {
 
         $actualizado = $citaModelo->actualizar_estado_cita($cit_id, $nuevo_estado_raw, $user_id);
         if ($actualizado) {
-            echo json_encode(['success' => true, 'message' => "Estado de la cita #{$cit_id} actualizado a '{$nuevo_estado_raw}'.", 'nuevo_estado' => $nuevo_estado_raw]);
+            // Si la cita fue aprobada, marcar el vehículo como reservado automáticamente
+            if ($nuevo_estado_raw === 'aprobada') {
+                require_once './../MODELOS/vehiculos_m.php';
+                $vehiculoModelo = new Vehiculo();
+                $vehiculo_id = $detalle['veh_id'];
+                $resultado_reserva = $vehiculoModelo->actualizarEstadoVehiculo($vehiculo_id, 'reservado', $user_id);
+                
+                if ($resultado_reserva['resultado'] == 1) {
+                    echo json_encode(['success' => true, 'message' => "Cita #{$cit_id} aprobada exitosamente. El vehículo ha sido marcado como reservado automáticamente.", 'nuevo_estado' => $nuevo_estado_raw]);
+                } else {
+                    error_log("Cita aprobada pero error al reservar vehículo #{$vehiculo_id}: " . $resultado_reserva['mensaje']);
+                    echo json_encode(['success' => true, 'message' => "Cita #{$cit_id} aprobada exitosamente, pero hubo un problema al reservar el vehículo. Verifique manualmente el estado del vehículo.", 'nuevo_estado' => $nuevo_estado_raw]);
+                }
+            } else {
+                echo json_encode(['success' => true, 'message' => "Estado de la cita #{$cit_id} actualizado a '{$nuevo_estado_raw}'.", 'nuevo_estado' => $nuevo_estado_raw]);
+            }
         } else {
             error_log("Error al actualizar estado de cita #{$cit_id} a '{$nuevo_estado_raw}' por usuario {$user_id}");
             echo json_encode(['success' => false, 'message' => "Error al actualizar el estado de la cita #{$cit_id}. Verifique los logs para más detalles."]);
@@ -181,10 +196,9 @@ case 'insertar_cita':
     case 'registrar_venta':
         $user_id = verificar_sesion_y_rol([1, 2, 3]);
         $cit_id = filter_input(INPUT_POST, 'id_cita', FILTER_VALIDATE_INT);
-        $precio_final = filter_input(INPUT_POST, 'precio_final', FILTER_VALIDATE_FLOAT);
-
-        if (!$cit_id || !$precio_final) {
-            echo json_encode(['success' => false, 'message' => 'Datos inválidos para registrar la venta.']); exit;
+        
+        if (!$cit_id) {
+            echo json_encode(['success' => false, 'message' => 'ID de cita inválido para registrar la venta.']); exit;
         }
 
         $cita_detalle = $citaModelo->obtener_detalle_cita($cit_id);
@@ -202,14 +216,28 @@ case 'insertar_cita':
             echo json_encode(['success' => false, 'message' => 'Este vehículo ya ha sido vendido.']); exit;
         }
 
-        $comprador_id = $cita_detalle['usu_id_solicitante'];
+        // Obtener el precio del vehículo automáticamente
         $vehiculo_id = $cita_detalle['veh_id'];
+        $sql_precio = "SELECT veh_precio FROM vehiculos WHERE veh_id = ?";
+        $stmt_precio = $db_conn_mysqli->prepare($sql_precio);
+        $stmt_precio->bind_param("i", $vehiculo_id);
+        $stmt_precio->execute();
+        $result_precio = $stmt_precio->get_result();
+        $vehiculo_data = $result_precio->fetch_assoc();
+        $stmt_precio->close();
+
+        if (!$vehiculo_data) {
+            echo json_encode(['success' => false, 'message' => 'No se pudo obtener el precio del vehículo.']); exit;
+        }
+
+        $precio_final = $vehiculo_data['veh_precio'];
+        $comprador_id = $cita_detalle['usu_id_solicitante'];
         $vendedor_id = $cita_detalle['usu_id_gestor'];
 
         // Llamada al procedimiento almacenado de registro de venta
         $sql = "CALL sp_registrar_venta(?, ?, ?, ?, ?, ?)";
         $stmt = $db_conn_mysqli->prepare($sql);
-        $notas = "Venta registrada por el usuario ID: " . $user_id;
+        $notas = "Venta registrada por el usuario ID: " . $user_id . " con precio automático del vehículo";
         $stmt->bind_param("idiiis", $cit_id, $precio_final, $comprador_id, $vendedor_id, $vehiculo_id, $notas);
         $stmt->execute();
         
@@ -228,9 +256,9 @@ case 'insertar_cita':
         $detalle_generado = $detalleVentaModelo->generar_detalle_venta($venta_id);
         
         if ($detalle_generado) {
-            echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente. El vehículo ha sido marcado como vendido y se ha generado la factura.']);
+            echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente por $' . number_format($precio_final, 2) . '. El vehículo ha sido marcado como vendido y se ha generado la factura.']);
         } else {
-            echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente, pero hubo un problema al generar la factura. Contacte al administrador.']);
+            echo json_encode(['success' => true, 'message' => 'Venta registrada exitosamente por $' . number_format($precio_final, 2) . ', pero hubo un problema al generar la factura. Contacte al administrador.']);
         }
         break;
 

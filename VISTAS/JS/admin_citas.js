@@ -255,8 +255,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Registra la venta de un vehículo
     async function registrarVenta(citaId, boton) {
-        const precio = prompt('Ingrese el precio final de la venta:');
-        if (precio === null || precio.trim() === '') {
+        // Confirmar la venta sin pedir precio (se usará el precio del vehículo)
+        if (!confirm('¿Confirma registrar la venta de este vehículo? Se usará el precio publicado del vehículo.')) {
             return;
         }
 
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('action', 'registrar_venta');
         formData.append('id_cita', citaId);
-        formData.append('precio_final', precio);
+        // No enviamos precio_final - se obtendrá automáticamente del vehículo
 
         try {
             const response = await fetch('./../AJAX/citas_ajax.php', {
