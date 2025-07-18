@@ -190,197 +190,230 @@ function setupRefreshButton() {
 }
 
 /**
-         * Función para ver detalles de una venta específica
-         */
-        function verDetallesVenta(ventaId) {
-            // Prevenir múltiples llamadas
-            if (window.ventaDetailsLoading) {
-                return;
-            }
-            window.ventaDetailsLoading = true;
-            
-            // Obtener o crear instancia del modal
-            const modalElement = document.getElementById('modalDetallesVenta');
-            let modal = bootstrap.Modal.getInstance(modalElement);
-            if (!modal) {
-                modal = new bootstrap.Modal(modalElement, {
-                    backdrop: true,
-                    keyboard: true
-                });
-            }
-            
-            const contenido = document.getElementById('contenidoDetallesVenta');
-            
-            // Mostrar loading
-            contenido.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                    <p class="mt-2">Cargando detalles de la venta...</p>
-                </div>
-            `;
-            
-            // Mostrar modal
-            modal.show();
-            
-            // Limpiar flag cuando se cierre el modal - usar jQuery para evitar conflictos
-            $(modalElement).off('hidden.bs.modal.ventaDetails').on('hidden.bs.modal.ventaDetails', function() {
-                window.ventaDetailsLoading = false;
-            });
-            
-            // Cargar detalles via AJAX
-            $.ajax({
-                url: './../AJAX/detalles_venta_ajax.php',
-                method: 'GET',
-                data: { 
-                    action: 'obtener_detalle_venta',
-                    id: ventaId 
-                },
-                dataType: 'json',
-                timeout: 10000, // 10 segundos timeout
-                success: function(response) {
-                    if (response.success) {
-                        mostrarDetallesVenta(response.venta);
-                    } else {
-                        mostrarErrorDetalles(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error AJAX:', status, error);
-                    let errorMessage = 'Error de conexión al cargar los detalles.';
-                    if (status === 'timeout') {
-                        errorMessage = 'La solicitud tardó demasiado tiempo. Intente nuevamente.';
-                    } else if (xhr.responseText) {
-                        try {
-                            const errorResponse = JSON.parse(xhr.responseText);
-                            errorMessage = errorResponse.message || errorMessage;
-                        } catch(e) {
-                            errorMessage = 'Error del servidor al procesar la solicitud.';
-                        }
-                    }
-                    mostrarErrorDetalles(errorMessage);
-                },
-                complete: function() {
-                    // Limpiar flag de carga cuando termine la petición
-                    window.ventaDetailsLoading = false;
-                }
-            });
-        }
+ * Función para ver detalles de una venta específica - VERSIÓN FINAL CORREGIDA
+ */
+function verDetallesVenta(ventaId) {
+    // Prevenir múltiples llamadas si ya se está cargando
+    if (window.ventaDetailsLoading) {
+        return;
+    }
+    window.ventaDetailsLoading = true;
+
+    const modalElement = document.getElementById('modalDetallesVenta');
+    if (!modalElement) {
+        console.error('Modal no encontrado');
+        window.ventaDetailsLoading = false;
+        return;
+    }
+
+    // SOLUCIÓN DEFINITIVA: Destruir completamente cualquier instancia previa
+    const existingModal = bootstrap.Modal.getInstance(modalElement);
+    if (existingModal) {
+        existingModal.dispose();
+    }
+
+    // Remover cualquier backdrop que pueda haber quedado
+    const existingBackdrops = document.querySelectorAll('.modal-backdrop');
+    existingBackdrops.forEach(backdrop => backdrop.remove());
+
+    // Limpiar clases del body que puedan interferir
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+
+    const contenido = document.getElementById('contenidoDetallesVenta');
+
+    // Configurar el estado de carga
+    contenido.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando detalles de la venta...</p>
+        </div>
+    `;
+
+    // Crear nueva instancia del modal con configuración explícita
+    const modal = new bootstrap.Modal(modalElement, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+    });
+
+    // Mostrar el modal
+    modal.show();
+
+    // Configurar eventos de limpieza
+    const cleanup = () => {
+        window.ventaDetailsLoading = false;
+    };
+
+    // Evento para cuando el modal se oculte completamente
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        cleanup();
+        // Limpiar cualquier backdrop residual
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
         
-        /**
-         * Muestra los detalles de la venta en el modal
-         */
-        function mostrarDetallesVenta(venta) {
-            const contenido = document.getElementById('contenidoDetallesVenta');
-            const fecha = new Date(venta.vnt_fecha_venta).toLocaleDateString('es-ES', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            contenido.innerHTML = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-primary">Información de la Venta</h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <td><strong>ID Venta:</strong></td>
-                                <td>${venta.vnt_id}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Fecha:</strong></td>
-                                <td>${fecha}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Precio Final:</strong></td>
-                                <td class="text-success"><strong>$${parseFloat(venta.vnt_precio_final).toLocaleString('es-ES', {minimumFractionDigits: 2})}</strong></td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-primary">Información del Vehículo</h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <td><strong>Vehículo:</strong></td>
-                                <td>${venta.vehiculo_nombre}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Comprador:</strong></td>
-                                <td>${venta.comprador_nombre}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Vendedor:</strong></td>
-                                <td>${venta.vendedor_nombre}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <a href="factura.php?id=${venta.vnt_id}" class="btn btn-primary">
-                        <i class="bi bi-receipt"></i> Ver Factura Completa
-                    </a>
-                </div>
-            `;
-            
-            // Asegurar que el modal se puede cerrar
-            const modalElement = document.getElementById('modalDetallesVenta');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal._config.backdrop = true;
-                modal._config.keyboard = true;
-            }
-            
-            // Limpiar flag después de mostrar detalles
-            window.ventaDetailsLoading = false;
+        // Restaurar el estado del body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }, { once: true });
+
+    // AJAX para obtener los detalles de la venta
+    $.ajax({
+        url: './../AJAX/detalles_venta_ajax.php',
+        method: 'GET',
+        data: {
+            action: 'obtener_detalle_venta',
+            id: ventaId
+        },
+        dataType: 'json',
+        timeout: 15000
+    }).done(function(response) {
+        if (response.success) {
+            mostrarDetallesVenta(response.venta);
+        } else {
+            mostrarErrorDetalles(response.message || 'No se pudo obtener la información de la venta.');
         }
-        
-        /**
-         * Muestra error en el modal de detalles
-         */
-        function mostrarErrorDetalles(mensaje) {
-            const contenido = document.getElementById('contenidoDetallesVenta');
-            contenido.innerHTML = `
-                <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <strong>Error:</strong> ${mensaje}
-                </div>
-                <div class="text-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-2"></i>Cerrar
-                    </button>
-                </div>
-            `;
-            
-            // Asegurar que el modal se puede cerrar
-            const modalElement = document.getElementById('modalDetallesVenta');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal._config.backdrop = true;
-                modal._config.keyboard = true;
+    }).fail(function(xhr, status, error) {
+        console.error('Error AJAX:', status, error);
+        let errorMessage = 'Error de conexión al cargar los detalles.';
+        if (status === 'timeout') {
+            errorMessage = 'La solicitud tardó demasiado. Por favor, intente de nuevo.';
+        } else if (xhr.responseText) {
+            try {
+                const errorResponse = JSON.parse(xhr.responseText);
+                errorMessage = errorResponse.message || 'Error del servidor al procesar la solicitud.';
+            } catch (e) {
+                errorMessage = 'Ha ocurrido un error inesperado en el servidor.';
             }
-            
-            // Asegurar que el loading flag se resetee
-            window.ventaDetailsLoading = false;
         }
+        mostrarErrorDetalles(errorMessage);
+    });
+}
         
-        // Configuración adicional cuando el documento esté listo
-        $(document).ready(function() {
-            // Configurar tooltips de Bootstrap
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-            
-            // Agregar clase de animación al contenedor principal
-            $('.container').addClass('slide-in');
-            
-            // Log para debugging
-            console.log('Página de ventas cargada correctamente');
-            console.log('Total de ventas mostradas:', $('#tabla-ventas-body tr').length);
-        });
+/**
+ * Muestra los detalles de la venta en el modal - VERSIÓN CORREGIDA
+ */
+function mostrarDetallesVenta(venta) {
+    const contenido = document.getElementById('contenidoDetallesVenta');
+    const fecha = new Date(venta.vnt_fecha_venta).toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    contenido.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-primary">Información de la Venta</h6>
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>ID Venta:</strong></td>
+                        <td>${venta.vnt_id}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fecha:</strong></td>
+                        <td>${fecha}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precio Final:</strong></td>
+                        <td class="text-success"><strong>$${parseFloat(venta.vnt_precio_final).toLocaleString('es-ES', {minimumFractionDigits: 2})}</strong></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-primary">Información del Vehículo</h6>
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Vehículo:</strong></td>
+                        <td>${venta.vehiculo_nombre}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Comprador:</strong></td>
+                        <td>${venta.comprador_nombre}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vendedor:</strong></td>
+                        <td>${venta.vendedor_nombre}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="mt-3">
+            <a href="factura.php?id=${venta.vnt_id}" class="btn btn-primary">
+                <i class="bi bi-receipt"></i> Ver Factura Completa
+            </a>
+        </div>
+    `;
+    
+    // Limpiar flag después de mostrar detalles
+    window.ventaDetailsLoading = false;
+}
+
+/**
+ * Muestra error en el modal de detalles - VERSIÓN CORREGIDA
+ */
+function mostrarErrorDetalles(mensaje) {
+    const contenido = document.getElementById('contenidoDetallesVenta');
+    contenido.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>Error:</strong> ${mensaje}
+        </div>
+        <div class="text-center">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-2"></i>Cerrar
+            </button>
+        </div>
+    `;
+    
+    // Asegurar que el loading flag se resetee
+    window.ventaDetailsLoading = false;
+}
+
+// Configuración adicional cuando el documento esté listo
+$(document).ready(function() {
+    // Configurar tooltips de Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Agregar clase de animación al contenedor principal
+    $('.container').addClass('slide-in');
+    
+    // SOLUCIÓN ADICIONAL: Limpiar cualquier modal residual al cargar la página
+    $(document).on('click', '[data-bs-dismiss="modal"]', function() {
+        // Forzar limpieza de backdrops
+        setTimeout(function() {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }, 300);
+    });
+    
+    // Limpiar al hacer clic en el backdrop
+    $(document).on('click', '.modal-backdrop', function() {
+        setTimeout(function() {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }, 300);
+    });
+    
+    // Log para debugging
+    console.log('Página de ventas cargada correctamente');
+    console.log('Total de ventas mostradas:', $('#tabla-ventas-body tr').length);
+});
 
 /**
  * Actualiza los datos de ventas via AJAX

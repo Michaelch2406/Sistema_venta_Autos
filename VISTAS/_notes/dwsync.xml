@@ -16,8 +16,8 @@
 <file name="logout.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133970892063542334" remote="133970892250000000" Dst="0" />
 <file name="mis_favoritos.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971914946859947" remote="133972352290000000" Dst="0" />
 <file name="mis_vehiculos.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971914805555609" remote="133972352290000000" Dst="0" />
-<file name="mis_ventas.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972357306487079" remote="133972357390000000" Dst="0" />
-<file name="publicar_vehiculo.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971913693973847" remote="133972352300000000" Dst="0" />
+<file name="mis_ventas.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972586474400817" remote="133972592600000000" Dst="0" />
+<file name="publicar_vehiculo.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972484644201148" remote="133972484760000000" Dst="0" />
 <file name="registro.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971914313638028" remote="133972352300000000" Dst="0" />
 <file name="admin_citas.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133972374920324994" remote="133972379570000000" Dst="0" />
 <file name="admin_vehiculos.php" server="10.10.35.45//var/www/html/PA_2025_I/CHASIGUANO/" local="133971918773954054" remote="133972352270000000" Dst="0" />
